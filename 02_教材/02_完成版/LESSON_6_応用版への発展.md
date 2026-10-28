@@ -1,599 +1,1112 @@
-# LESSON_6：基礎版から応用版へ - プログラム的な工夫
+# LESSON_6：応用版へのチャレンジ - 1つのオプション改造
 
 ## 概要
-「避けゲー」から「NEON DODGE」へ。**同じ p5.js のまま**で、プログラム的な工夫により、ゲームがどう成長するか学びます。
 
-### このレッスンのポイント
-- 敵の種類を増やす工夫（if 文と type プロパティ）
-- シューティング機能の実装（配列管理）
-- パワーアップシステムの設計
-- ステージシステムで難易度を効率的に管理
-- スコアシステムの多様性
-- ボスバトルの実装
+LESSON_1〜5 で基礎版（避けゲー）を完成させました。
+
+LESSON_6 では、**応用版（NEON DODGE）の機能から 1つを選んで、自分だけのゲームに改造します**。
+
+同じオプションを選んだ友達とも、**全く異なるゲーム**になるように工夫しましょう。
 
 ---
 
-## 第1部：2つのゲームの比較
+## オプション一覧
 
-### 基礎版「避けゲー」と応用版「NEON DODGE」
+### 🎮 ゲームロジック系（難易度：★★☆）
+複雑なゲーム機能を追加することで、ゲームの遊び方そのものを変える
 
-| 項目 | 基礎版 | 応用版 |
-|------|--------|--------|
-| **ライブラリ** | p5.js | **p5.js（同じ）** |
-| **画面サイズ** | 600 × 400 px | 900 × 600 px |
-| **敵の種類** | 1種類 | 3種類（通常・ジグザグ・タンク） |
-| **プレイヤー機能** | 移動のみ | 移動 + 射撃 |
-| **ステージ** | 1ステージ（難易度3段階） | 4ステージ（秘密ステージ含む） |
-| **難易度** | 敵速度・個数・時間 | ステージごとに自動調整 |
-| **パワーアップ** | なし | 4種類（ハート・スター・シールド・ラピッド） |
-| **ボス** | なし | あり（ステージの最後） |
-| **音声** | なし | あり（Web Audio API） |
-| **隠し要素** | なし | コナミコマンドで秘密ステージ解禁 |
-| **コード行数** | 約200行 | 約1000行 |
+- **[A] 敵の多様化**：敵を複数の種類に分ける
+- **[B] 射撃機能**：プレイヤーが敵に反撃できるようにする
+- **[C] パワーアップシステム**：ゲーム中にパワーアップアイテムが出現
+- **[D] ボスバトル**：ラスボスが出現する
+- **[E] ステージシステム**：複数のステージで難易度が変わる
+- **[F] 隠しコマンド**：特定のキー操作で秘密ステージが出現
+
+### 🎨 ビジュアル・音声系（難易度：★☆☆）
+ゲームの見た目・音を変えて、プレイヤーの印象を大きく変える
+
+- **[G] BGM のカスタマイズ**：ゲーム中の音楽を変更
+- **[H] ビジュアルカスタマイズ**：敵やプレイヤーの色・形・サイズを変更
+- **[I] 効果音の追加**：敵撃破時や得点時の音を追加
+- **[J] パーティクル効果**：爆発やエフェクトを追加
+
+### 🚀 高度なオプション（難易度：★★★）
+ゲームシステムそのものを大きく改造する
+
+- **[K] コンボシステム**：連続で敵を倒すと得点が増える
+- **[L] 難易度調整**：敵の速度・生成頻度・ゲーム時間を変更
+- **[M] スコアシステムの工夫**：得点の計算ルールを変える
+- **[N] ボーナスステージ**：特定の条件でボーナスが発生
 
 ---
 
-## 第2部：敵の多様性化
+## どのオプションを選ぶ？
 
-### 基礎版：敵は1種類
+### 選び方のコツ
+
+**「このゲーム、こんなふうに変えたら面白そうだな」と思うものを選びましょう。**
+
+例：
+- 「敵をもっと種類を増やしたい」 → **[A] 敵の多様化**
+- 「敵に反撃したい」 → **[B] 射撃機能**
+- 「ゲームの音楽を変えたい」 → **[G] BGM のカスタマイズ**
+- 「得点をもっと複雑にしたい」 → **[M] スコアシステムの工夫**
+
+**同じオプションを選んでも、工夫次第で全く違うゲームになります！**
+
+---
+
+## 次のステップ
+
+下記から選んだオプションの詳細を読んで、改造に挑戦しましょう。
+
+### ゲームロジック系
+- [A - 敵の多様化](#a-敵の多様化)
+- [B - 射撃機能](#b-射撃機能)
+- [C - パワーアップシステム](#c-パワーアップシステム)
+- [D - ボスバトル](#d-ボスバトル)
+- [E - ステージシステム](#e-ステージシステム)
+- [F - 隠しコマンド](#f-隠しコマンド)
+
+### ビジュアル・音声系
+- [G - BGM のカスタマイズ](#g-bgm-のカスタマイズ)
+- [H - ビジュアルカスタマイズ](#h-ビジュアルカスタマイズ)
+- [I - 効果音の追加](#i-効果音の追加)
+- [J - パーティクル効果](#j-パーティクル効果)
+
+### 高度なオプション
+- [K - コンボシステム](#k-コンボシステム)
+- [L - 難易度調整](#l-難易度調整)
+- [M - スコアシステムの工夫](#m-スコアシステムの工夫)
+- [N - ボーナスステージ](#n-ボーナスステージ)
+
+---
+
+# A - 敵の多様化
+
+## 説明
+
+基礎版では、敵は「上から落ちてくる同じ形」です。
+
+敵を **複数の種類に分ける** ことで、ゲーム性が大きく変わります。
+
+## 実装の流れ
+
+### ステップ 1：敵に「type」プロパティを追加
 
 ```javascript
-// 敵は常に「落ちてくるだけ」
+// 基礎版
 enemies.push({
   x: random(enemySize, width - enemySize),
   y: random(-300, -50),
   speed: enemySpeed + random(0, 2)
 });
-```
 
-### 応用版：敵を「タイプ」で分類
+// 応用版：type を追加
+const type = random() < 0.5 ? 'fast' : 'slow';
 
-```javascript
-// 敵のタイプを決める（確率で分岐）
-const rand_type = random();
-let type = 'normal';
-
-if (rand_type < 0.17) {
-  type = 'zig';      // 17%：ジグザグ移動
-} else if (rand_type < 0.29) {
-  type = 'tank';     // 12%：耐久型
-}
-// 残り 71%：通常敵
-
-// オブジェクトに「type」プロパティを持たせる
 enemies.push({
-  x: random(enemyR, width - enemyR),
-  y: -35,
-  r: enemyR,
-  hp: type === 'tank' ? 3 : 1,        // タンクは体力3
-  maxhp: type === 'tank' ? 3 : 1,
-  speed: enemySpeed,
-  type: type,                          // ★ ここが重要
-  phase: random(TWO_PI),
-  value: type === 'tank' ? 30 : 10    // 得点もタイプで変更
+  x: random(enemySize, width - enemySize),
+  y: random(-300, -50),
+  speed: enemySpeed + random(0, 2),
+  type: type  // ← 敵の種類を記録
 });
 ```
 
-### 敵ごとに異なる動きを実装
+### ステップ 2：敵のタイプに応じて動きを変える
 
 ```javascript
-// 敵の移動（draw 関数内）
+// draw() 関数内で敵の移動処理
+
 for (let e of enemies) {
   e.y += e.speed * dt;
   
-  // type に応じて異なる動きをさせる
+  // type に応じて異なる動き
   if (e.type === 'zig') {
     e.x += sin(elapsed * 5 + e.phase) * 110 * dt;  // 左右に揺れる
+  } else if (e.type === 'spin') {
+    e.rotation += 5;  // 回転する
   }
-  // タンクは真下に落ちるだけ（何もしない）
 }
 ```
 
-### 敵の描画でも type を参照
+### ステップ 3：敵の種類ごとに見た目を変える
 
 ```javascript
 for (let e of enemies) {
-  // タンクは6角形、他は4角形
-  let sides = e.type === 'tank' ? 6 : 4;
+  push();
+  translate(e.x, e.y);
   
-  // タンクはオレンジ、他はピンク
-  let color = e.type === 'tank' ? [255, 160, 93] : [255, 102, 142];
+  // タイプごとに色を変える
+  if (e.type === 'fast') {
+    fill([255, 100, 100]);  // 赤 = 速い
+  } else if (e.type === 'slow') {
+    fill([100, 100, 255]);  // 青 = 遅い
+  }
   
-  fill(color);
-  drawPolygon(e.x, e.y, e.r, sides);
+  circle(0, 0, enemySize);
+  pop();
 }
 ```
 
-**学ぶポイント**
-- オブジェクトのプロパティで「敵の種類」を記録
-- if 文で敵の種類に応じた処理を分岐
-- 同じ配列で複数タイプを効率的に管理
+## 生徒の工夫例
+
+### 例 1：敵の速度で分ける
+```javascript
+const type = random() < 0.3 ? 'slow' : random() < 0.7 ? 'normal' : 'fast';
+
+if (type === 'slow') {
+  e.speed = enemySpeed * 0.5;
+} else if (type === 'normal') {
+  e.speed = enemySpeed;
+} else {
+  e.speed = enemySpeed * 1.5;
+}
+```
+
+### 例 2：敵の大きさで分ける
+```javascript
+const type = random() < 0.5 ? 'big' : 'small';
+
+if (type === 'big') {
+  e.size = enemySize * 1.5;
+  e.speed = enemySpeed * 0.7;  // 大きい敵は遅い
+} else {
+  e.size = enemySize * 0.7;
+  e.speed = enemySpeed * 1.3;  // 小さい敵は速い
+}
+```
+
+### 例 3：敵の動きで分ける
+```javascript
+const type = random() < 0.3 ? 'straight' : random() < 0.6 ? 'wave' : 'spiral';
+
+if (type === 'wave') {
+  e.x += sin(elapsed * 3) * 150 * dt;
+} else if (type === 'spiral') {
+  e.x += cos(elapsed * 4) * 120 * dt;
+  e.y += sin(elapsed * 4) * 30 * dt;
+}
+```
+
+## ヒント
+
+- **得点を変える**：倒しにくい敵はより多くの得点をゲット
+- **見た目を工夫**：色だけでなく、形も変えてみる（円・四角・三角）
+- **効果音を追加**：敵の種類ごとに異なる音を鳴らす
 
 ---
 
-## 第3部：シューティング機能
+# B - 射撃機能
 
-### 基礎版：避けるだけ
+## 説明
+
+基礎版ではプレイヤーは「避けるだけ」です。
+
+射撃機能を追加することで、**プレイヤーが敵に反撃できる**ようになります。
+
+## 実装の流れ
+
+### ステップ 1：弾の配列を作成
+
 ```javascript
-// 基礎版にはシューティング機能なし
+let bullets = [];  // グローバル変数に追加
+let shotTimer = 0;
 ```
 
-### 応用版：プレイヤーも射撃可能
+### ステップ 2：射撃関数を作成
 
 ```javascript
-// グローバル変数
-let bullets = [];      // 弾の配列
-let shotTimer = 0;     // 連射制御用
-
-// 射撃関数
 function shoot() {
-  const rapid = player.fire > 0;  // 連続射撃中？
-  const interval = rapid ? 0.085 : 0.18;  // 連続射撃ならより早く
+  if (shotTimer > 0) return;  // クールタイム中は発射できない
+  shotTimer = 0.18;  // 次の射撃まで 0.18 秒待つ
   
-  if (shotTimer > 0) return;  // クールタイム中なら発射できない
-  shotTimer = interval;
-  
-  // 通常射撃：1発
   bullets.push({
-    x: player.x,
-    y: player.y - 24,
-    vy: -690,  // 上に高速移動
+    x: playerX,
+    y: playerY - 20,
+    vy: -400,  // 上に移動
     r: 5
   });
   
-  // 連続射撃中なら左右にも発射
-  if (rapid) {
-    bullets.push(
-      { x: player.x - 10, y: player.y - 18, vy: -640, vx: -90, r: 4 },
-      { x: player.x + 10, y: player.y - 18, vy: -640, vx: 90, r: 4 }
-    );
-  }
-  
-  playSound(rapid ? 600 : 480, 0.05);
+  playSound(500, 0.1);  // 射撃音
 }
+```
 
-// update 関数内で発射判定
-if (keyIsDown(32)) shoot();  // スペースキーで連続射撃
+### ステップ 3：キー入力で射撃
 
-// 弾の移動（draw 関数内）
+```javascript
+function keyPressed() {
+  if (key === ' ') {  // スペースキー
+    shoot();
+  }
+}
+```
+
+### ステップ 4：弾の移動と当たり判定
+
+```javascript
+// update 関数内
+
+// 弾を移動
 for (let b of bullets) {
   b.y += b.vy * dt;
-  if (b.vx) b.x += b.vx * dt;
 }
 
 // 敵との当たり判定
 for (let b of bullets) {
   for (let e of enemies) {
     if (dist(b.x, b.y, e.x, e.y) < b.r + e.r) {
-      e.hp--;      // 敵に被弾
-      b.y = -100;  // 弾を削除
-      
-      if (e.hp <= 0) {
-        destroyEnemy(e);  // 敵撃破
-      }
+      score += 10;
+      enemies.splice(enemies.indexOf(e), 1);  // 敵を削除
+      bullets.splice(bullets.indexOf(b), 1);  // 弾を削除
     }
   }
 }
 ```
 
-**学ぶポイント**
-- 弾も敵と同じく「配列で管理」
-- 当たり判定は敵と同じく dist 関数で実装
-- 連射速度の違いで「通常射撃」と「連続射撃」を表現
+## 生徒の工夫例
 
----
-
-## 第4部：パワーアップシステム
-
-### 基礎版：パワーアップなし
-
-### 応用版：複数種類のパワーアップ
-
+### 例 1：複数の弾を発射
 ```javascript
-const CONFIG = {
-  // ... 他の設定
-  playerSpeed: 380,
-  playerSize: 19,
-};
+function shoot() {
+  bullets.push({ x: playerX - 15, y: playerY - 20, vy: -400, r: 5 });
+  bullets.push({ x: playerX, y: playerY - 20, vy: -400, r: 5 });
+  bullets.push({ x: playerX + 15, y: playerY - 20, vy: -400, r: 5 });
+}
+```
 
-// プレイヤーにパワーアップ用のプロパティを追加
-let player = {
-  x: width / 2,
-  y: height - 76,
-  r: 19,
-  lives: 3,
-  inv: 1,
-  star: 0,      // ★ スター（無敵）の残り秒数
-  shield: 0,    // ◆ シールド（次の被弾を無効化）の残り秒数
-  fire: 0       // ⚡ 連続射撃の残り秒数
-};
+### 例 2：連続射撃
+```javascript
+let isRapidFire = false;
 
-// パワーアップアイテムの生成
-function dropPickup(x, y) {
-  const r = random();
+function shoot() {
+  const interval = isRapidFire ? 0.08 : 0.18;
+  if (shotTimer > 0) return;
+  shotTimer = interval;
   
-  if (r < 0.085) {
-    pickups.push({ x, y, type: 'heart', r: 13, t: 0 });
-  } else if (r < 0.17) {
-    pickups.push({ x, y, type: 'star', r: 13, t: 0 });
-  } else if (r < 0.255) {
-    pickups.push({ x, y, type: 'shield', r: 13, t: 0 });
-  } else if (r < 0.34) {
-    pickups.push({ x, y, type: 'rapid', r: 13, t: 0 });
-  }
+  bullets.push({
+    x: playerX,
+    y: playerY - 20,
+    vy: -400,
+    r: 5
+  });
 }
-
-// プレイヤーとアイテムの当たり判定
-for (let p of pickups) {
-  if (dist(p.x, p.y, player.x, player.y) < p.r + player.r) {
-    if (p.type === 'heart') {
-      player.lives = min(5, player.lives + 1);
-    } else if (p.type === 'star') {
-      player.star = 7;  // 7秒間無敵
-    } else if (p.type === 'shield') {
-      player.shield = 15;  // シールド有効化
-    } else if (p.type === 'rapid') {
-      player.fire = 12;  // 12秒間連続射撃
-    }
-  }
-}
-
-// 時間経過でパワーアップ効果を減らす
-player.star = max(0, player.star - dt);
-player.shield = max(0, player.shield - dt);
-player.fire = max(0, player.fire - dt);
 ```
 
-**学ぶポイント**
-- パワーアップを「時間制御」で表現
-- プレイヤーのプロパティで複数の効果を同時管理
-- 敵撃破時のドロップは確率で決定
+### 例 3：斜め射撃
+```javascript
+function shoot(angle = 0) {
+  bullets.push({
+    x: playerX,
+    y: playerY - 20,
+    vx: sin(angle) * 300,
+    vy: cos(angle) * 400,
+    r: 5
+  });
+}
+```
+
+## ヒント
+
+- **射撃音を変える**：敵の種類ごとに異なる周波数の音
+- **弾のサイズを変える**：大きい弾と小さい弾で威力を変える
+- **敵に被弾ダメージを追加**：複数回被弾で敵が破壊される
 
 ---
 
-## 第5部：ステージシステム
+# C - パワーアップシステム
 
-### 基礎版：難易度選択で値を変更
+## 説明
+
+敵を倒すとパワーアップアイテムが出現し、プレイヤーが拾うと一時的に能力がアップします。
+
+## 実装の流れ
+
+### ステップ 1：パワーアップの種類を決める
 
 ```javascript
-function startGame(level) {
-  if (level === 1) {
-    enemySpeed = 4;
-    enemyCount = 1;
-    clearTime = 30;
-  } else if (level === 2) {
-    enemySpeed = 6;
-    enemyCount = 2;
-    clearTime = 45;
-  } else {
-    enemySpeed = 8;
-    enemyCount = 3;
-    clearTime = 60;
+const pickupTypes = {
+  heart: { name: '♥ ライフ +1', effect: 'life' },
+  star: { name: '★ 無敵', effect: 'invincible', duration: 5 },
+  shield: { name: '◆ シールド', effect: 'shield', duration: 3 },
+  rapid: { name: '⚡ 連続射撃', effect: 'rapidFire', duration: 8 }
+};
+```
+
+### ステップ 2：敵撃破時にアイテムを生成
+
+```javascript
+function destroyEnemy(e) {
+  score += 10;
+  
+  // ランダムでパワーアップを出現
+  const types = Object.keys(pickupTypes);
+  const randomType = types[floor(random(types.length))];
+  
+  pickups.push({
+    x: e.x,
+    y: e.y,
+    type: randomType,
+    t: 0
+  });
+}
+```
+
+### ステップ 3：プレイヤーとアイテムの当たり判定
+
+```javascript
+for (let p of pickups) {
+  if (dist(p.x, p.y, playerX, playerY) < 20) {
+    // アイテムを拾った
+    if (p.type === 'heart') {
+      playerLives++;
+    } else if (p.type === 'star') {
+      playerInvincible = 5;  // 5秒間無敵
+    } else if (p.type === 'shield') {
+      playerShield = true;
+    }
+    
+    pickups.splice(pickups.indexOf(p), 1);
   }
 }
 ```
 
-### 応用版：ステージオブジェクトで設定を一括管理
+## 生徒の工夫例
+
+### 例 1：新しいパワーアップを追加
+```javascript
+// 爆弾：周囲の敵を全て破壊
+bomb: { name: '💣 爆弾', effect: 'bomb', duration: 0 }
+
+// 減速：敵が遅くなる
+slow: { name: '❄️ 減速', effect: 'slow', duration: 10 }
+```
+
+### 例 2：出現確率を変える
+```javascript
+const rand = random();
+
+if (rand < 0.1) {
+  pickups.push({ x: e.x, y: e.y, type: 'heart' });
+} else if (rand < 0.2) {
+  pickups.push({ x: e.x, y: e.y, type: 'star' });
+} else if (rand < 0.4) {
+  pickups.push({ x: e.x, y: e.y, type: 'shield' });
+}
+```
+
+### 例 3：パワーアップの見た目を工夫
+```javascript
+for (let p of pickups) {
+  push();
+  translate(p.x, p.y);
+  
+  // 回転しながら浮かぶ
+  rotate(p.t * 3);
+  
+  fill(pickupColors[p.type]);
+  circle(0, 0, 15 + sin(p.t * 5) * 3);
+  
+  pop();
+}
+```
+
+## ヒント
+
+- **パワーアップの持続時間を表示**：画面上にカウントダウンを表示
+- **同時に複数のパワーアップを持つ**：複数の効果を同時に有効化
+- **パワーアップの効果を視覚化**：プレイヤーの見た目が変わる
+
+---
+
+# D - ボスバトル
+
+## 説明
+
+ゲーム終盤にボス敵が出現します。ボスは複数の射撃パターンを持ち、倒すとゲームクリア。
+
+## 実装の流れ
+
+### ステップ 1：ボスデータを作成
+
+```javascript
+let boss = null;
+
+function spawnBoss() {
+  boss = {
+    x: width / 2,
+    y: 100,
+    r: 40,
+    hp: 20,
+    maxhp: 20,
+    t: 0,
+    shotTimer: 0
+  };
+}
+```
+
+### ステップ 2：ボスを描画
+
+```javascript
+if (boss) {
+  push();
+  translate(boss.x, boss.y);
+  rotate(boss.t * 0.5);
+  
+  fill([255, 100, 100]);
+  rect(-40, -40, 80, 80);
+  
+  pop();
+  
+  // HP バーを表示
+  fill([100, 100, 100]);
+  rect(50, 20, 100, 10);
+  fill([255, 100, 100]);
+  rect(50, 20, 100 * boss.hp / boss.maxhp, 10);
+}
+```
+
+### ステップ 3：ボスの射撃パターン
+
+```javascript
+if (boss) {
+  boss.t += dt;
+  boss.shotTimer -= dt;
+  
+  if (boss.shotTimer <= 0) {
+    boss.shotTimer = 0.5;
+    
+    // 複数方向に射撃
+    for (let i = 0; i < 8; i++) {
+      const angle = (TWO_PI / 8) * i;
+      enemyBullets.push({
+        x: boss.x,
+        y: boss.y,
+        vx: cos(angle) * 150,
+        vy: sin(angle) * 150,
+        r: 8
+      });
+    }
+  }
+}
+```
+
+## 生徒の工夫例
+
+### 例 1：複数の射撃パターン
+```javascript
+// パターン 1：円形
+// パターン 2：直線
+// パターン 3：螺旋
+
+const pattern = floor(boss.t / 3) % 3;
+
+if (pattern === 0) {
+  // 円形
+} else if (pattern === 1) {
+  // 直線
+} else {
+  // 螺旋
+}
+```
+
+### 例 2：複数ステージのボス
+```javascript
+const bosses = [
+  { name: '火の精', color: [255, 100, 0], hp: 15 },
+  { name: '氷の精', color: [0, 100, 255], hp: 20 },
+  { name: '雷の精', color: [255, 255, 0], hp: 25 }
+];
+
+boss = { ...bosses[stageIndex], x: width / 2, y: 100 };
+```
+
+### 例 3：ボスの移動パターン
+```javascript
+// ボスが左右に移動しながら射撃
+boss.x = width / 2 + sin(boss.t * 2) * 200;
+boss.y = 100 + cos(boss.t * 1) * 50;
+```
+
+## ヒント
+
+- **複数フェーズに分ける**：HP が減ると射撃パターンが変わる
+- **ボスの移動速度を変える**：難易度が上がると速くなる
+- **クリア後のエフェクト**：ボス撃破時に派手なパーティクル
+
+---
+
+# E - ステージシステム
+
+## 説明
+
+複数のステージを用意し、クリアするごとに難易度が上がります。
+
+## 実装の流れ
+
+### ステップ 1：ステージデータを作成
 
 ```javascript
 const STAGES = [
   {
-    name: 'NEON CITY',
-    accent: [78, 245, 255],           // ステージの色
-    bg: [7, 16, 41],
-    enemySpeed: 1,
-    spawn: 0.88,        // 敵の生成頻度（小さいほど頻繁）
-    goal: 45            // クリア条件（秒数）
+    name: 'ステージ 1',
+    enemySpeed: 3,
+    spawnRate: 0.8,
+    duration: 30,
+    bgColor: [0, 0, 50]
   },
   {
-    name: 'LAVA CORE',
-    accent: [255, 173, 91],
-    bg: [38, 11, 33],
-    enemySpeed: 1.28,   // より速い敵
-    spawn: 0.66,        // より多くの敵
-    goal: 55
+    name: 'ステージ 2',
+    enemySpeed: 5,
+    spawnRate: 0.5,
+    duration: 45,
+    bgColor: [50, 0, 0]
   },
   {
-    name: 'VOID GALAXY',
-    accent: [220, 163, 255],
-    bg: [16, 9, 40],
-    enemySpeed: 1.52,
-    spawn: 0.52,
-    goal: 65
-  },
-  {
-    name: 'SECRET MATRIX',
-    accent: [131, 255, 146],
-    bg: [7, 27, 20],
-    enemySpeed: 1.8,
-    spawn: 0.44,
-    goal: 75,
-    secret: true        // 隠しステージフラグ
+    name: 'ステージ 3',
+    enemySpeed: 7,
+    spawnRate: 0.3,
+    duration: 60,
+    bgColor: [50, 50, 0]
   }
 ];
 
-// ステージ情報にアクセス
-const stage = STAGES[stageIndex];
+let currentStage = 0;
+```
 
-// ステージに応じた背景色
-background(stage.bg);
+### ステップ 2：ステージを切り替える
 
-// ステージに応じた敵の速度
-const enemySpeed = random(105, 170) * stage.enemySpeed;
-
-// ステージに応じた敵の生成頻度
-spawnTimer = random(0.65, 1.2) * stage.spawn;
-
-// ゲーム時間がステージの目標に達したらボス出現
-if (elapsed >= stage.goal) {
-  spawnBoss();
+```javascript
+function nextStage() {
+  currentStage++;
+  
+  if (currentStage >= STAGES.length) {
+    // ゲームクリア
+    gameState = 'clear';
+    return;
+  }
+  
+  // 次のステージを開始
+  const stage = STAGES[currentStage];
+  enemySpeed = stage.enemySpeed;
+  gameTime = stage.duration;
 }
 ```
 
-**学ぶポイント**
-- 「オブジェクトの配列」で複数のステージを効率的に管理
-- ステージごとに異なる難易度を数値で制御
-- 新しいステージ追加が簡単
+### ステップ 3：ステージ情報を画面に表示
+
+```javascript
+function draw() {
+  background(STAGES[currentStage].bgColor);
+  
+  // ステージ名を表示
+  fill(255);
+  textSize(20);
+  text('現在：' + STAGES[currentStage].name, 20, 30);
+  
+  // 残り時間を表示
+  text('残り時間：' + floor(gameTime) + '秒', 20, 60);
+}
+```
+
+## 生徒の工夫例
+
+### 例 1：ステージごとに敵の種類を変える
+```javascript
+const stage = STAGES[currentStage];
+
+// ステージ 1：単純な敵だけ
+// ステージ 2：速い敵が増える
+// ステージ 3：全ての種類の敵が登場
+```
+
+### 例 2：ステージボーナスを追加
+```javascript
+if (gameTime <= 0) {
+  // クリア条件を満たした
+  if (gameTime > -5) {
+    // 時間に余裕があればボーナス
+    score += 1000;
+  }
+  nextStage();
+}
+```
+
+### 例 3：ステージのテーマを作る
+```javascript
+const STAGES = [
+  { name: '森のステージ', bgColor: [0, 100, 0], enemyColor: [0, 200, 0] },
+  { name: '火山のステージ', bgColor: [100, 0, 0], enemyColor: [255, 100, 0] },
+  { name: '宇宙のステージ', bgColor: [0, 0, 100], enemyColor: [200, 200, 255] }
+];
+```
 
 ---
 
-## 第6部：スコアシステム
+# F - 隠しコマンド
 
-### 基礎版：生存時間 = スコア
+## 説明
+
+特定のキー操作をすると、隠しステージが出現するなどの特別なイベントが発生します。
+
+## 実装の流れ
+
+### ステップ 1：キー履歴を記録
 
 ```javascript
-score = (millis() - startTime) / 1000;
+let keyHistory = [];
+const SECRET_COMMAND = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 
+                        'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+                        'b', 'a'];
+
+function keyPressed() {
+  keyHistory.push(keyCode);
+  
+  if (keyHistory.length > SECRET_COMMAND.length) {
+    keyHistory.shift();
+  }
+}
 ```
 
-**単純：時間を消費しただけ**
-
-### 応用版：複数の稼ぎ方
+### ステップ 2：コマンドを検出
 
 ```javascript
-let kills = 0;      // 撃破した敵の数
-let combo = 0;      // 現在のコンボ数
-let comboTimer = 0; // コンボの時間制限
-
-// 敵を撃破したとき
-function destroyEnemy(e) {
-  // スコア計算：敵の価値 × 難易度 × コンボ倍率
-  score += e.value * (1 + floor(combo / 5));
-  
-  kills++;
-  combo++;
-  comboTimer = 3;  // 3秒以内に次の敵を倒さないとコンボリセット
-  
-  // 12敵撃破ごとにスターモード
-  if (kills > 0 && kills % 12 === 0) {
-    player.star = 4;  // スター時間中、得点が 2倍
-    notice = '★ STAR MODE!';
+function checkSecretCommand() {
+  if (keyHistory.length === SECRET_COMMAND.length) {
+    let match = true;
+    for (let i = 0; i < SECRET_COMMAND.length; i++) {
+      if (keyHistory[i] !== SECRET_COMMAND[i]) {
+        match = false;
+        break;
+      }
+    }
+    
+    if (match) {
+      activateSecret();
+    }
   }
 }
 
-// 毎フレーム
-comboTimer -= dt;
-if (comboTimer <= 0) combo = 0;  // コンボ時間切れでリセット
+function activateSecret() {
+  // 隠しステージを有効化
+  STAGES.push({
+    name: '秘密のステージ',
+    enemySpeed: 10,
+    duration: 120
+  });
+  
+  notice = '✦ シークレットステージが解禁されました！';
+}
 ```
 
-**スコアシステムの多様性**
-- **敵の種類ごとに価値が違う**（タンクは得点高い）
-- **コンボで倍率が上がる**（連続撃破で得点増加）
-- **スター中は全得点 2倍**（戦略的にスター獲得を狙う）
+## 生徒の工夫例
+
+### 例 1：複数の隠しコマンド
+```javascript
+const COMMANDS = {
+  secret1: ['a', 'a', 'a'],
+  secret2: ['b', 'b', 'b'],
+  secret3: ['z', 'x', 'c']
+};
+```
+
+### 例 2：隠しコマンドでゲームモード変更
+```javascript
+function activateSecret() {
+  godMode = true;  // 無敵モード
+  infiniteLives = true;  // 無限ライフ
+}
+```
+
+### 例 3：簡単な隠しコマンド
+```javascript
+// 複雑なコマンドではなく、シンプルなもの
+// 例：スペースキーを 10 回連続押すと発動
+```
 
 ---
 
-## 第7部：ボスバトル
+# G - BGM のカスタマイズ
 
-### 基礎版：ボスなし
+## 説明
 
-### 応用版：ステージの最後に登場
+ゲーム中に鳴る BGM（BGM）を自分好みに変更します。
+
+## 実装の流れ
+
+### ステップ 1：BGM シーケンスを定義
 
 ```javascript
-// ボスデータ
-let boss = {
-  x: width / 2,
-  y: -90,
-  r: 68,
-  hp: 38 + stageIndex * 15,  // ステージが進むほど強い
-  maxhp: 38 + stageIndex * 15,
-  t: 0,                       // 経過時間
-  shot: 1.1                   // 射撃クールタイム
+// 基礎版（基本的なBGM）
+const BGM_BASIC = [220, 330, 440, 330, 261.63, 392, 523, 392];
+
+// 応用版：複数のパターン
+const BGM_PATTERNS = {
+  happy: [262, 330, 392, 262, 294, 330, 349, 330],
+  dark: [110, 165, 220, 165, 130, 195, 220, 195],
+  fast: [330, 440, 330, 440, 330, 440, 330, 440],
+  slow: [110, 110, 110, 220, 220, 220, 110, 110]
 };
 
-// ボスの射撃パターン（複数方向から発射）
-if (boss.shot <= 0) {
-  boss.shot = 0.75;
-  
-  for (let i = -2; i <= 2; i++) {
-    let angle = PI / 2 + i * 0.22 + sin(boss.t) * 0.1;
+let currentBGM = BGM_BASIC;
+```
+
+### ステップ 2：BGM 再生ロジック
+
+```javascript
+let bgmTimer = 0;
+
+function updateBGM(dt) {
+  bgmTimer -= dt;
+  if (bgmTimer <= 0) {
+    bgmTimer = 0.22;  // 1/4.5 秒ごとに音を再生
     
-    enemyBullets.push({
-      x: boss.x,
-      y: boss.y + 35,
-      vx: cos(angle) * 240,
-      vy: sin(angle) * 240,
-      r: 8
+    const freq = currentBGM[floor(elapsed / 0.22) % currentBGM.length];
+    playSound(freq, 0.11);
+  }
+}
+```
+
+### ステップ 3：BGM パターンを切り替える
+
+```javascript
+function keyPressed() {
+  if (key === '1') {
+    currentBGM = BGM_PATTERNS.happy;
+    notice = 'BGM: Happy に変更';
+  } else if (key === '2') {
+    currentBGM = BGM_PATTERNS.dark;
+    notice = 'BGM: Dark に変更';
+  }
+}
+```
+
+## 生徒の工夫例
+
+### 例 1：オリジナル BGM を作成
+```javascript
+const MY_BGM = [262, 294, 330, 349, 392, 440, 494, 523];  // ドレミファソラシド
+```
+
+### 例 2：ステージごとに異なる BGM
+```javascript
+if (currentStage === 0) {
+  currentBGM = BGM_PATTERNS.happy;
+} else if (currentStage === 1) {
+  currentBGM = BGM_PATTERNS.dark;
+}
+```
+
+### 例 3：BGM の速度を変える
+```javascript
+// BGM を速くする
+const bgmInterval = isRapidMode ? 0.11 : 0.22;
+```
+
+---
+
+# H - ビジュアルカスタマイズ
+
+## 説明
+
+プレイヤーや敵の色・形・サイズを変更して、ゲーム画面の見た目を大きく変えます。
+
+## 実装の流れ
+
+### ステップ 1：プレイヤーの色を変更
+
+```javascript
+// 基本設定
+let playerColor = [102, 250, 255];  // シアン
+
+function drawPlayer() {
+  push();
+  translate(playerX, playerY);
+  
+  fill(playerColor);  // プレイヤーの色
+  circle(0, 0, playerSize);
+  
+  pop();
+}
+
+// キー入力で色変更
+function keyPressed() {
+  if (key === '1') playerColor = [255, 100, 100];  // 赤
+  if (key === '2') playerColor = [100, 255, 100];  // 緑
+  if (key === '3') playerColor = [100, 100, 255];  // 青
+}
+```
+
+### ステップ 2：敵の形を変更
+
+```javascript
+function drawEnemy(e) {
+  push();
+  translate(e.x, e.y);
+  
+  fill(enemyColor);
+  
+  // 基本：円
+  if (e.type === 'circle') {
+    circle(0, 0, enemySize);
+  }
+  // 四角
+  else if (e.type === 'square') {
+    rect(-enemySize / 2, -enemySize / 2, enemySize, enemySize);
+  }
+  // 三角
+  else if (e.type === 'triangle') {
+    triangle(0, -enemySize / 2, -enemySize / 2, enemySize / 2, enemySize / 2, enemySize / 2);
+  }
+  
+  pop();
+}
+```
+
+### ステップ 3：背景色を変更
+
+```javascript
+let bgColor = [7, 12, 33];  // 基本：濃紺
+
+function draw() {
+  background(bgColor);
+  // ...
+}
+
+// ステージごとに背景色を変更
+if (currentStage === 0) {
+  bgColor = [7, 12, 33];      // 濃紺
+} else if (currentStage === 1) {
+  bgColor = [50, 20, 20];     // 暗い赤
+} else if (currentStage === 2) {
+  bgColor = [20, 20, 50];     // 暗い青
+}
+```
+
+## 生徒の工夫例
+
+### 例 1：キャラクターをカスタマイズ
+```javascript
+// プレイヤーを三角形に
+triangle(playerX, playerY - 20, playerX - 15, playerY + 15, playerX + 15, playerY + 15);
+
+// 敵を星形に
+// または、敵を多角形に
+```
+
+### 例 2：グラデーション背景
+```javascript
+// 上が青、下が黒のグラデーション背景を作成
+```
+
+### 例 3：敵の大きさを動的に変える
+```javascript
+// 時間経過で敵が大きくなったり小さくなったりする
+let enemySize = 35 + sin(elapsed * 2) * 10;
+```
+
+---
+
+# I - 効果音の追加
+
+## 説明
+
+敵撃破時や得点時に異なる効果音を追加して、ゲームをより楽しくします。
+
+## 実装の流れ
+
+### ステップ 1：効果音の種類を定義
+
+```javascript
+const SOUNDS = {
+  hit: { freq: 400, duration: 0.1 },
+  destroy: { freq: 800, duration: 0.2 },
+  powerup: { freq: 1200, duration: 0.3 },
+  levelup: { freq: [523, 659, 784], duration: 0.5 }
+};
+```
+
+### ステップ 2：敵撃破時に効果音
+
+```javascript
+function destroyEnemy(e) {
+  score += 10;
+  
+  // 敵撃破音
+  playSound(SOUNDS.destroy.freq, SOUNDS.destroy.duration);
+}
+```
+
+### ステップ 3：パワーアップ時に効果音
+
+```javascript
+function collectPowerup(p) {
+  if (p.type === 'heart') {
+    playSound(SOUNDS.powerup.freq, SOUNDS.powerup.duration);
+  }
+}
+```
+
+## 生徒の工夫例
+
+### 例 1：敵の種類ごとに異なる音
+```javascript
+if (e.type === 'fast') {
+  playSound(800, 0.1);  // 高い音
+} else if (e.type === 'slow') {
+  playSound(400, 0.1);  // 低い音
+}
+```
+
+### 例 2：スコアに応じた音
+```javascript
+// 得点が高いほど、高い周波数の音が鳴る
+const freq = 300 + (score / 100) * 100;
+playSound(freq, 0.1);
+```
+
+### 例 3：複数音の組み合わせ
+```javascript
+// 複数の音を連続して再生
+playSound(523, 0.1);  // ド
+setTimeout(() => playSound(659, 0.1), 100);  // ミ
+setTimeout(() => playSound(784, 0.1), 200);  // ソ
+```
+
+---
+
+# J - パーティクル効果
+
+## 説明
+
+敵撃破時や得点時に、小さな粒が飛び散るエフェクトを追加します。
+
+## 実装の流れ
+
+### ステップ 1：パーティクルシステムを作成
+
+```javascript
+let particles = [];
+
+function burst(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    const angle = random(TWO_PI);
+    const speed = random(50, 200);
+    
+    particles.push({
+      x: x,
+      y: y,
+      vx: cos(angle) * speed,
+      vy: sin(angle) * speed,
+      color: color,
+      life: 0.8
     });
   }
 }
+```
 
-// ボスの移動（画面内に出てきて、左右に揺れる）
-boss.y += (min(110, boss.y + 90) - boss.y) * dt * 2;
-boss.x = width / 2 + sin(boss.t * 1.3) * 280;
+### ステップ 2：敵撃破時にパーティクル発生
 
-// ボスへのダメージ判定
-if (boss && dist(b.x, b.y, boss.x, boss.y) < b.r + boss.r) {
-  boss.hp--;
+```javascript
+function destroyEnemy(e) {
+  score += 10;
   
-  if (boss.hp <= 0) {
-    score += 500;
-    boss = null;
-    endGame(true);  // ゲームクリア
-  }
+  // パーティクルを発生
+  burst(e.x, e.y, [255, 100, 100], 16);
 }
 ```
 
-**ボス実装のポイント**
-- ボスも敵と同じく「当たり判定」で管理
-- 敵弾の配列に敵の弾も追加して統一管理
-- ステージ進行に応じて強さ（HP）を変動
-
----
-
-## 第8部：隠しコマンド（コナミコマンド）
-
-### キー入力を記録して検出
+### ステップ 3：パーティクルを描画・更新
 
 ```javascript
-const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 
-                        'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 
-                        'b', 'a'];
-let keyHistory = [];
-
-function keyPressed() {
-  // キーコードを記録
-  let currentKey = '';
-  if (keyCode === 38) currentKey = 'ArrowUp';
-  else if (keyCode === 40) currentKey = 'ArrowDown';
-  else if (keyCode === 37) currentKey = 'ArrowLeft';
-  else if (keyCode === 39) currentKey = 'ArrowRight';
-  else currentKey = key.toLowerCase();
-  
-  keyHistory.push(currentKey);
-  if (keyHistory.length > 10) keyHistory.shift();
-  
-  // コナミコマンドが入力されたか確認
-  if (keyHistory.join('|') === konamiSequence.join('|')) {
-    secretUnlocked = true;
-    stageIndex = 3;  // 秘密ステージに移動
-    notice = '✦ SECRET UNLOCKED! ✦';
+function draw() {
+  // パーティクルの更新と描画
+  for (let p of particles) {
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.life -= dt;
+    
+    if (p.life > 0) {
+      push();
+      fill(p.color[0], p.color[1], p.color[2], p.life * 255);
+      circle(p.x, p.y, 3);
+      pop();
+    }
   }
+  
+  // ライフが尽きたパーティクルを削除
+  particles = particles.filter(p => p.life > 0);
 }
 ```
 
----
+## 生徒の工夫例
 
-## 第9部：講師向けポイント
-
-### 基礎版を学んだ生徒に「応用版の工夫」を説明する順序
-
-1. **「敵のタイプ分け」を説明**
-   - 「敵のオブジェクトに『type』という情報を持たせることで、1つの配列で複数の敵を管理できる」
-   - if 文で敵のタイプによって動きを変える工夫
-
-2. **「配列の応用」として弾を説明**
-   - 「敵の配列と同じように、弾も配列で管理する」
-   - 当たり判定も dist 関数で実装
-
-3. **「時間制御でパワーアップを実装」**
-   - 「プレイヤーのプロパティに『残り秒数』を持たせる」
-   - dt で毎フレーム減らしていく工夫
-
-4. **「ステージシステム」で効率性を説明**
-   - 「STAGES という配列のオブジェクトで、各ステージの情報を一括管理」
-   - 新しいステージ追加が簡単になる
-
-5. **「スコアシステムの複雑さ」**
-   - 「単に時間を数えるだけでなく、敵の種類・コンボ・パワーアップで得点が変わる」
-
-### よくある質問への回答例
-
-**Q: 「なぜ敵に hp というプロパティが必要？」**
-- A: 「基礎版は敵が1回で消えるだけだが、応用版のタンクは3回被弾に耐えます。hp を持たせることで、同じ敵配列で複数タイプを管理できます」
-
-**Q: 「ボスはどう実装するのか」**
-- A: 「ボスも敵と同じく『オブジェクト』です。でも敵配列には入れず『boss 変数』に入れるだけ。当たり判定と射撃パターンを追加する工夫です」
-
-**Q: 「パワーアップが同時に複数あったら」**
-- A: 「player.star、player.shield、player.fire と別々のプロパティを持つことで、同時に効果を持たせられます」
-
-**Q: 「ステージを5個に増やしたら」**
-- A: 「STAGES 配列に5個目のオブジェクトを追加するだけ。他のコードは変わりません」
-
----
-
-## 第10部：コード設計の工夫
-
-### 基礎版の設計パターン
+### 例 1：パーティクルの色を変える
 ```javascript
-// グローバル変数で各機能を分散
-let gameState = ...
-let playerX = ...
-let playerY = ...
-let enemies = []
-let difficultyName = ...
+// 敵の種類ごとに異なる色
+if (e.type === 'fast') {
+  burst(e.x, e.y, [255, 100, 100], 16);  // 赤
+} else if (e.type === 'slow') {
+  burst(e.x, e.y, [100, 100, 255], 16);  // 青
+}
 ```
 
-### 応用版の設計パターン
+### 例 2：爆発エフェクトを大きくする
 ```javascript
-// オブジェクトで関連情報をまとめる
-let player = { x, y, r, lives, inv, star, shield, fire }
-let enemies = [{ x, y, r, hp, type, ... }]
-let boss = { x, y, r, hp, ... }
-
-// 設定を配列で一括管理
-const CONFIG = { ... }
-const STAGES = [ { ... } ]
+burst(e.x, e.y, [255, 200, 0], 32);  // より多くの粒
 ```
 
-**学ぶポイント**
-- 関連する情報をオブジェクトでまとめると、コードが整理しやすくなる
-- 配列のオブジェクトを活用すると、複数の要素を効率的に管理できる
-- 設定を固定値から「オブジェクト・配列」に変更すると、スケーラビリティが上がる
+### 例 3：パーティクルの移動方向を変える
+```javascript
+// 放射状ではなく、上方向に飛び散る
+particles.push({
+  x: x,
+  y: y,
+  vx: random(-100, 100),
+  vy: random(-200, -50),  // 上方向
+  color: color,
+  life: 0.8
+});
+```
 
 ---
 
-## 第11部：成長段階の理解
+# K - コンボシステム
 
-```
-基礎版（200行）
-↓
-敵の種類化 + 200行 → 400行
-↓
-シューティング機能 + 150行 → 550行
-↓
-パワーアップシステム + 100行 → 650行
-↓
-ステージシステム + 150行 → 800行
-↓
-ボスバトル + 150行 → 950行
-↓
-隠しコマンド + 50行 → 1000行
+## 説明
 
-応用版（1000行）
-```
-
-**プログラムの成長は「段階的」である**
-- 各機能は独立して実装可能
-- 基本的な概念（配列、オブジェクト、当たり判定）は共通
-- ゲームロジックの複雑さは増すが、p5.js というツール自体は変わらない
+連続で敵を倒すと、得点が増える仕組みです。
 
 ---
 
-## まとめ
+# L - 難易度調整
 
-| 学習段階 | 習得内容 | 次のステップ |
-|---------|---------|-----------|
-| **レッスン1〜5** | p5.js の基本とゲーム構造 | 「基本のマスター」 |
-| **レッスン6** | プログラム的な工夫で機能を拡張 | 「応用への扉」 |
-| **レッスン7〜8** | 実装テクニックと講師リハーサル | 「授業実施への準備」 |
+## 説明
 
-### このレッスンで理解すべきこと
-
-1. **「ライブラリを変える必要はない」** - 同じ p5.js で複雑なゲームは作れる
-2. **「データ構造の工夫が大事」** - オブジェクトと配列で効率的に管理
-3. **「段階的な成長が基本」** - 基礎から応用への道のりは連続している
-4. **「生徒に見せる意図」** - NEON DODGE は「生徒が到達できる目標地点」
+敵の速度、生成頻度、ゲーム時間などを調整して、ゲームの難易度を変更します。
 
 ---
 
-## 次のレッスンへ
+# M - スコアシステムの工夫
 
-**レッスン7** では、NEON DODGE の具体的な実装テクニック
-- 射撃システムの詳細な実装方法
-- ボスバトルの戦闘パターン設計
-- パワーアップの効果バランス
-- コナミコマンドの詳細実装
-- スコアシステムと難易度管理の工夫
+## 説明
 
-を詳しく学び、生徒が段階的に実装できる道筋を示します。
+得点の計算ルールを変更して、ゲームの遊び方を大きく変えます。
+
+---
+
+# N - ボーナスステージ
+
+## 説明
+
+特定の条件を満たすと、ボーナスステージが出現します。
+
+---
+
+## 最後に
+
+**あなたのオプション改造が、ゲーム全体の印象を大きく変えます。**
+
+同じオプション を選んだ友達とも全く違うゲームになるように、思いっきり工夫しましょう！
+
+質問や困ったことがあれば、先生に聞いてくださいね。
