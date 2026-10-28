@@ -83,33 +83,34 @@
 敵を生成するときに、ランダムに敵の種類を決めます。
 
 ```javascript
-// 敵を生成する関数（既存）
-function spawnEnemy() {
-  const enemyR = random(14, 27);
+// 敵を生成する関数（NEON DODGE 応用版対応）
+function enemySpawn() {
+  const d = STAGES[stageIndex];
+  const r = rand(14, 27);
   
   // ← ここに敵のtype決定を追加
-  const rand_type = random();
-  let type = 'normal';
-  
-  if (rand_type < 0.17) {
-    type = 'zig';    // 17%の確率で「zig」（揺れる敵）
-  } else if (rand_type < 0.29) {
-    type = 'tank';   // 12%の確率で「tank」（丈夫な敵）
-  }
-  // それ以外は 'normal'（71%の確率）
+  const type = Math.random() < 0.17 ? 'zig' : Math.random() < 0.12 ? 'tank' : 'normal';
+  // - 17% の確率で「zig」（揺れる敵）
+  // - 12% の確率で「tank」（丈夫な敵）
+  // - 71% の確率で 'normal'（通常の敵）
   
   enemies.push({
-    x: random(enemyR, CONFIG.canvasW - enemyR),
+    x: rand(r, W - r),
     y: -35,
-    r: enemyR,
+    r: r,
     hp: type === 'tank' ? 3 : 1,  // tankは3回必要、他は1回
     maxhp: type === 'tank' ? 3 : 1,
-    speed: random(105, 170),
+    v: rand(105, 170) * d.enemySpeed * (difficulty === 0 ? 0.75 : difficulty === 2 ? 1.45 : 1),
     type: type,  // ← 敵のtypeを保存
-    phase: random(TWO_PI),
+    phase: rand(0, TAU),
     value: type === 'tank' ? 30 : 10  // tankは得点が多い
   });
 }
+
+// 定数の確認
+// W = 960（ゲーム画面の幅）
+// TAU = Math.PI * 2（2π）
+// rand() は独自の乱数生成関数。p5.jsの random() とは異なります
 ```
 
 ### ステップ2：敵の動きを変える
@@ -117,21 +118,24 @@ function spawnEnemy() {
 敵のタイプに応じて、異なる動きを実装します。
 
 ```javascript
-// draw()関数内で敵を移動させるループ
+// update() 関数内で敵を移動させるループ（NEON DODGE 応用版対応）
 for (let e of enemies) {
   // 敵を下へ移動（全敵共通）
-  e.y += e.speed * dt;
+  e.y += e.v * dt;  // NEON DODGEでは speed ではなく v を使用
   
   // type に応じて異なる動きを追加
   if (e.type === 'zig') {
     // 「zig」敵は左右に揺れる
-    e.x += sin(elapsed * 5 + e.phase) * 110 * dt;
+    e.x += Math.sin(elapsed * 5 + e.phase) * 110 * dt;
   } else if (e.type === 'tank') {
-    // 「tank」敵は回転する（見た目の工夫）
-    e.rotation = (e.rotation || 0) + 5;
+    // 「tank」敵は特に追加動きなし（速度で区別）
+    // 見た目は回転で表現（描画時に実装）
   }
   // 「normal」敵は何もしない（真っすぐ落ちる）
 }
+
+// 注意：NEON DODGEでは canvas API を使用しているため、
+// p5.js の sin() ではなく Math.sin() を使用します
 ```
 
 ### ステップ3：敵の見た目を変える
@@ -139,31 +143,52 @@ for (let e of enemies) {
 敵を描画するときに、タイプごとに色や形を変えます。
 
 ```javascript
-// 敵を描画する部分
+// 敵を描画する部分（canvas API対応）
 for (let e of enemies) {
-  push();
-  translate(e.x, e.y);
+  ctx.save();  // p5.js の push() に相当
+  ctx.translate(e.x, e.y);
+  ctx.rotate(elapsed * (e.type === 'zig' ? 3 : 1));
   
   // タイプごとに色を変える
   if (e.type === 'normal') {
-    fill([255, 102, 142]);  // 赤
+    ctx.fillStyle = '#ff668e';  // 赤
   } else if (e.type === 'zig') {
-    fill([102, 255, 180]);  // 緑
+    ctx.fillStyle = '#66ffb4';  // 緑
   } else if (e.type === 'tank') {
-    fill([255, 160, 93]);   // オレンジ
+    ctx.fillStyle = '#ffb763';  // オレンジ
   }
+  
+  ctx.fill();
   
   // タイプごとに形を変える
+  // 多角形を描画する補助関数を使用
   if (e.type === 'tank') {
-    // 多角形（6角形）
-    drawPolygon(0, 0, e.r, 6);
+    // 6角形（hexagon）
+    polygon(0, 0, e.r, 6);  // polygon 関数を呼び出し
   } else {
-    // 四角形
-    drawPolygon(0, 0, e.r, 4);
+    // 4角形（square）
+    polygon(0, 0, e.r, 4);
   }
   
-  pop();
+  ctx.restore();  // p5.js の pop() に相当
 }
+
+// polygon() 関数（game.js に定義）
+function polygon(x, y, r, n, rot = 0) {
+  ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    let a = rot + i * TAU / n;
+    let xx = x + Math.cos(a) * r;
+    let yy = y + Math.sin(a) * r;
+    i ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy);
+  }
+  ctx.closePath();
+}
+
+// 注意：
+// - fillStyle では 16進数カラーコード（'#rrggbb' 形式）を使用
+// - ctx.save() / ctx.restore() で描画状態を管理
+// - polygon() は game.js で既に定義されています
 ```
 
 ---
@@ -176,22 +201,31 @@ for (let e of enemies) {
 
 ```javascript
 // スポーン時に敵のタイプを決める
-function spawnEnemy() {
-  const type = random() < 0.5 ? 'fast' : 'slow';
+function enemySpawn() {
+  const d = STAGES[stageIndex];
+  const r = random(14, 27);
+  const type = Math.random() < 0.5 ? 'fast' : 'slow';
   
-  const speed = type === 'fast' ? 8 : 4;
+  const baseSpeed = type === 'fast' ? 170 : 105;
   
   enemies.push({
-    x: random(30, CONFIG.canvasW - 30),
+    x: Math.random() * (W - r * 2) + r,
     y: -35,
-    r: 25,
-    speed: speed,
+    r: r,
+    hp: 1,
+    maxhp: 1,
+    v: baseSpeed * d.enemySpeed,  // 注意：speed ではなく v を使用
     type: type
   });
 }
 ```
 
 **確認ポイント：** ゲームをプレイして、敵の速度が異なるか確認
+
+**注意：**
+- `speed` ではなく `v` プロパティを使用
+- `random()` ではなく `Math.random()` を使用  
+- 敵の高さと位置計算が NEON DODGE の仕様に従っています
 
 ---
 
@@ -202,23 +236,30 @@ function spawnEnemy() {
 ```javascript
 // 敵の描画時に色を変える
 for (let e of enemies) {
-  push();
-  translate(e.x, e.y);
+  ctx.save();
+  ctx.translate(e.x, e.y);
   
-  // 敵のタイプで色を分ける
+  // 敵のタイプで色を分ける（Canvas API で実装）
   if (e.type === 'fast') {
-    fill([255, 100, 100]);  // 赤：速い敵
+    ctx.fillStyle = '#ff6464';  // 赤：速い敵
   } else {
-    fill([100, 100, 255]);  // 青：遅い敵
+    ctx.fillStyle = '#6464ff';  // 青：遅い敵
   }
   
-  circle(0, 0, e.r * 2);
+  ctx.beginPath();
+  ctx.arc(0, 0, e.r, 0, Math.PI * 2);
+  ctx.fill();
   
-  pop();
+  ctx.restore();
 }
 ```
 
 **確認ポイント：** 赤い敵が速く、青い敵が遅いか確認
+
+**注意：**
+- p5.js の `fill()` と `circle()` ではなく Canvas API を使用
+- `ctx.save()` / `ctx.restore()` で描画状態を管理
+- 16進数カラーコード（`'#rrggbb'`）を使用
 
 ---
 
@@ -229,20 +270,24 @@ for (let e of enemies) {
 ```javascript
 // 敵の更新時に、タイプに応じた動きを追加
 for (let e of enemies) {
-  e.y += e.speed * dt;
+  e.y += e.v * dt;
   
   if (e.type === 'zig') {
     // 左右に揺れる動き
-    e.x += sin(elapsed * 5 + e.phase) * 100 * dt;
+    e.x += Math.sin(elapsed * 5 + e.phase) * 100 * dt;
   } else if (e.type === 'spin') {
     // 螺旋運動
-    e.x += cos(elapsed * 3) * 80 * dt;
+    e.x += Math.cos(elapsed * 3) * 80 * dt;
   }
   // 他の敵は普通に落ちるだけ
 }
 ```
 
 **確認ポイント：** 敵の動きが異なるか確認
+
+**注意：**
+- p5.js の `sin()` / `cos()` ではなく `Math.sin()` / `Math.cos()` を使用
+- `speed` ではなく `v` を使用
 
 ---
 
@@ -701,3 +746,131 @@ console.log('最初の敵:', enemies[0]);
 質問があれば、いつでもコーチに聞いてね！
 
 頑張れ！🎮✨
+
+---
+
+## 🔗 他の詳細レッスンとの関連性
+
+### LESSON_6M（スコアシステムの工夫）との連携 ⭐ 重要
+
+**LESSON_6A で実装する内容が、LESSON_6M の前提条件になります。**
+
+LESSON_6A で敵に設定する `type` と `value` プロパティ：
+```javascript
+enemies.push({
+  type: type,           // ← 敵の種類
+  value: type === 'tank' ? 30 : 10  // ← 敵の得点
+});
+```
+
+LESSON_6M で使用するこれらのプロパティ：
+```javascript
+function destroyEnemy(e) {
+  score += e.value * (1 + Math.floor(combo / 5));
+  // type に応じた得点が計算される
+}
+```
+
+**一緒に実装した場合の効果：**
+- 敵の種類によって、敵を倒したときの得点が異なる
+- 難しい敵（tank）を倒すと、より多くのポイントがもらえる
+- ゲームの戦略性が大幅に向上
+
+---
+
+### LESSON_6B（射撃機能）との連携
+
+**LESSON_6A で敵に設定する `hp` プロパティが、LESSON_6B で敵撃破の判定に使われます。**
+
+LESSON_6A で敵に設定する HP：
+```javascript
+hp: type === 'tank' ? 3 : 1  // tank は 3 回射撃が必要
+```
+
+LESSON_6B で使用される当たり判定：
+```javascript
+if (e.hp > 0 && circle(b, e)) {
+  e.hp--;
+  if (e.hp <= 0) destroyEnemy(e);
+}
+```
+
+**一緒に実装した場合の効果：**
+- 敵の種類によって、撃破に必要な射撃回数が異なる
+- 敵の強さがゲームプレイに直結する
+- 敵の種類を判断しながら射撃戦略を立てる必要が生まれる
+
+---
+
+### LESSON_6H（ビジュアルカスタマイズ）との連携
+
+**LESSON_6A の `type` に基づいて、敵の見た目を区別します。**
+
+LESSON_6A で設定する type：
+```javascript
+const type = Math.random() < 0.17 ? 'zig' : ...
+```
+
+LESSON_6H での敵の描画：
+```javascript
+if (e.type === 'tank') {
+  ctx.fillStyle = '#ffb763';  // オレンジ
+} else if (e.type === 'zig') {
+  ctx.fillStyle = '#66ffb4';  // 緑
+}
+```
+
+**一緒に実装した場合の効果：**
+- 敵の種類が見た目で一目瞭然
+- プレイヤーが敵の行動を予測しやすくなる
+
+---
+
+### LESSON_6G（BGMのカスタマイズ）との連携（オプション）
+
+敵を撃破したときの効果音を、敵の種類に応じて変更することで、ゲーム全体の雰囲気が統一されます。
+
+---
+
+## 🔗 関連するレッスン・参考資料
+
+### このレッスンと関連する改造オプション
+
+**組み合わせ例1：敵の多様化 + ビジュアルカスタマイズ**
+- 敵の種類を増やした後、敵の形や色をもっと工夫したい
+- → **[H] ビジュアルカスタマイズ** の詳細レッスンも読む
+- 敵の見た目が敵のタイプをより強調できるようになる
+
+**組み合わせ例2：敵の多様化 + スコアシステムの工夫**
+- 敵の種類ごとに異なる得点を設定したい
+- → **[M] スコアシステムの工夫** の詳細レッスンも読む
+- 強い敵ほど得点が多いという仕組みが作れる
+
+**組み合わせ例3：敵の多様化 + 難易度調整**
+- 敵の種類によって出現頻度や速度を変えたい
+- → **参考資料 [L] 難易度調整** を参照
+- 敵の種類ごとに異なる難易度調整が可能
+
+### 時間が余った場合の発展課題
+
+**課題1：敵の種類をさらに増やす**
+- 現在：2～3種類の敵
+- 発展：5種類以上の敵を追加
+- コツ：敵のタイプごとに異なる特性を持たせる（速度、大きさ、形、得点など）
+
+**課題2：敵の動きをより複雑にする**
+- 現在：上下移動 + 左右の揺れ
+- 発展：参考資料 **[L] 難易度調整** を参照して、敵の生成パターンを複雑化
+- 例：ステージが進むと、敵の混合率（fast/slow の割合）が変わる
+
+**課題3：参考資料 [E] ステージシステムと組み合わせる**
+- 各ステージで敵の構成が異なる
+- ステージ1：遅い敵が多い
+- ステージ2：普通の敵が中心
+- ステージ3：速い敵が大半
+- → ゲーム全体の難易度設計が学べる
+
+**課題4：敵に HP を追加（参考資料 [B] 射撃機能で学ぶ）**
+- 敵の種類によって異なる HP を設定
+- 強い敵 = 複数回射撃が必要
+- → ゲームのバランス設計が学べる
