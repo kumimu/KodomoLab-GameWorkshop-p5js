@@ -19,15 +19,33 @@
 
 ### 問題：グローバル変数に BGM 設定を追加
 
-**CUSTOM AREA の下に追加：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：「CUSTOM AREA」の下**
+
+現在のコード：
+```javascript
+let gameTitle = "隕石をよけろ！";
+// ================================================  ← ここの下に追加！
+
+let gameState = "start"; // start / play / end
+let playerX;
+```
+
+**追加するコード：**
 
 ```javascript
+let gameTitle = "隕石をよけろ！";
+// ================================================
+
 // ★ OPTION G：BGM のカスタマイズ
 const OPTION_G_ENABLED = true;
 const BGM_MELODY = [262, 294, 330, 349, 392, 440, 493, 523];  // ドレミファソラシド
 // ★ ここを埋めてください
 let _________________________ = 0;  // ← BGM の再生タイマー
 let _________________________ = 0;  // ← BGM のメロディインデックス
+
+let gameState = "start"; // start / play / end
 ```
 
 **💡 ヒント：** タイマーは `bgmTimer`、インデックスは `bgmIndex` という名前がわかりやすい
@@ -39,13 +57,45 @@ let bgmTimer = 0;
 let bgmIndex = 0;
 ```
 
+**✅ 追加後の確認：**
+```
+grep で確認：Ctrl + F で「bgmTimer」を検索
+→ 「let bgmTimer = 0;」が見つかる？
+```
+
 ---
 
 ## 📝 虫食い問題 — 段階2：playGame() に BGM 再生処理を追加
 
 ### 問題：定期的に周波数を再生
 
-**playGame() 関数の最初に追加：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：`playGame()` 関数の中**
+
+**📍 具体的な場所：最初の「if (remaining <= 0)」の下**
+
+現在のコード：
+```javascript
+function playGame() {
+  const elapsed = floor((millis() - startTime) / 1000);
+  const remaining = clearTime - elapsed;
+
+  if (remaining <= 0) {
+    resultText = "CLEAR!";
+    gameState = "end";
+    return;
+  }
+  // ← ここに追加！（drawGameInfo() の上）
+
+  drawGameInfo(remaining);
+  movePlayer();
+  drawPlayer();
+  // ... 敵の処理 ...
+}
+```
+
+**追加するコード：**
 
 ```javascript
 function playGame() {
@@ -58,7 +108,7 @@ function playGame() {
     return;
   }
 
-  // ★ ここを埋めてください
+  // ★ OPTION G：BGM 再生
   if (OPTION_G_ENABLED) {
     ____________________________  // ← タイマーをインクリメント
     if (bgmTimer % 15 === 0) {    // 15フレームごと（約0.25秒）
@@ -88,13 +138,50 @@ bgmTimer++;
 bgmIndex++;
 ```
 
+**✅ 追加後の確認：**
+```
+1. Ctrl + S で保存
+2. F5 でリロード
+3. ゲーム開始
+4. 音が聞こえる？
+```
+
 ---
 
 ## 📝 虫食い問題 — 段階3：ゲーム開始時に BGM を初期化
 
 ### 問題：startGame() で BGM 変数をリセット
 
-**startGame() 関数内の敵の初期化の前に追加：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：`startGame()` 関数の中**
+
+**📍 具体的な場所：`enemies = [];` の直後**
+
+現在のコード：
+```javascript
+function startGame(level) {
+  if (level === 1) {
+    // ... 難易度設定 ...
+  }
+
+  playerX = width / 2;
+  playerY = height - 55;
+  score = 0;
+  startTime = millis();
+  resultText = "";
+  enemies = [];
+  // ← ここに追加！（for ループの上）
+
+  for (let i = 0; i < enemyCount; i++) {
+    // ... 敵の生成処理 ...
+  }
+
+  gameState = "play";
+}
+```
+
+**追加するコード：**
 
 ```javascript
 function startGame(level) {
@@ -109,13 +196,15 @@ function startGame(level) {
   resultText = "";
   enemies = [];
 
-  // ★ ここを埋めてください
+  // ★ OPTION G：BGM 初期化
   if (OPTION_G_ENABLED) {
     ____________________________  // ← bgmTimer をリセット
     ____________________________  // ← bgmIndex をリセット
   }
 
-  // ... 敵の生成処理 ...
+  for (let i = 0; i < enemyCount; i++) {
+    // ... 敵の生成処理 ...
+  }
 
   gameState = "play";
 }
@@ -128,6 +217,12 @@ function startGame(level) {
 ```javascript
 bgmTimer = 0;
 bgmIndex = 0;
+```
+
+**✅ 追加後の確認：**
+```
+1. ゲーム開始時に BGM タイマーがリセットされる
+2. ゲーム再開時に BGM が最初から再生される
 ```
 
 ---
