@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自分だけの避けゲーを作ろう！ — チートシート</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.4;
+      color: #333;
+      background: white;
+    }
+
+    /* A4サイズ（297mm × 210mm）印刷用 */
+    @media print {
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .page {
+        width: 297mm;
+        height: 210mm;
+        margin: 0;
+        padding: 10mm;
+        page-break-after: always;
+        break-after: page;
+      }
+    }
+
+    @media screen {
+      .page {
+        width: 297mm;
+        height: 210mm;
+        margin: 20px auto;
+        padding: 10mm;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        background: white;
+      }
+    }
+
+    h1 {
+      font-size: 20px;
+      margin-bottom: 5px;
+      color: #0066cc;
+      border-bottom: 2px solid #0066cc;
+      padding-bottom: 3px;
+    }
+
+    h2 {
+      font-size: 13px;
+      margin-top: 8px;
+      margin-bottom: 4px;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      font-size: 9px;
+      color: #666;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10px;
+      margin-bottom: 6px;
+    }
+
+    th, td {
+      border: 1px solid #999;
+      padding: 4px 6px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #e6f2ff;
+      font-weight: bold;
+    }
+
+    pre {
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      padding: 6px;
+      font-size: 8px;
+      overflow-x: auto;
+      margin-bottom: 4px;
+      font-family: 'Courier New', monospace;
+      line-height: 1.3;
+    }
+
+    code {
+      font-family: 'Courier New', monospace;
+      font-size: 8px;
+      background-color: #f0f0f0;
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+
+    .section {
+      margin-bottom: 6px;
+      page-break-inside: avoid;
+    }
+
+    .column {
+      display: inline-block;
+      width: 48%;
+      vertical-align: top;
+      margin-right: 2%;
+    }
+
+    .column:last-child {
+      margin-right: 0;
+    }
+
+    ul, ol {
+      margin-left: 12px;
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+
+    li {
+      margin-bottom: 2px;
+    }
+
+    .important {
+      background-color: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 4px 6px;
+      font-size: 9px;
+      margin-bottom: 4px;
+    }
+
+    .tip {
+      background-color: #d1ecf1;
+      border-left: 4px solid #17a2b8;
+      padding: 4px 6px;
+      font-size: 9px;
+      margin-bottom: 4px;
+    }
+
+    .footer {
+      font-size: 8px;
+      color: #999;
+      text-align: center;
+      margin-top: 6px;
+      border-top: 1px solid #ccc;
+      padding-top: 4px;
+    }
+
+    /* 印刷時は背景色を保持 */
+    @media print {
+      .important, .tip, th, pre {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>🎮 自分だけの避けゲーを作ろう！</h1>
+    <p class="subtitle">チートシート版 — A4横向き印刷用</p>
+
+    <!-- セクション1: 流れ -->
+    <div class="section">
+      <h2>📋 ワークショップの流れ（0:00～2:00）</h2>
+      <table>
+        <tr>
+          <th>時間</th>
+          <th>内容</th>
+          <th>やること</th>
+        </tr>
+        <tr>
+          <td>0:00～0:15</td>
+          <td>導入</td>
+          <td>JavaScript って何？</td>
+        </tr>
+        <tr>
+          <td>0:15～0:25</td>
+          <td>ゲーム体験</td>
+          <td>完成版で遊ぶ</td>
+        </tr>
+        <tr>
+          <td>0:25～0:40</td>
+          <td>LESSON 1-4</td>
+          <td>テンプレートツアー</td>
+        </tr>
+        <tr>
+          <td>0:40～1:20</td>
+          <td>LESSON 5</td>
+          <td>ミッション改造（3段階）</td>
+        </tr>
+        <tr>
+          <td>1:20～1:40</td>
+          <td>自由改造</td>
+          <td>好きなようにカスタマイズ</td>
+        </tr>
+        <tr>
+          <td>1:40～1:55</td>
+          <td>試遊会</td>
+          <td>友達と交換プレイ</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- セクション2: 3つの状態 -->
+    <div class="section">
+      <h2>🎮 ゲームの3つの状態</h2>
+      <pre>開始画面 ⟶ ゲーム中 ⟶ 終了画面
+1・2・3   ← → 移動   スペースキー</pre>
+    </div>
+
+    <!-- セクション3: 5つの設定値 -->
+    <div class="section column">
+      <h2>⚙️ 5つの設定値</h2>
+      <pre><code>const playerColor = color(0, 255, 255);
+const enemyColor = color(255, 0, 0);
+const backgroundColor = color(20, 20, 30);
+const playerSize = 15;
+const enemySpeed = 3;</code></pre>
+      <p style="font-size: 9px;"><strong>例：</strong> <code>enemySpeed = 5</code> にすると敵が速くなる</p>
+    </div>
+
+    <!-- セクション4: 重要な関数 -->
+    <div class="section column">
+      <h2>🔑 重要な3つの関数</h2>
+      <p style="font-size: 9px;"><strong>1. draw()：</strong> 1秒間に60回実行</p>
+      <pre><code>background()  // 前を消す
+if (gameState === "play") {
+  playGame();
+}</code></pre>
+      <p style="font-size: 9px; margin-top: 3px;"><strong>2. movePlayer()：</strong> キー入力検出</p>
+      <p style="font-size: 9px;"><strong>3. isHit()：</strong> 当たり判定</p>
+    </div>
+
+    <!-- セクション5: ミッション -->
+    <div class="section">
+      <h2>✏️ 改造ミッション（3段階）</h2>
+      <table>
+        <tr>
+          <th>ミッション</th>
+          <th>コード</th>
+          <th>時間</th>
+          <th>難易度</th>
+        </tr>
+        <tr>
+          <td>1. 色を変える</td>
+          <td><code>playerColor = color(255, 255, 0)</code></td>
+          <td>5分</td>
+          <td>★☆☆</td>
+        </tr>
+        <tr>
+          <td>2. 敵の速度</td>
+          <td><code>enemySpeed = 5</code></td>
+          <td>5分</td>
+          <td>★★☆</td>
+        </tr>
+        <tr>
+          <td>3. 画面サイズ</td>
+          <td><code>W = 800; H = 500</code></td>
+          <td>15分</td>
+          <td>★★★</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- セクション6: オプション -->
+    <div class="section">
+      <h2>🚀 LESSON_6 応用オプション</h2>
+      <p style="font-size: 9px;"><strong>A. 敵の多様化</strong> (30分) | <strong>B. 射撃機能</strong> (45分) | <strong>G. BGM</strong> (30分) | <strong>H. ビジュアル</strong> (20分) | <strong>M. スコア</strong> (20分)</p>
+    </div>
+
+    <!-- セクション7: バグ対応 -->
+    <div class="section">
+      <h2>🐛 よくあるバグ</h2>
+      <table style="font-size: 9px;">
+        <tr>
+          <th>バグ</th>
+          <th>原因</th>
+          <th>対応</th>
+        </tr>
+        <tr>
+          <td>動かない</td>
+          <td>キー入力なし</td>
+          <td>keyIsDown()確認</td>
+        </tr>
+        <tr>
+          <td>敵が見えない</td>
+          <td>色が背景と同じ</td>
+          <td>enemyColor変更</td>
+        </tr>
+        <tr>
+          <td>画面カクカク</td>
+          <td>フレーム低下</td>
+          <td>ブラウザ再起動</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- セクション8: 操作チート -->
+    <div class="section column">
+      <h2>💾 ファイル操作</h2>
+      <ul>
+        <li><strong>保存：</strong> Ctrl + S</li>
+        <li><strong>更新：</strong> F5</li>
+        <li><strong>強制更新：</strong> Ctrl + Shift + R</li>
+        <li><strong>開発者ツール：</strong> F12</li>
+      </ul>
+    </div>
+
+    <!-- セクション9: 基本概念 -->
+    <div class="section column">
+      <h2>💡 JavaScript 基本</h2>
+      <ul>
+        <li><strong>変数：</strong> let playerX = 300</li>
+        <li><strong>関数：</strong> function movePlayer() {}</li>
+        <li><strong>if文：</strong> 条件判定</li>
+        <li><strong>ループ：</strong> for, while</li>
+        <li><strong>配列：</strong> [敵1, 敵2, ...]</li>
+      </ul>
+    </div>
+
+    <!-- セクション10: 色一覧 -->
+    <div class="section">
+      <h2>🎨 よく使う色（RGB）</h2>
+      <p style="font-size: 9px;">
+        <strong>赤：</strong> color(255,0,0) |
+        <strong>緑：</strong> color(0,255,0) |
+        <strong>青：</strong> color(0,0,255) |
+        <strong>黄：</strong> color(255,255,0) |
+        <strong>シアン：</strong> color(0,255,255) |
+        <strong>白：</strong> color(255,255,255) |
+        <strong>黒：</strong> color(0,0,0)
+      </p>
+    </div>
+
+    <!-- セクション11: 重要なポイント -->
+    <div class="important">
+      <strong>✅ 覚えておくこと：</strong> background()は毎フレーム呼ぶ | draw()は自動で60回/秒実行 | keyIsDown()で「今」押されているか判定 | 毎回Ctrl+Sで保存、F5で更新 | わかりません時はF12でエラー確認
+    </div>
+
+    <!-- セクション12: チェックリスト -->
+    <div class="tip">
+      <strong>📌 完了確認：</strong> ゲーム起動 ☐ | ミッション1～3達成 ☐ | オプション1つ挑戦 ☐ | 友達のゲームプレイ ☐ | コーチに見せた ☐
+    </div>
+
+    <!-- フッター -->
+    <div class="footer">
+      自分だけのゲームが完成しました。おめでとう！🎮 ✨ | 質問・アイデアはコーチに相談してね | p5js.org で他の作品も見てみよう
+    </div>
+  </div>
+</body>
+</html>
