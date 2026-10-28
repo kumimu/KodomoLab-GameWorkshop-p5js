@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEON DODGE - p5.js版 完成形</title>
+  <title>NEON DODGE - p5.js版</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
   <style>
     * {
@@ -13,56 +13,17 @@
     }
     body {
       background: #070c21;
-      color: #dce9ff;
-      font-family: "Hiragino Kaku Gothic ProN", sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
+      overflow: hidden;
+      font-family: system-ui, sans-serif;
     }
-    .container {
-      text-align: center;
-      max-width: 900px;
-    }
-    h1 {
-      font-size: 2em;
-      margin-bottom: 10px;
-      color: #73f9ff;
-      letter-spacing: 0.15em;
-    }
-    #p5-container {
-      background: #070c21;
-      border: 2px solid #2e4473;
-      border-radius: 15px;
-      display: inline-block;
-      margin: 20px 0;
-      box-shadow: 0 0 60px rgba(23, 108, 186, 0.13);
-    }
-    .controls {
-      font-size: 0.9em;
-      color: #93a4c9;
-      margin-bottom: 15px;
-    }
-    .credit {
-      font-size: 0.8em;
-      color: #5f7399;
-      margin-top: 20px;
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>✦ NEON DODGE ✦</h1>
-    <p class="controls">
-      移動：← → キー / 射撃：スペースキー / 開始：ENTER / タイトル：ESC / 音声：M
-    </p>
-    <div id="p5-container"></div>
-    <p class="credit">
-      基礎版から段階的に成長させた応用ゲーム<br>
-      隠しコマンド：↑ ↑ ↓ ↓ ← → ← → B A
-    </p>
-  </div>
   <script src="sketch.js"></script>
 </body>
 </html>
