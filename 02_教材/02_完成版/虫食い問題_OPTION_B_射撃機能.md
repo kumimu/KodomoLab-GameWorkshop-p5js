@@ -19,28 +19,58 @@
 
 ### 問題1：グローバル変数に弾の配列を追加
 
-**CUSTOM AREA の下に追加：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：「CUSTOM AREA」の下**
+
+**📍 現在のコード：**
+```javascript
+let gameTitle = "隕石をよけろ！";
+// ================================================  ← ここの下に追加！
+
+let gameState = "start";
+```
+
+**追加するコード：**
 
 ```javascript
+let gameTitle = "隕石をよけろ！";
+// ================================================
+
 // ★ OPTION B：射撃機能
 const OPTION_B_ENABLED = true;
 // ★ ここを埋めてください
 let ________________________ = [];  // ← 弾を管理する配列を作成
+
+let gameState = "start";
 ```
 
-**💡 ヒント：** 敵は `enemies` という名前なので、弾は？
-
-**答え：**
+**追加するコード（答え）：**
 
 ```javascript
 let bullets = [];
 ```
 
+**✅ 完成後：**
+```javascript
+// ★ OPTION B：射撃機能
+const OPTION_B_ENABLED = true;
+let bullets = [];
+```
+
+**💡 ヒント：** 敵は `enemies` という配列なので、弾は？
+
 ---
 
 ### 問題2：スペースキーで弾を発射
 
-**keyPressed() 関数を修正：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：`keyPressed()` 関数の中**
+
+**📍 具体的な場所：既存のキー処理の最後**
+
+**📍 現在のコード：**
 
 ```javascript
 function keyPressed() {
@@ -51,17 +81,29 @@ function keyPressed() {
   } else if (gameState === "end" && key === " ") {
     gameState = "start";
   }
-  // ★ ここを埋めてください
+  // ★ ここに追加！
+}
+```
+
+**追加するコード：**
+
+```javascript
+function keyPressed() {
+  if (gameState === "start") {
+    if (key === "1") startGame(1);
+    if (key === "2") startGame(2);
+    if (key === "3") startGame(3);
+  } else if (gameState === "end" && key === " ") {
+    gameState = "start";
+  }
+  // ★ OPTION B：スペースキーで弾を発射
   else if (OPTION_B_ENABLED && gameState === "play" && key === " ") {
-    // スペースキーで弾を発射
     _________________________________________
   }
 }
 ```
 
-**💡 ヒント：** 弾オブジェクトを `bullets` 配列に追加する。弾は x, y, vy（移動速度）を持つ
-
-**答え：**
+**追加するコード（答え）：**
 
 ```javascript
 bullets.push({
@@ -71,13 +113,48 @@ bullets.push({
 });
 ```
 
+**✅ 完成後：**
+```javascript
+function keyPressed() {
+  if (gameState === "start") {
+    if (key === "1") startGame(1);
+    if (key === "2") startGame(2);
+    if (key === "3") startGame(3);
+  } else if (gameState === "end" && key === " ") {
+    gameState = "start";
+  }
+  else if (OPTION_B_ENABLED && gameState === "play" && key === " ") {
+    bullets.push({
+      x: playerX,
+      y: playerY - playerSize / 2,
+      vy: -8
+    });
+  }
+}
+```
+
+**💡 ヒント：** 弾オブジェクトは x（横位置）、y（縦位置）、vy（移動速度）を持つ
+
 ---
 
 ## 📝 虫食い問題 — 段階2：弾の更新と敵への当たり判定
 
 ### 問題1：弾の位置を更新し、画面外に出たら削除
 
-**新しい関数 updateBullets() を作成：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：ファイルの最後に新しい関数を作成**
+
+**📍 現在のコード（関数の構造例）：**
+
+```javascript
+function drawEnemy(enemy) {
+  // ... 敵の描画処理 ...
+}
+// ← ここに新しい関数を追加！
+```
+
+**追加するコード（新しい関数）：**
 
 ```javascript
 function updateBullets() {
@@ -91,7 +168,6 @@ function updateBullets() {
       continue;
     }
     
-    // ★ ここを埋めてください
     // 敵との当たり判定
     for (let j = enemies.length - 1; j >= 0; j--) {
       const dist = hypot(
@@ -100,6 +176,7 @@ function updateBullets() {
       );
       if (dist < 10 + enemySize / 2) {
         // 敵に当たった
+        // ★ ここを埋めてください（3箇所）
         ____________________________  // ← スコア加算
         ____________________________  // ← 弾を削除
         ____________________________  // ← 敵を削除
@@ -110,27 +187,71 @@ function updateBullets() {
 }
 ```
 
-**💡 ヒント：**
-- 弾の移動：`bullets[i].y += bullets[i].vy`
-- スコア加算：`score += 10`
-- 弾削除：`bullets.splice(i, 1)`
-- 敵削除：`enemies.splice(j, 1)`
-
-**答え：**
+**追加するコード（答え）：**
 
 ```javascript
+// 弾の移動：
 bullets[i].y += bullets[i].vy;
-// ... 画面外判定 ...
+
+// スコア加算：
 score += 10;
+
+// 弾削除：
 bullets.splice(i, 1);
+
+// 敵削除：
 enemies.splice(j, 1);
 ```
+
+**✅ 完成後：**
+```javascript
+function updateBullets() {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    bullets[i].y += bullets[i].vy;
+    
+    if (bullets[i].y < 0) {
+      bullets.splice(i, 1);
+      continue;
+    }
+    
+    for (let j = enemies.length - 1; j >= 0; j--) {
+      const dist = hypot(
+        bullets[i].x - enemies[j].x,
+        bullets[i].y - enemies[j].y
+      );
+      if (dist < 10 + enemySize / 2) {
+        score += 10;
+        bullets.splice(i, 1);
+        enemies.splice(j, 1);
+        break;
+      }
+    }
+  }
+}
+```
+
+**💡 ヒント：**
+- 弾の移動：`vy` は負の値（上に移動）
+- 敵に当たったら、スコア加算 → 弾削除 → 敵削除の順
 
 ---
 
 ### 問題2：弾を描画する関数を作成
 
-**新しい関数 drawBullets() を作成：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：ファイルの最後に新しい関数を作成**
+
+**📍 現在のコード（関数の構造例）：**
+
+```javascript
+function updateBullets() {
+  // ... 上で作った関数 ...
+}
+// ← ここに新しい関数を追加！
+```
+
+**追加するコード（新しい関数）：**
 
 ```javascript
 function drawBullets() {
@@ -143,13 +264,24 @@ function drawBullets() {
 }
 ```
 
-**💡 ヒント：** 敵が赤、プレイヤーがシアンなので、弾は黄色とか？
-
-**答え：**
+**追加するコード（答え）：**
 
 ```javascript
 fill("yellow");
 ```
+
+**✅ 完成後：**
+```javascript
+function drawBullets() {
+  fill("yellow");
+  noStroke();
+  for (const bullet of bullets) {
+    circle(bullet.x, bullet.y, 5);
+  }
+}
+```
+
+**💡 ヒント：** 敵が赤、プレイヤーがシアンなので、弾は何色がいい？
 
 ---
 
@@ -157,7 +289,39 @@ fill("yellow");
 
 ### 問題：playGame() に弾の更新と描画を追加
 
-**playGame() 関数を修正：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：`playGame()` 関数の中**
+
+**📍 具体的な場所：`drawPlayer();` の直後、敵のループの前**
+
+**📍 現在のコード：**
+
+```javascript
+function playGame() {
+  const elapsed = floor((millis() - startTime) / 1000);
+  const remaining = clearTime - elapsed;
+
+  if (remaining <= 0) {
+    resultText = "CLEAR!";
+    gameState = "end";
+    return;
+  }
+
+  drawGameInfo(remaining);
+  movePlayer();
+  drawPlayer();
+  // ★ ここに追加！
+
+  for (const enemy of enemies) {
+    moveEnemy(enemy);
+    drawEnemy(enemy);
+    // ... 当たり判定処理 ...
+  }
+}
+```
+
+**追加するコード：**
 
 ```javascript
 function playGame() {
@@ -174,7 +338,7 @@ function playGame() {
   movePlayer();
   drawPlayer();
 
-  // ★ ここを埋めてください
+  // ★ OPTION B：弾の処理を追加
   if (OPTION_B_ENABLED) {
     ____________________________  // ← 弾を更新
     ____________________________  // ← 弾を描画
@@ -183,7 +347,43 @@ function playGame() {
   for (const enemy of enemies) {
     moveEnemy(enemy);
     drawEnemy(enemy);
+    // ... 当たり判定処理 ...
+  }
+}
+```
 
+**追加するコード（答え）：**
+
+```javascript
+updateBullets();
+drawBullets();
+```
+
+**✅ 完成後：**
+```javascript
+function playGame() {
+  const elapsed = floor((millis() - startTime) / 1000);
+  const remaining = clearTime - elapsed;
+
+  if (remaining <= 0) {
+    resultText = "CLEAR!";
+    gameState = "end";
+    return;
+  }
+
+  drawGameInfo(remaining);
+  movePlayer();
+  drawPlayer();
+
+  if (OPTION_B_ENABLED) {
+    updateBullets();
+    drawBullets();
+  }
+
+  for (const enemy of enemies) {
+    moveEnemy(enemy);
+    drawEnemy(enemy);
+    
     if (isHit(enemy)) {
       resultText = "GAME OVER";
       gameState = "end";
@@ -193,14 +393,7 @@ function playGame() {
 }
 ```
 
-**💡 ヒント：** 作った 2 つの関数を呼び出すだけ
-
-**答え：**
-
-```javascript
-updateBullets();
-drawBullets();
-```
+**💡 ヒント：** 作った 2 つの関数（updateBullets と drawBullets）を呼び出すだけ
 
 ---
 

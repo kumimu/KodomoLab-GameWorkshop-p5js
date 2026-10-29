@@ -18,7 +18,13 @@
 
 ### 問題：敵を回転させて描く
 
-**drawEnemy() 関数を修正：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：`drawEnemy()` 関数の中**
+
+**📍 具体的な場所：`fill(enemyColor);` の下**
+
+**📍 現在のコード：**
 
 ```javascript
 function drawEnemy(enemy) {
@@ -38,16 +44,34 @@ function drawEnemy(enemy) {
 }
 ```
 
-**💡 ヒント：**
-- 原点移動：`translate(enemy.x, enemy.y)`
-- 回転：`rotate(frameCount * 0.05)` （0.05 は回転速度）
-
-**答え：**
+**追加するコード（答え）：**
 
 ```javascript
 translate(enemy.x, enemy.y);
 rotate(frameCount * 0.05);
 ```
+
+**✅ 完成後：**
+```javascript
+function drawEnemy(enemy) {
+  fill(enemyColor);
+  noStroke();
+
+  if (true) {
+    push();
+    translate(enemy.x, enemy.y);
+    rotate(frameCount * 0.05);
+    circle(0, 0, enemySize);
+    pop();
+  } else {
+    circle(enemy.x, enemy.y, enemySize);
+  }
+}
+```
+
+**💡 ヒント：**
+- `translate(x, y)` — 原点を敵の位置に移動
+- `rotate(frameCount * 0.05)` — frameCount は時間経過で回転
 
 ---
 
@@ -55,7 +79,13 @@ rotate(frameCount * 0.05);
 
 ### 問題：プレイヤーの周りに光の円を描く
 
-**drawPlayer() 関数を修正：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：`drawPlayer()` 関数の中**
+
+**📍 具体的な場所：プレイヤーの本体を描く前（triangle の上）**
+
+**📍 現在のコード：**
 
 ```javascript
 function drawPlayer() {
@@ -78,35 +108,78 @@ function drawPlayer() {
 }
 ```
 
-**💡 ヒント：** `fill()` に 4 番目の引数（透明度 0-255）を追加
-
-**答え：**
+**追加するコード（答え）：**
 
 ```javascript
-fill(playerColor, 100);  // 100 は透明度（255 が完全不透明）
+fill(playerColor, 100);
 ```
+
+**✅ 完成後：**
+```javascript
+function drawPlayer() {
+  fill(playerColor);
+  noStroke();
+
+  if (true) {
+    fill(playerColor, 100);
+    circle(playerX, playerY, playerSize + 20);
+  }
+
+  fill(playerColor);
+  triangle(
+    playerX, playerY - playerSize / 2,
+    playerX - playerSize / 2, playerY + playerSize / 2,
+    playerX + playerSize / 2, playerY + playerSize / 2
+  );
+}
+```
+
+**💡 ヒント：** `fill()` の 2 番目の引数は透明度（0 = 透明、255 = 完全不透明、100 = 半透明）
 
 ---
 
-## 📝 虫食い問題 — 段階3：グローバル変数に追加
+## 📝 虫食い問題 — 段階3：グローバル変数に OPTION_H フラグを追加
 
 ### 問題：OPTION_H のフラグを追加
 
-**CUSTOM AREA の下に追加：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：「CUSTOM AREA」の下**
+
+**📍 現在のコード：**
+```javascript
+let gameTitle = "隕石をよけろ！";
+// ================================================  ← ここの下に追加！
+
+let gameState = "start";
+```
+
+**追加するコード：**
 
 ```javascript
+let gameTitle = "隕石をよけろ！";
+// ================================================
+
 // ★ OPTION H：ビジュアルカスタマイズ
 // ★ ここを埋めてください
 _________________________ = true;
+
+let gameState = "start";
 ```
 
-**💡 ヒント：** 他のオプションと同じ形式で
-
-**答え：**
+**追加するコード（答え）：**
 
 ```javascript
 const OPTION_H_ENABLED = true;
 ```
+
+**✅ 完成後：**
+```javascript
+// ★ OPTION H：ビジュアルカスタマイズ
+const OPTION_H_ENABLED = true;
+```
+
+**💡 ヒント：** 他のオプション（OPTION_A, OPTION_B など）と同じ形式
 
 ---
 

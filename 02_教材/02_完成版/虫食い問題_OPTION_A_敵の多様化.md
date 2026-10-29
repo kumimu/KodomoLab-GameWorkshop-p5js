@@ -19,72 +19,58 @@
 
 ### 問題：敵の初期化時に type プロパティを設定
 
-**LESSON_5 の startGame() 関数内：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：`startGame()` 関数の中**
+
+**📍 具体的な場所：`enemies.push()` の中、`speed:` プロパティの下**
+
+**📍 現在のコード：**
 
 ```javascript
-function startGame(level) {
-  if (level === 1) {
-    difficultyName = "かんたん";
-    enemySpeed = 4;
-    enemyCount = 1;
-    clearTime = 30;
-  } else if (level === 2) {
-    difficultyName = "ふつう";
-    enemySpeed = 6;
-    enemyCount = 2;
-    clearTime = 45;
-  } else {
-    difficultyName = "むずかしい";
-    enemySpeed = 8;
-    enemyCount = 3;
-    clearTime = 60;
-  }
-
-  playerX = width / 2;
-  playerY = height - 55;
-  score = 0;
-  startTime = millis();
-  resultText = "";
-  enemies = [];
-
-  for (let i = 0; i < enemyCount; i++) {
-    enemies.push({
-      x: random(enemySize, width - enemySize),
-      y: random(-300, -50),
-      speed: enemySpeed + random(0, 2),
-      // ★ ここを埋めてください
-      type: ________________________  // ← 敵のタイプをランダムに設定
-    });
-  }
-
-  gameState = "play";
+for (let i = 0; i < enemyCount; i++) {
+  enemies.push({
+    x: random(enemySize, width - enemySize),
+    y: random(-300, -50),
+    speed: enemySpeed + random(0, 2),
+    // ★ ここを埋めてください
+    type: ________________________  // ← 敵のタイプをランダムに設定
+  });
 }
 ```
 
-**💡 ヒント：** `random()` を使って、30% の確率で 'fast'、70% の確率で 'normal' に分ける
-
-**答え（クリックで展開）：**
+**追加するコード（答え）：**
 
 ```javascript
 type: random() < 0.3 ? 'fast' : 'normal'
 ```
 
+**✅ 完成後：**
+```javascript
+enemies.push({
+  x: random(enemySize, width - enemySize),
+  y: random(-300, -50),
+  speed: enemySpeed + random(0, 2),
+  type: random() < 0.3 ? 'fast' : 'normal'
+});
+```
+
+**💡 ヒント：** `random()` を使って、30% の確率で 'fast'、70% の確率で 'normal' に分ける
+
 ---
 
-### 問題解説
-
-**条件式の読み方：**
+### 解説：三項演算子の読み方
 
 ```javascript
 random() < 0.3 ? 'fast' : 'normal'
 ```
 
-- `random()` — 0 から 1 の間の乱数を生成
-- `random() < 0.3` — 30% の確率で true（0 から 0.3 の間）
-- `? 'fast'` — 条件が true なら 'fast'
-- `: 'normal'` — 条件が false なら 'normal'
+- `random()` — 0～1 の乱数生成
+- `random() < 0.3` — 30% の確率で true
+- `? 'fast'` — true なら 'fast'
+- `: 'normal'` — false なら 'normal'
 
-**つまり：** 30% の敵は「速い敵」、70% の敵は「通常の敵」
+**結果：** 30% 速い敵、70% 通常敵
 
 ---
 
@@ -92,30 +78,43 @@ random() < 0.3 ? 'fast' : 'normal'
 
 ### 問題：敵が画面下に出た時、type を再設定
 
-**LESSON_5 の moveEnemy() 関数内：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：`moveEnemy()` 関数の中**
+
+**📍 具体的な場所：`if (enemy.y > height + enemySize)` ブロックの中**
+
+**📍 現在のコード：**
 
 ```javascript
-function moveEnemy(enemy) {
-  enemy.y += enemy.speed;
-
-  if (enemy.y > height + enemySize) {
-    enemy.y = random(-300, -50);
-    enemy.x = random(enemySize, width - enemySize);
-    // ★ ここを埋めてください
-    enemy.type = ________________________;  // ← 敵を再生成する時も type を設定
-    enemy.speed = enemySpeed + random(0, 2);
-    score += 1;
-  }
+if (enemy.y > height + enemySize) {
+  enemy.y = random(-300, -50);
+  enemy.x = random(enemySize, width - enemySize);
+  // ★ ここを埋めてください
+  enemy.type = ________________________;  // ← 敵を再生成する時も type を設定
+  enemy.speed = enemySpeed + random(0, 2);
+  score += 1;
 }
 ```
 
-**💡 ヒント：** 敵を新しく生成する時も、タイプをランダムに決める
-
-**答え：**
+**追加するコード（答え）：**
 
 ```javascript
 enemy.type = random() < 0.3 ? 'fast' : 'normal'
 ```
+
+**✅ 完成後：**
+```javascript
+if (enemy.y > height + enemySize) {
+  enemy.y = random(-300, -50);
+  enemy.x = random(enemySize, width - enemySize);
+  enemy.type = random() < 0.3 ? 'fast' : 'normal';
+  enemy.speed = enemySpeed + random(0, 2);
+  score += 1;
+}
+```
+
+**💡 ヒント：** 敵を新しく生成する時も、タイプをランダムに決める（段階1と同じ）
 
 ---
 
@@ -123,14 +122,33 @@ enemy.type = random() < 0.3 ? 'fast' : 'normal'
 
 ### 問題1：敵のタイプに応じて、移動速度を変更
 
-**moveEnemy() 関数を修正：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：`moveEnemy()` 関数の最初**
+
+**📍 具体的な場所：`enemy.y += enemy.speed;` の部分**
+
+**📍 現在のコード：**
 
 ```javascript
 function moveEnemy(enemy) {
   // ★ ここを埋めてください
+  enemy.y += enemy.speed;
+
+  if (enemy.y > height + enemySize) {
+    // ... 敵の再生成処理 ...
+  }
+}
+```
+
+**追加するコード（条件分岐に変更）：**
+
+```javascript
+function moveEnemy(enemy) {
+  // ★ OPTION A：敵のタイプに応じて移動速度を変更
   if (enemy.type === 'fast') {
     // 速い敵は 1.5 倍速で移動
-    _______________________________
+    ___________________________
   } else {
     enemy.y += enemy.speed;
   }
@@ -141,19 +159,40 @@ function moveEnemy(enemy) {
 }
 ```
 
-**💡 ヒント：** 速い敵は `enemy.speed * 1.5` で移動
-
-**答え：**
+**追加するコード（答え）：**
 
 ```javascript
 enemy.y += enemy.speed * 1.5;
 ```
 
+**✅ 完成後：**
+```javascript
+function moveEnemy(enemy) {
+  if (enemy.type === 'fast') {
+    enemy.y += enemy.speed * 1.5;
+  } else {
+    enemy.y += enemy.speed;
+  }
+
+  if (enemy.y > height + enemySize) {
+    // ... 敵の再生成処理 ...
+  }
+}
+```
+
+**💡 ヒント：** 速い敵は通常の 1.5 倍の速度で移動
+
 ---
 
 ### 問題2：敵のタイプに応じて、見た目を変更
 
-**drawEnemy() 関数を修正：**
+**📍 ファイル：`sketch.js`**
+
+**📍 場所：`drawEnemy()` 関数の中**
+
+**📍 具体的な場所：`circle(enemy.x, enemy.y, enemySize);` の部分**
+
+**📍 現在のコード：**
 
 ```javascript
 function drawEnemy(enemy) {
@@ -161,22 +200,48 @@ function drawEnemy(enemy) {
   noStroke();
   
   // ★ ここを埋めてください
+  circle(enemy.x, enemy.y, enemySize);
+}
+```
+
+**追加するコード（条件分岐に変更）：**
+
+```javascript
+function drawEnemy(enemy) {
+  fill(enemyColor);
+  noStroke();
+  
+  // ★ OPTION A：敵のタイプに応じて見た目を変更
   if (enemy.type === 'fast') {
     // 速い敵は小さく描く（0.8 倍）
-    _______________________________
+    ___________________________
   } else {
     circle(enemy.x, enemy.y, enemySize);
   }
 }
 ```
 
-**💡 ヒント：** 敵のサイズは `enemySize * 0.8` にする
-
-**答え：**
+**追加するコード（答え）：**
 
 ```javascript
 circle(enemy.x, enemy.y, enemySize * 0.8);
 ```
+
+**✅ 完成後：**
+```javascript
+function drawEnemy(enemy) {
+  fill(enemyColor);
+  noStroke();
+  
+  if (enemy.type === 'fast') {
+    circle(enemy.x, enemy.y, enemySize * 0.8);
+  } else {
+    circle(enemy.x, enemy.y, enemySize);
+  }
+}
+```
+
+**💡 ヒント：** 敵のサイズは `enemySize * 0.8` にする（つまり 80%）
 
 ---
 
