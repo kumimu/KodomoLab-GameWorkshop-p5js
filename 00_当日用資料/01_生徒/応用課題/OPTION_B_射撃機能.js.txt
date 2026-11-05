@@ -1,0 +1,73 @@
+// ===== このファイルで使う関数・用語の早見表 =====
+// 必要な名前を探し、次の行のURLから詳しい説明を確認できます。
+// p5.js 1.x 公式リファレンス：https://v1.p5js.org/reference/
+//
+// 【p5.jsが用意する関数】
+// fill(色)：この後に描く図形や文字の塗り色を決める。
+// https://v1.p5js.org/reference/p5/fill/
+// noStroke()：図形の輪郭線を描かない設定にする。
+// https://v1.p5js.org/reference/p5/noStroke/
+// circle(x, y, 直径)：中心(x, y)に円を描く。
+// https://v1.p5js.org/reference/p5/circle/
+// dist(x1, y1, x2, y2)：2点の間の距離を求める。
+// https://v1.p5js.org/reference/p5/dist/
+//
+// 【JavaScript標準の機能：p5.jsとは別】
+// 配列.push(値)：一覧の末尾に値を追加する。描画設定のpush()とは別の機能。
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/push
+// 配列.splice(位置, 個数)：指定位置から要素を取り除く。この教材では弾の削除に使う。
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
+//
+// 【ゲーム本体にある自作関数】
+// registerWorkshopOption(ID, 機能)：本体の共通関数へ、課題IDごとに機能を登録する。
+// respawnEnemy(敵)：敵を上へ戻して再登場させる。本体に定義がある。
+// 定義と【役割】の説明は、同じ教材フォルダのsketch.jsで確認できます。
+// ===== 早見表ここまで =====
+
+registerWorkshopOption("B", {
+  bullets: [], // この機能の弾をまとめて管理します。
+  // 【役割】ゲーム開始時に、この機能の弾の一覧を空にします。
+  start() {
+    this.bullets = []; // 再開始時に前の弾を残しません。
+  },
+  // 【役割】プレイ中にSpaceが押されたら、自機の位置から弾を1発追加します。
+  key(k) {
+    if (gameState === "play" && k === " ") {
+      // ① Spaceが押されたので、弾を1つ作って一覧へ追加します。
+      this.bullets.push({
+        x: playerX,
+        y: playerY - playerSize / 2,
+        vy: __B1__
+      });
+    }
+  },
+  // 【役割】弾を動かし、画面外の弾の削除と、命中・得点・敵の再登場を処理します。
+  update() {
+    // ② 毎回、一覧の弾を動かし、画面外や命中の処理をします。
+    for (let i = this.bullets.length - 1; i >= 0; i--) {
+      this.bullets[i].y += this.bullets[i].vy;
+      if (this.bullets[i].y < -3) {
+        this.bullets.splice(i, 1);
+        continue;
+      }
+      for (const enemy of enemies) {
+        const b = this.bullets[i];
+        if (dist(b.x, b.y, enemy.x, enemy.y) < 3 + enemySize / 2) {
+          score += __B2__;
+          this.bullets.splice(i, 1);
+          respawnEnemy(enemy); // 当たった敵を画面上へ戻します。
+          break; // 1発で複数の敵を倒さないようにします。
+        }
+      }
+    }
+  },
+  // 【役割】この機能が持つ弾を、指定した色の小さな円で描きます。
+  draw() {
+    // ③ 一覧に残っている弾を、この色で画面へ描きます。
+    fill("__B3__");
+    noStroke();
+    for (const b of this.bullets) {
+      circle(b.x, b.y, 6);
+    }
+  }
+});

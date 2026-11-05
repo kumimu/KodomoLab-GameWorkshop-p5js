@@ -1,0 +1,65 @@
+// ===== このファイルで使う関数・用語の早見表 =====
+// 必要な名前を探し、次の行のURLから詳しい説明を確認できます。
+// p5.js 1.x 公式リファレンス：https://v1.p5js.org/reference/
+//
+// 【p5.jsが用意する関数】
+// fill(色)：この後に描く図形や文字の塗り色を決める。
+// https://v1.p5js.org/reference/p5/fill/
+// noStroke()：図形の輪郭線を描かない設定にする。
+// https://v1.p5js.org/reference/p5/noStroke/
+// circle(x, y, 直径)：中心(x, y)に円を描く。
+// https://v1.p5js.org/reference/p5/circle/
+// rect(x, y, 幅, 高さ)：四角形を描く。位置の基準はrectModeで決まる。
+// https://v1.p5js.org/reference/p5/rect/
+// rectMode(CENTER)：四角形の位置を中心座標で指定する設定にする。
+// https://v1.p5js.org/reference/p5/rectMode/
+// push()：現在の描画設定や座標の変換を保存する。pop()と組にして使う。
+// https://v1.p5js.org/reference/p5/push/
+// pop()：直前のpush()で保存した描画設定や座標の変換へ戻す。
+// https://v1.p5js.org/reference/p5/pop/
+// translate(x, y)：この後に描く図形の原点を移動する。
+// https://v1.p5js.org/reference/p5/translate/
+// rotate(角度)：この後に描く図形の座標を回転する。この教材では角度はラジアン。
+// https://v1.p5js.org/reference/p5/rotate/
+// color(色)：透明度などを変更できる色の情報を作る。
+// https://v1.p5js.org/reference/p5/color/
+//
+// 【p5.jsが用意する値：関数ではないので()を付けない】
+// frameCount：draw()が呼ばれた回数。
+// https://v1.p5js.org/reference/p5/frameCount/
+// CENTER：四角形の中心を位置の基準にする定数。
+// https://v1.p5js.org/reference/p5/rectMode/
+// 色.setAlpha(濃さ)：色の透明度を変更する。標準では0が透明、255が不透明。
+// https://v1.p5js.org/reference/p5.Color/setAlpha/
+//
+// 【ゲーム本体にある自作関数】
+// registerWorkshopOption(ID, 機能)：本体の共通関数へ、課題IDごとに機能を登録する。
+// optionEnemyColor(敵)：基本設定と追加機能から敵の色を選ぶ。本体に定義がある。
+// 定義と【役割】の説明は、同じ教材フォルダのsketch.jsで確認できます。
+// ===== 早見表ここまで =====
+
+registerWorkshopOption("H", {
+  // 【役割】敵の位置で四角形を回転させて描き、標準の円の描画に代えます。
+  // ① 本体が敵を描くとき、この敵1体を受け取ります。
+  drawEnemy(enemy) {
+    // ② この敵の位置で、回転した四角を描きます。
+    push();
+    translate(enemy.x, enemy.y);
+    rotate(frameCount * __H1__);
+    fill(optionEnemyColor(enemy));
+    noStroke();
+    rectMode(CENTER);
+    rect(0, 0, enemySize * 0.7, enemySize * 0.7);
+    pop(); // 座標や描画設定を元に戻します。
+    // ③ 本体へ「描画済み」と伝え、通常の円を重ねないようにします。
+    return true;
+  },
+  // 【役割】自機を描く前に、自機と同じ色の半透明の光を周りに描きます。
+  beforePlayer() {
+    const glow = color(playerColor); // 自分で決めた自機の色を使います。
+    glow.setAlpha(__H2__);
+    fill(glow);
+    noStroke();
+    circle(playerX, playerY, playerSize + 20);
+  }
+});

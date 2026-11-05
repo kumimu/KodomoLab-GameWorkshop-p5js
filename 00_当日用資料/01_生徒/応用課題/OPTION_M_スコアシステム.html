@@ -1,0 +1,212 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OPTION M　スコアシステム</title><style>@page{size:A4;margin:16mm}*{box-sizing:border-box}body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;color:#162234;font-size:11pt;line-height:1.7;max-width:190mm;margin:24px auto;padding:0 12px}h1{font-size:23pt;line-height:1.35;border-bottom:3px solid #197c7c;padding-bottom:9px}h2{font-size:16pt;break-after:avoid;margin-top:24px}h3{font-size:13pt;break-after:avoid}p,li{overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:10pt}th,td{border:1px solid #b7c3ca;padding:6px 8px;text-align:left;vertical-align:top}th{background:#eaf3f3}tr,pre{break-inside:avoid}pre{padding:12px;background:#f0f4f6;border-left:3px solid #197c7c;font-size:10pt;white-space:pre-wrap;overflow-wrap:anywhere}code{font-family:Menlo,Consolas,monospace}a{color:#156c70}input{accent-color:#197c7c}.sheet{min-height:257mm;break-after:page}.sheet:last-child{break-after:auto}.write{height:19mm;border-bottom:1px solid #7c8b97;margin-bottom:7mm}.short{height:11mm} .label{font-weight:600;margin-bottom:0}.screenonly{font-size:10pt;color:#607080}@media print{body{max-width:none;padding:0;margin:0}.screenonly{display:none}}.copy{padding:7px 14px;background:#197c7c;color:white;border:0;cursor:pointer;font-size:11pt}.copy-status{font-size:10pt;margin-left:12px}@media print{.copy,.copy-status,.back{display:none}}.copy{padding:7px 14px;background:#197c7c;color:white;border:0;cursor:pointer;font-size:11pt}.copy-status{font-size:10pt;margin-left:12px}@media print{.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}h2[id]{scroll-margin-top:20px}h2[id]{scroll-margin-top:20px}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}.prediction-quiz{border:1px solid #a9bdca;border-radius:8px;padding:12px 16px;margin:18px 0;background:#f5f9fb;min-width:0}.prediction-quiz legend{font-weight:700;padding:0 6px}.prediction-quiz label{display:flex;align-items:flex-start;gap:10px;padding:10px 8px;cursor:pointer;line-height:1.65}.prediction-quiz input{flex-shrink:0;width:20px;height:20px;margin-top:3px;accent-color:#087f83}.prediction-quiz label:has(input:checked){background:#e0f2f1;border-radius:4px}.prediction-quiz label:focus-within{outline:2px solid #087f83;outline-offset:2px}
+.operation-checks{list-style:none;padding-left:0}.operation-checks label{display:flex;align-items:flex-start;gap:10px;padding:9px 8px;cursor:pointer;line-height:1.65}.operation-checks input{flex-shrink:0;width:20px;height:20px;margin-top:3px;accent-color:#087f83}.operation-checks label:has(input:checked){background:#e0f2f1;border-radius:4px}.operation-checks label:focus-within{outline:2px solid #087f83;outline-offset:2px}
+.prediction-quiz{border:1px solid #a9bdca;border-radius:8px;padding:12px 16px;margin:18px 0;background:#f5f9fb;min-width:0}.prediction-quiz legend{font-weight:700;padding:0 6px}.prediction-quiz label{display:flex;align-items:flex-start;gap:10px;padding:10px 8px;cursor:pointer;line-height:1.65}.prediction-quiz input{flex-shrink:0;width:20px;height:20px;margin-top:3px;accent-color:#087f83}.prediction-quiz label:has(input:checked){background:#e0f2f1;border-radius:4px}.prediction-quiz label:focus-within{outline:2px solid #087f83;outline-offset:2px}</style><body><p class="back"><a href="../../index.html">当日資料一覧へ</a></p><h1>OPTION M　スコアシステム</h1>
+<p>敵を画面下まで通過させると「回避」になり、続けて回避すると回避得点の倍率が上がります。射撃を先に作る必要はありません。</p>
+<h2>まず、仕組みを3つでつかもう</h2>
+<p><strong>敵を避ける → Mが得点とコンボを計算 → 本体は通常得点を重ねて足さない。</strong></p>
+<p><strong>①</strong> 敵が画面下を通り過ぎると、本体がavoidへその敵を渡します。</p>
+<p><strong>②</strong> Mがコンボと得点を計算し、次のコンボ期限も決めます。</p>
+<p><strong>③</strong> Mがtrue（得点の計算済み）を返すと、本体は標準の1点を重ねて足しません。</p>
+<p>敵が登場するときにspawnEnemyが通常・レアを抽選し、回避得点を決めます。updateは期限切れのコンボを0へ戻し、drawInfoがコンボ数と倍率を表示します。</p>
+<h3>今回変えるのはここ</h3>
+<table>
+<thead>
+<tr>
+<th>虫食い</th>
+<th>どこに効く？</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>__M1__</code></td>
+<td>spawnEnemyでレア敵に設定する回避得点。②で使う</td>
+</tr>
+<tr>
+<td><code>__M2__</code></td>
+<td>②で1回避けるたびに増やすコンボ数</td>
+</tr>
+<tr>
+<td><code>__M3__</code></td>
+<td>②で決める、次の回避までのコンボ猶予時間</td>
+</tr>
+</tbody></table>
+<p>まずは①②③の流れと、自分が変える値を追えれば大丈夫です。コード内にも同じ番号のコメントがあります。</p>
+<p><a href="%E4%BB%95%E7%B5%84%E3%81%BF_%E6%9C%AC%E4%BD%93%E3%81%A8%E8%BF%BD%E5%8A%A0%E6%A9%9F%E8%83%BD.html">もっと知りたい人へ：本体と追加機能のつながり</a></p>
+<h2 id="steps">選んだ機能だけを1か所へ貼る</h2>
+<ol>
+<li>「ワーク用」のsketch.jsを保存します。この後も同じワーク用フォルダで作業します。オリジナルは編集しません。</li>
+<li>下の「この機能のコードをコピー」を押します。</li>
+<li>VS Codeで「ワーク用」のsketch.jsを開き、末尾の「応用コード貼り付け欄」を探します。</li>
+<li>「ここから」と「ここまで」の間に、この課題のコードを1回貼ります。別の機能を追加するときは、先のコードを残したまま、その下へ貼ります。同じ課題を修正する場合は、その課題のコードを置き換えます。</li>
+<li>このページの「空欄の意味とヒント」を読み、虫食いを全て埋め、保存します。迷ったら表の例を使えます。</li>
+<li>Chromeでゲーム本体を更新して始め、機能の動作を確認します。</li>
+</ol>
+<p><strong>ゲーム全体を置き換えません。</strong> CUSTOM AREAの色・大きさ・速さ・タイトルはそのまま残ります。自機をyellowに変えていれば、そのままです。</p>
+<p>貼り付け欄が見つからない場合は、「ワーク用」のsketch.jsを開いているか確認します。<a href="../02_%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88.html#help">困ったときの手順</a>も使えます。</p>
+<h2>貼るコード（この1枠だけ）</h2>
+<pre><code class="language-javascript">// ===== このファイルで使う関数・用語の早見表 =====
+// 必要な名前を探し、次の行のURLから詳しい説明を確認できます。
+// p5.js 1.x 公式リファレンス：https://v1.p5js.org/reference/
+//
+// 【p5.jsが用意する関数】
+// fill(色)：この後に描く図形や文字の塗り色を決める。
+// https://v1.p5js.org/reference/p5/fill/
+// text(文字, x, y)：指定した位置に文字を描く。
+// https://v1.p5js.org/reference/p5/text/
+// textSize(大きさ)：文字の大きさを決める。
+// https://v1.p5js.org/reference/p5/textSize/
+// millis()：スケッチ開始からの経過時間をミリ秒で得る。1000ミリ秒で1秒。
+// https://v1.p5js.org/reference/p5/millis/
+// floor(数)：その数以下の最大の整数にする。例：1.8 → 1。
+// https://v1.p5js.org/reference/p5/floor/
+// random(下限, 上限)：範囲内の乱数を得る。上限は含まない。引数なしでは0以上1未満。
+// https://v1.p5js.org/reference/p5/random/
+// max(値1, 値2, ...)：指定した値のうち最大のものを返す。
+// https://v1.p5js.org/reference/p5/max/
+//
+// 【ゲーム本体にある自作関数】
+// registerWorkshopOption(ID, 機能)：本体の共通関数へ、課題IDごとに機能を登録する。
+// 定義と【役割】の説明は、同じ教材フォルダのsketch.jsで確認できます。
+// ===== 早見表ここまで =====
+
+registerWorkshopOption(&quot;M&quot;, {
+  rareScore: __M1__,
+  increment: __M2__,
+  duration: __M3__, // コンボを続けられる時間。1000で1秒です。
+  combo: 0,
+  until: 0,
+  // 【役割】ゲーム開始時に、コンボ数とコンボの期限をリセットします。
+  start() {
+    this.combo = 0;
+    this.until = 0;
+  },
+  // 【役割】敵が登場するたびに、通常かレアかを抽選して回避得点を決めます。
+  spawnEnemy(enemy) {
+    enemy.value = random() &lt; 0.15 ? this.rareScore : 10;
+  },
+  // 【役割】コンボの期限が切れていれば、連続回避の数を0に戻します。
+  update() {
+    if (millis() &gt;= this.until) {
+      this.combo = 0;
+    }
+  },
+  // 【役割】敵を避けたときにコンボと倍率を計算し、得点と次の期限を更新します。
+  // ① 敵が画面下を通り過ぎると、本体がこの敵を渡して呼びます。
+  avoid(enemy) {
+    if (millis() &gt;= this.until) {
+      this.combo = 0;
+    }
+    // ② コンボを増やし、得点と次のコンボ期限を決めます。
+    this.combo += this.increment;
+    const multiplier = 1 + floor((this.combo - 1) / 5);
+    score += enemy.value * multiplier;
+    this.until = millis() + this.duration;
+    // ③ 本体へ「計算済み」と伝え、標準の1点を重ねて足さないようにします。
+    return true; // この課題で得点を計算しました。
+  },
+  // 【役割】レア敵なら黄色を返します。それ以外は基本や別の機能の色を使います。
+  enemyColor(enemy) {
+    return enemy.value === this.rareScore ? &quot;yellow&quot; : undefined;
+  },
+  // 【役割】現在の連続回避の数と得点倍率を、指定された行へ表示します。
+  drawInfo(y) {
+    fill(&quot;white&quot;);
+    textSize(14);
+    const multiplier = 1 + floor(max(this.combo - 1, 0) / 5);
+    text(&quot;連続回避: &quot; + this.combo + &quot; / 回避倍率: &quot; + multiplier, 20, y);
+  }
+});
+</code></pre>
+<h2 id="holes">空欄の意味とヒント</h2>
+<p><code>__M1__</code>のような<strong>印全体</strong>を置き換えます。アンダースコアも消します。色の外側にある引用符は残し、数値には引用符を追加しません。</p>
+<table>
+<thead>
+<tr>
+<th>印</th>
+<th>何を決める？</th>
+<th>考えるヒント</th>
+<th>迷ったときの例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>__M1__</code></td>
+<td>レア敵を避けたときの点数</td>
+<td>通常の10点より高くする</td>
+<td><code>50</code></td>
+</tr>
+<tr>
+<td><code>__M2__</code></td>
+<td>1回避けると増えるコンボ数</td>
+<td>1回の成功で1つ増やす</td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td><code>__M3__</code></td>
+<td>コンボが続く制限時間</td>
+<td>1000で1秒。3000なら3秒</td>
+<td><code>3000</code></td>
+</tr>
+</tbody></table>
+<p>まず自分で考え、迷ったら例の値を使って動きを確かめます。動いた後に1つずつ変えて試せます。空欄が残っている間は、まだ動かない場合があります。</p>
+<ul>
+<li>敵を画面下まで避けると得点が入り、連続回避の1～5回目は1倍、6～10回目は2倍です。射撃を先に作る必要はありません。</li>
+<li>表示する行は本体が割り当てるので、BGM表示とコンボ表示は重なりません。</li>
+</ul>
+<h2>回避コンボを試す準備</h2>
+<p>敵が1体だけだと、次の敵を回避するまでにコンボの期限が切れやすくなります。<strong>「かんたん」の速さのまま、敵だけ複数にして試します。</strong></p>
+<ol>
+<li>ワーク用のsketch.jsで、<code>function startGame(level)</code>を探します。</li>
+<li>その中の<code>if (level === 1)</code>、つまり「かんたん」の設定を見つけます。</li>
+<li><code>enemySpeed = 4;</code>はそのままにし、同じ設定内の<code>enemyCount</code>を、まず<code>3</code>にします。ファイル上部の同名変数だけを変えても、開始時にこの設定で上書きされるため、startGameの中を変更します。</li>
+<li>保存・更新して、1キーで始めます。敵を画面下まで通過させ、回避した数を確認します。</li>
+</ol>
+<p>すでに敵数を増やしている場合は、その数で確認して構いません。比較実験では敵数と難易度を揃え、durationだけを変えます。多すぎて避けにくければ敵数を減らし、確認が終わったら遊びたい数へ調整します。</p>
+<p>3体でも配置や再登場のタイミングによってコンボが切れることはあります。画面の「連続回避」と「回避倍率」を見て、続く場合・途切れる場合を比べましょう。</p>
+<h2>動作確認</h2>
+<ul class="operation-checks">
+<li><label><input type="checkbox"><span>通常敵と黄色のレア敵で回避得点が変わる。</span></label></li>
+<li><label><input type="checkbox"><span>敵を複数にし、回避して、連続回避・回避倍率・時間切れを確認できる。</span></label></li>
+<li><label><input type="checkbox"><span>再開始でコンボも0に戻る。</span></label></li>
+</ul>
+
+<h2>うまく動かないとき</h2>
+<ul>
+<li>この課題の<code>__M1__</code>などの印が残っていないか探します。</li>
+<li>保存後、円の練習画面ではなくゲーム本体を更新し、1で始めます。</li>
+<li>別の機能も入っている場合、そのコードを残したまま追加したか確かめます。同じ課題は1つだけにします。</li>
+<li>それでも直らなければ<a href="../02_%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88.html#help">テキストの対処手順</a>へ進みます。</li>
+</ul>
+<h2>動いたら挑戦！ コンボの「ちょうどよい時間」を作ろう</h2>
+<p>ここからは、動いたコードを自分のルールに変える時間です。3～5分を目安に、次の順で試しましょう。比べる間は、incrementを1、rareScoreを50に揃え、durationだけを変えます。</p>
+<h3>1．予想クイズ：実行する前に考えよう</h3>
+<p>durationを3000から6000に変えると、どうなるでしょう？ 下で予想を1つ選びます。</p>
+<fieldset class="prediction-quiz">
+<legend>予想を1つ選ぶ</legend>
+<label><input type="radio" name="quiz-m" value="1"><span>ア：1回の回避でもらえる点数が2倍になる。</span></label>
+<label><input type="radio" name="quiz-m" value="2"><span>イ：次の敵を避けるまで、コンボをつなげられる時間が2倍になる。</span></label>
+<label><input type="radio" name="quiz-m" value="3"><span>ウ：敵が落ちる速さが2倍になる。</span></label>
+</fieldset>
+
+<p>選んだらdurationを6000にし、保存してゲームを更新します。同じ難易度で遊び、画面の「連続回避」が0へ戻るまでの様子を確かめましょう。敵を避けるたびに期限が更新されるので、<strong>最後に敵を避けてから</strong>の時間に注目します。</p>
+<details>
+<summary>試した後に、答えと理由を見る</summary>
+
+<p>正解は「イ」です。durationはコンボを続けられる時間で、1000が1秒です。3000は3秒、6000は6秒。期限までに次の敵を避けるとコンボが続きます。得点の基本値や敵の速さは、この変更では変わりません。</p>
+<p>コードの <code>this.until = millis() + this.duration;</code> は、今の時刻にdurationを足して、次の期限を決めています。</p>
+</details>
+
+<h3>2．お題：つなげたい！ と思えるコンボにしよう</h3>
+<p><strong>「コンボが続くとうれしい。でも、油断すると切れる」</strong>。そんなゲームになるよう、durationを調整してください。正解の数値は1つではありません。</p>
+<ol>
+<li>今の値より短い時間を、自分で決めて試します。durationには0より大きい数値を入れます。</li>
+<li>短い場合と長い場合を、同じ難易度で遊び比べます。値を変えたら保存・更新し、ゲームを始め直します。</li>
+<li>どちらが面白いか考え、最後に自分の採用する値を決めます。最初の値へ戻しても構いません。</li>
+</ol>
+<p>ノートN03へ「試した値・予想・実際の違い」を短く残します。コンボが切れにくいほど、必ず面白くなるでしょうか？</p>
+<h3>3．発見をコメント1行にしよう</h3>
+<p>ワーク用のsketch.jsで、<strong>Mのdurationの行のすぐ上</strong>へ、<code>//</code>で始まるコメントを1行追加します。「どんな遊び心地にしたくて、その値を選んだか」を、自分の言葉で書きましょう。</p>
+<p>書き出しに迷ったら、<code>// durationを〇〇にした。〇〇なゲームにしたいから。</code> を手がかりにできます。〇〇は自分の数値や言葉に置き換えます。コメントはゲームの動作を変えず、工夫の理由を残すものです。</p>
+<p>最後にコーチへ「この値にした理由」と「遊んで分かったこと」を1つ伝えてください。予想と違った結果も、発見です。</p>
+<details><summary>Bの射撃も追加した人へ</summary><p>Bの命中得点と、Mの回避得点・回避コンボは別です。回避コンボを確かめるときは、敵を撃たずに画面下まで通過させます。</p></details><h2>できたら次へ</h2>
+<p>自分のルールを決め、コメントを残せたら、この機能の挑戦は完了です。時間があれば、別の課題のコードも同じ欄へ追加できます。追加するたびに前の機能も動くか確認し、55分になったら新しい追加を止めます。</p>
+<p><a href="00_%E8%AA%B2%E9%A1%8C%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9.html">課題一覧へ戻る</a></p>
+<script>document.querySelectorAll('pre').forEach(pre=>{const button=document.createElement('button');button.className='copy';button.textContent='この機能のコードをコピー';const status=document.createElement('span');status.className='copy-status';status.setAttribute('role','status');button.onclick=async()=>{const code=pre.querySelector('code');try{await navigator.clipboard.writeText(code.textContent);status.textContent='コピーしました。sketch.js末尾の応用コード貼り付け欄へ貼ってください。';}catch(e){const r=document.createRange();r.selectNodeContents(code);const s=window.getSelection();s.removeAllRanges();s.addRange(r);status.textContent='機能コードを選択しました。Chromeの編集メニューからコピーしてください。';}};pre.before(button,status);});</script></body></html>

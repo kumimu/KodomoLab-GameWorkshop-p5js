@@ -1,0 +1,101 @@
+// ===== このファイルで使う関数・用語の早見表 =====
+// 必要な名前を探し、次の行のURLから詳しい説明を確認できます。
+// p5.js 1.x 公式リファレンス：https://v1.p5js.org/reference/
+//
+// 【p5.jsが用意する関数】
+// fill(色)：この後に描く図形や文字の塗り色を決める。
+// https://v1.p5js.org/reference/p5/fill/
+// text(文字, x, y)：指定した位置に文字を描く。
+// https://v1.p5js.org/reference/p5/text/
+// textSize(大きさ)：文字の大きさを決める。
+// https://v1.p5js.org/reference/p5/textSize/
+// millis()：スケッチ開始からの経過時間をミリ秒で得る。1000ミリ秒で1秒。
+// https://v1.p5js.org/reference/p5/millis/
+//
+// 【JavaScript標準の機能：p5.jsとは別】
+// 文字列.toLowerCase()：英字を小文字に揃える。
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/String/toLowerCase
+//
+// 【ブラウザの音声機能：Web Audio API】
+// AudioContext / createOscillator() / createGain()：音の処理、音源、音量調節の部品を用意する。
+// https://developer.mozilla.org/ja/docs/Web/API/AudioContext
+// resume()：一時停止中の音声処理を動かす。
+// https://developer.mozilla.org/ja/docs/Web/API/AudioContext/resume
+// connect() / disconnect()：音の部品をつなぐ・切り離す。
+// https://developer.mozilla.org/ja/docs/Web/API/AudioNode
+// start() / stop() / onended：音の開始・停止・終了後の処理を扱う。
+// https://developer.mozilla.org/ja/docs/Web/API/AudioScheduledSourceNode
+// frequency.value / setValueAtTime() / linearRampToValueAtTime()：音の高さや音量を時刻に合わせて変える。
+// https://developer.mozilla.org/ja/docs/Web/API/AudioParam
+// audio.currentTime：音声処理の時刻（秒）。millis()のミリ秒と区別する。
+// https://developer.mozilla.org/ja/docs/Web/API/BaseAudioContext/currentTime
+//
+// 【ゲーム本体にある自作関数】
+// registerWorkshopOption(ID, 機能)：本体の共通関数へ、課題IDごとに機能を登録する。
+// 定義と【役割】の説明は、同じ教材フォルダのsketch.jsで確認できます。
+// ===== 早見表ここまで =====
+
+registerWorkshopOption("G", {
+  melody: [262, __G1__, 330, 349, 392, 440, 494, 523],
+  interval: __G2__, // 音の間隔。1000で1秒です。
+  audio: null,
+  enabled: true,
+  index: 0,
+  nextAt: 0,
+  // 【役割】開始キーの操作で音を使える状態にし、メロディの先頭と再生時刻を準備します。
+  start() {
+    // 開始キーを押したタイミングで音を有効にします。
+    if (!this.audio) {
+      const AudioType = window.AudioContext || window.webkitAudioContext;
+      if (!AudioType) {
+        return;
+      }
+      this.audio = new AudioType();
+    }
+    this.audio.resume();
+    this.index = 0;
+    this.nextAt = 0;
+  },
+  // 【役割】Mキーが押されたら、BGMのオン・オフを切り替えます。
+  key(k) {
+    if (k.toLowerCase() === "m") {
+      this.enabled = !this.enabled;
+    }
+  },
+  // 【役割】次の音の時刻になったら短い音を1つ鳴らし、メロディを次へ進めます。
+  // ① 本体から毎回呼ばれ、音を鳴らせる状態か確かめます。
+  update() {
+    if (!this.enabled || !this.audio || this.audio.state !== "running") {
+      return;
+    }
+    // ② 次の音の時刻まで待ち、時刻になったら次回の予定を決めます。
+    if (millis() < this.nextAt) {
+      return;
+    }
+    this.nextAt = millis() + this.interval;
+    const note = this.audio.createOscillator();
+    const volume = this.audio.createGain();
+    const now = this.audio.currentTime;
+    // ③ メロディから今の音を選び、下のnote.startで鳴らします。
+    note.frequency.value = this.melody[this.index];
+    volume.gain.setValueAtTime(0, now);
+    volume.gain.linearRampToValueAtTime(0.025, now + 0.01);
+    volume.gain.linearRampToValueAtTime(0, now + 0.12);
+    note.connect(volume);
+    volume.connect(this.audio.destination);
+    note.start(now);
+    note.stop(now + 0.13);
+    // 【役割】1つの音の再生が終わったら、音を作った部品の接続を外して片付けます。
+    note.onended = () => {
+      note.disconnect();
+      volume.disconnect();
+    };
+    this.index = (this.index + 1) % this.melody.length;
+  },
+  // 【役割】BGMがオンかオフかと、切り替えキーを指定された行へ表示します。
+  drawInfo(y) {
+    fill("white");
+    textSize(14);
+    text("M: BGM " + (this.enabled ? "ON" : "OFF"), 20, y);
+  }
+});

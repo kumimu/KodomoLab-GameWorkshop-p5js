@@ -110,6 +110,151 @@ let keysPressed = {}; // キーごとに押しているかを記録。trueなら
 // グローバル Audio Context（再利用）
 let audioContext = null; // 音声を生成する仕組み。初めて鳴らすときに作って再利用。
 
+// ===== このファイルで使う関数・用語の早見表 =====
+// 必要な名前を探し、次の行のURLから詳しい説明を確認できます。
+// p5.js 1.x 公式リファレンス：https://v1.p5js.org/reference/
+//
+// 【p5.jsが用意する関数】
+// createCanvas(幅, 高さ)：描画する画面を作る。
+// https://v1.p5js.org/reference/p5/createCanvas/
+// resizeCanvas(幅, 高さ)：既存の画面の大きさを変える。
+// https://v1.p5js.org/reference/p5/resizeCanvas/
+// background(色)：背景を塗り直す。
+// https://v1.p5js.org/reference/p5/background/
+// fill(色)：この後に描く図形や文字の塗り色を決める。
+// https://v1.p5js.org/reference/p5/fill/
+// noFill()：図形の内側を塗らない設定にする。
+// https://v1.p5js.org/reference/p5/noFill/
+// stroke(色)：この後に描く図形の輪郭や線の色を決める。
+// https://v1.p5js.org/reference/p5/stroke/
+// noStroke()：図形の輪郭線を描かない設定にする。
+// https://v1.p5js.org/reference/p5/noStroke/
+// strokeWeight(太さ)：線や輪郭線の太さを決める。
+// https://v1.p5js.org/reference/p5/strokeWeight/
+// circle(x, y, 直径)：中心(x, y)に円を描く。
+// https://v1.p5js.org/reference/p5/circle/
+// rect(x, y, 幅, 高さ)：四角形を描く。位置の基準はrectModeで決まる。
+// https://v1.p5js.org/reference/p5/rect/
+// line(x1, y1, x2, y2)：2点を結ぶ線を描く。
+// https://v1.p5js.org/reference/p5/line/
+// text(文字, x, y)：指定した位置に文字を描く。
+// https://v1.p5js.org/reference/p5/text/
+// textFont(フォント名)：文字の書体を決める。
+// https://v1.p5js.org/reference/p5/textFont/
+// textSize(大きさ)：文字の大きさを決める。
+// https://v1.p5js.org/reference/p5/textSize/
+// textAlign(横, 縦)：文字を配置する基準を決める。CENTERは中央、LEFTは左。
+// https://v1.p5js.org/reference/p5/textAlign/
+// textStyle(種類)：文字を太字などのスタイルにする。
+// https://v1.p5js.org/reference/p5/textStyle/
+// floor(数)：その数以下の最大の整数にする。例：1.8 → 1。
+// https://v1.p5js.org/reference/p5/floor/
+// ceil(数)：その数以上の最小の整数にする。例：1.2 → 2。
+// https://v1.p5js.org/reference/p5/ceil/
+// random(下限, 上限)：範囲内の乱数を得る。上限は含まない。引数なしでは0以上1未満。
+// https://v1.p5js.org/reference/p5/random/
+// dist(x1, y1, x2, y2)：2点の間の距離を求める。
+// https://v1.p5js.org/reference/p5/dist/
+// constrain(値, 下限, 上限)：値を指定した範囲内に収める。
+// https://v1.p5js.org/reference/p5/constrain/
+// max(値1, 値2, ...)：指定した値のうち最大のものを返す。
+// https://v1.p5js.org/reference/p5/max/
+// min(値1, 値2, ...)：指定した値のうち最小のものを返す。
+// https://v1.p5js.org/reference/p5/min/
+// push()：現在の描画設定や座標の変換を保存する。pop()と組にして使う。
+// https://v1.p5js.org/reference/p5/push/
+// pop()：直前のpush()で保存した描画設定や座標の変換へ戻す。
+// https://v1.p5js.org/reference/p5/pop/
+// translate(x, y)：この後に描く図形の原点を移動する。
+// https://v1.p5js.org/reference/p5/translate/
+// rotate(角度)：この後に描く図形の座標を回転する。この教材では角度はラジアン。
+// https://v1.p5js.org/reference/p5/rotate/
+// beginShape()：頂点を指定して独自の図形を描き始める。
+// https://v1.p5js.org/reference/p5/beginShape/
+// vertex(x, y)：beginShape()の図形へ頂点を1つ追加する。
+// https://v1.p5js.org/reference/p5/vertex/
+// endShape(CLOSE)：独自の図形を描き終え、最後の頂点と最初の頂点を結ぶ。
+// https://v1.p5js.org/reference/p5/endShape/
+// cos(角度)：角度から横方向の成分を求める。円周上の位置などに使う。
+// https://v1.p5js.org/reference/p5/cos/
+// sin(角度)：角度から縦方向の成分を求める。円周上の位置などに使う。
+// https://v1.p5js.org/reference/p5/sin/
+// frameRate()：現在の1秒あたりの描画回数（FPS）を得る。引数があれば目標値を設定する。
+// https://v1.p5js.org/reference/p5/frameRate/
+// nf(数, 整数の桁数, 小数の桁数)：数値を桁数を揃えた文字列にする。
+// https://v1.p5js.org/reference/p5/nf/
+//
+// 【p5.jsが呼び出す入口：中身はこのコードに書く】
+// setup()：p5.jsが最初に1回呼ぶ。画面などを準備する。
+// https://v1.p5js.org/reference/p5/setup/
+// draw()：p5.jsが繰り返し呼ぶ。移動の計算や描画を進める。
+// https://v1.p5js.org/reference/p5/draw/
+// keyPressed()：キーを押したときにp5.jsが呼ぶ。
+// https://v1.p5js.org/reference/p5/keyPressed/
+// windowResized()：ブラウザの表示領域の大きさが変わったときにp5.jsが呼ぶ。
+// https://v1.p5js.org/reference/p5/windowResized/
+//
+// 【p5.jsが用意する値：関数ではないので()を付けない】
+// windowWidth：ブラウザの表示領域の幅。
+// https://v1.p5js.org/reference/p5/windowWidth/
+// windowHeight：ブラウザの表示領域の高さ。
+// https://v1.p5js.org/reference/p5/windowHeight/
+// deltaTime：前回の描画からの経過時間（ミリ秒）。
+// https://v1.p5js.org/reference/p5/deltaTime/
+// key：直近に押されたキーの文字。
+// https://v1.p5js.org/reference/p5/key/
+// TWO_PI：1回転分の角度（ラジアン）。
+// https://v1.p5js.org/reference/p5/TWO_PI/
+// PI：半回転分の角度（ラジアン）。
+// https://v1.p5js.org/reference/p5/PI/
+// CENTER / LEFT：文字の配置の基準を表す定数。
+// https://v1.p5js.org/reference/p5/textAlign/
+// BOLD / NORMAL：文字の太字・標準のスタイルを表す定数。
+// https://v1.p5js.org/reference/p5/textStyle/
+// CLOSE：独自の図形を閉じる指定。
+// https://v1.p5js.org/reference/p5/endShape/
+//
+// 【JavaScript標準の機能：p5.jsとは別】
+// 配列.push(値)：一覧の末尾に値を追加する。描画設定のpush()とは別の機能。
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/push
+// 配列.filter(条件の関数)：条件がtrueの要素だけを残した新しい一覧を作る。
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+// 配列.shift()：一覧の先頭を取り除く。
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/shift
+// 配列.join(区切り文字)：一覧の値をつないで文字列にする。
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+// 文字列.toLowerCase()：英字を小文字に揃える。
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/String/toLowerCase
+// 文字列.repeat(回数)：同じ文字列を指定回数繰り返す。
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/String/repeat
+// Number(値)：値を数値に変換する。
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Number
+// String(値)：値を文字列に変換する。
+// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/String
+//
+// 【ブラウザが用意する機能】
+// setTimeout(処理, ミリ秒)：指定時間後に処理を1回呼ぶ。
+// https://developer.mozilla.org/ja/docs/Web/API/Window/setTimeout
+// addEventListener(種類, 処理)：キー操作などのイベントを受け取る処理を登録する。
+// https://developer.mozilla.org/ja/docs/Web/API/EventTarget/addEventListener
+// localStorage.getItem() / setItem()：同じブラウザに記録を保存・読み出しする。
+// https://developer.mozilla.org/ja/docs/Web/API/Storage
+//
+// 【ブラウザの音声機能：Web Audio API】
+// AudioContext / createOscillator() / createGain()：音の処理、音源、音量調節の部品を用意する。
+// https://developer.mozilla.org/ja/docs/Web/API/AudioContext
+// resume()：一時停止中の音声処理を動かす。
+// https://developer.mozilla.org/ja/docs/Web/API/AudioContext/resume
+// connect()：音の部品をつなぐ・切り離す。
+// https://developer.mozilla.org/ja/docs/Web/API/AudioNode
+// start() / stop()：音の開始・停止を扱う。
+// https://developer.mozilla.org/ja/docs/Web/API/AudioScheduledSourceNode
+// frequency.value / setValueAtTime() / exponentialRampToValueAtTime()：音の高さや音量を時刻に合わせて変える。
+// https://developer.mozilla.org/ja/docs/Web/API/AudioParam
+// audio.currentTime：音声処理の時刻（秒）。millis()のミリ秒と区別する。
+// https://developer.mozilla.org/ja/docs/Web/API/BaseAudioContext/currentTime
+// ===== 早見表ここまで =====
+
 // p5.js setup
 // 【役割】最初に1回だけ実行。画面を用意し、前回のハイスコアを読みます。
 function setup() {
@@ -202,14 +347,22 @@ function keyPressed(event) {
                      'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
   let currentKey = '';
   
-  if (code === 'ArrowUp') currentKey = 'ArrowUp';
-  else if (code === 'ArrowDown') currentKey = 'ArrowDown';
-  else if (code === 'ArrowLeft') currentKey = 'ArrowLeft';
-  else if (code === 'ArrowRight') currentKey = 'ArrowRight';
-  else currentKey = k;
+  if (code === 'ArrowUp') {
+    currentKey = 'ArrowUp';
+  } else if (code === 'ArrowDown') {
+    currentKey = 'ArrowDown';
+  } else if (code === 'ArrowLeft') {
+    currentKey = 'ArrowLeft';
+  } else if (code === 'ArrowRight') {
+    currentKey = 'ArrowRight';
+  } else {
+    currentKey = k;
+  }
   
   keyHistory.push(currentKey);
-  if (keyHistory.length > 10) keyHistory.shift();
+  if (keyHistory.length > 10) {
+    keyHistory.shift();
+  }
   
   if (keyHistory.join('|') === konamiSeq.join('|')) {
     secretUnlocked = true;
@@ -217,7 +370,9 @@ function keyPressed(event) {
     notice = '✦ SECRET UNLOCKED! ✦';
     noticeTime = 3;
     playSound(1046, 0.4);
-    if (gameState === 'title') gameState = 'select';
+    if (gameState === 'title') {
+      gameState = 'select';
+    }
   }
   
   // SELECT画面
@@ -261,19 +416,27 @@ function updateGame(dt) {
   shotTimer = max(0, shotTimer - dt);
   comboTimer -= dt;
   
-  if (comboTimer <= 0) combo = 0; // 受付時間がなくなったらコンボ終了。
+  if (comboTimer <= 0) {
+    combo = 0; // 受付時間がなくなったらコンボ終了。
+  }
   shake = max(0, shake - 35 * dt);
   flash = max(0, flash - dt);
   noticeTime = max(0, noticeTime - dt);
   
   // プレイヤー移動
   let moveDir = 0;
-  if (keysPressed['ArrowLeft'] || keysPressed['KeyA']) moveDir = -1;
-  if (keysPressed['ArrowRight'] || keysPressed['KeyD']) moveDir = 1;
+  if (keysPressed['ArrowLeft'] || keysPressed['KeyA']) {
+    moveDir = -1;
+  }
+  if (keysPressed['ArrowRight'] || keysPressed['KeyD']) {
+    moveDir = 1;
+  }
   player.x = constrain(player.x + moveDir * CONFIG.playerSpeed * dt, 25, CONFIG.canvasW - 25); // 速さ×時間で移動。constrainで画面外にはみ出さないようにする。
   
   // 射撃
-  if (keysPressed['Space'] || keysPressed['KeyZ']) shoot();
+  if (keysPressed['Space'] || keysPressed['KeyZ']) {
+    shoot();
+  }
   
   // 敵生成
   if (!boss && elapsed < stage.goal) {
@@ -298,14 +461,18 @@ function updateGame(dt) {
   }
   
   // filterは条件に合うものだけ残す操作。画面外や体力0の敵を取り除きます。
+  // 【役割】画面の下へ出ておらず、体力が残っている敵か調べます。
   enemies = enemies.filter(e => e.y < CONFIG.canvasH + 55 && e.hp > 0);
   
   // 弾移動
   for (let b of bullets) {
     b.y += b.vy * dt;
-    if (b.vx) b.x += b.vx * dt;
+    if (b.vx) {
+      b.x += b.vx * dt;
+    }
   }
   
+  // 【役割】画面の上端や左右の外へ出ていない自分の弾か調べます。
   bullets = bullets.filter(b => b.y > -20 && b.x > 0 && b.x < CONFIG.canvasW);
   
   // 敵弾移動
@@ -314,6 +481,7 @@ function updateGame(dt) {
     b.y += b.vy * dt;
   }
   
+  // 【役割】画面の下端や左右の外へ出ていない敵弾か調べます。
   enemyBullets = enemyBullets.filter(b => b.y < CONFIG.canvasH + 25 && b.x > -25 && b.x < CONFIG.canvasW + 25);
   
   // distは2点の距離。中心同士の距離が半径の合計より短ければ当たっています。
@@ -324,7 +492,9 @@ function updateGame(dt) {
       if (e.hp > 0 && dist(b.x, b.y, e.x, e.y) < b.r + e.r) {
         e.hp--;
         b.y = -100;
-        if (e.hp <= 0) destroyEnemy(e);
+        if (e.hp <= 0) {
+          destroyEnemy(e);
+        }
         break;
       }
     }
@@ -355,6 +525,7 @@ function updateGame(dt) {
     }
   }
   
+  // 【役割】体力が残っている敵か調べ、倒れた敵を一覧から取り除く条件にします。
   enemies = enemies.filter(e => e.hp > 0);
   
   // プレイヤーと敵弾の当たり判定
@@ -419,9 +590,11 @@ function updateGame(dt) {
     }
   }
   
+  // 【役割】画面の下へ流れ去っていないアイテムか調べます。
   pickups = pickups.filter(p => p.y < CONFIG.canvasH + 30);
   
   // パーティクル更新
+  // 【役割】表示する残り時間がある粒か調べます。
   particles = particles.filter(p => p.t > 0);
   for (let p of particles) {
     p.x += p.vx * dt;
@@ -522,7 +695,9 @@ function shoot() {
   const rapid = player.fire > 0;
   const interval = rapid ? 0.085 : CONFIG.shootInterval; // 【改造】連射強化中の間隔は0.085秒。通常時はCONFIGの値。
   
-  if (shotTimer > 0) return; // returnでこの関数を終える。まだ発射待ちなら弾を作らない。
+  if (shotTimer > 0) {
+    return; // returnでこの関数を終える。まだ発射待ちなら弾を作らない。
+  }
   shotTimer = interval;
   
   bullets.push({
@@ -546,7 +721,9 @@ function shoot() {
 // 【役割】被弾処理。無敵 → シールド → ライフ減少の順に判定します。
 function playerDamage() {
   // 無敵中はダメージ判定を打ち切り、シールドを温存する。
-  if (player.inv > 0 || player.star > 0) return;
+  if (player.inv > 0 || player.star > 0) {
+    return;
+  }
 
   if (player.shield > 0) {
     player.shield = 0;
@@ -565,7 +742,9 @@ function playerDamage() {
   burst(player.x, player.y, [255, 78, 137], 24);
   playSound(120, 0.3);
   
-  if (player.lives <= 0) endGame(false);
+  if (player.lives <= 0) {
+    endGame(false);
+  }
 }
 
 // パワーアップドロップ
@@ -624,6 +803,7 @@ function resetGame() {
   notice = 'STAGE ' + (stageIndex + 1) + ' — ' + stage.name;
   noticeTime = 2;
   playSound(523, 0.14);
+  // 【役割】少し遅れて次の音を鳴らし、ゲーム開始のメロディを続けます。
   setTimeout(() => playSound(784, 0.18), 130);
 }
 
@@ -835,9 +1015,15 @@ function drawUI() {
   // ceilは切り上げ。例えば残り2.3秒なら3sと表示します。
   // 同時に有効な効果をすべて表示する。
   const effects = [];
-  if (player.star > 0) effects.push('★ INVINCIBLE ' + ceil(player.star) + 's / SCORE ×2');
-  if (player.fire > 0) effects.push('⚡ RAPID FIRE ' + ceil(player.fire) + 's');
-  if (player.shield > 0) effects.push('◆ SHIELD 1 HIT');
+  if (player.star > 0) {
+    effects.push('★ INVINCIBLE ' + ceil(player.star) + 's / SCORE ×2');
+  }
+  if (player.fire > 0) {
+    effects.push('⚡ RAPID FIRE ' + ceil(player.fire) + 's');
+  }
+  if (player.shield > 0) {
+    effects.push('◆ SHIELD 1 HIT');
+  }
   textAlign(CENTER, CENTER);
   textSize(18);
   for (let i = 0; i < effects.length; i++) {

@@ -1,5 +1,7 @@
 # レッスン4：敵と当たり判定
 
+コードの仕組みを詳しく読む資料です。授業では当日用テキストの全体像を確認してから改造します。コードの場所は関数名で探せます。実際に貼る機能コードは当日用の課題ページからコピーします。
+
 ## 🎯 学習目標
 
 敵がどのように生成・移動し、プレイヤーとの衝突がどのように判定されるのかを理解する。
@@ -17,7 +19,7 @@
 ゲームでは、敵は **配列** で管理されています。
 
 ```javascript
-let enemies = [];  // 敵の配列（最初は空）
+let enemies = []; // 敵の配列（最初は空）
 ```
 
 **配列とは** — 複数の値をまとめて保存する「箱」です。
@@ -30,22 +32,22 @@ let enemies = [];  // 敵の配列（最初は空）
 
 ### ゲーム開始時に敵を作る
 
-**`sketch.js` の80〜99行目（`startGame()` 関数）：**
+**`sketch.js` の対応箇所（関数名で検索）（`startGame()` 関数）：**
 
 ```javascript
 function startGame(level) {
   if (level === 1) {
-    difficultyName = "かんたん";
+    difficultyName = 'かんたん';
     enemySpeed = 4;
     enemyCount = 1;
     clearTime = 30;
   } else if (level === 2) {
-    difficultyName = "ふつう";
+    difficultyName = 'ふつう';
     enemySpeed = 6;
     enemyCount = 2;
     clearTime = 45;
   } else {
-    difficultyName = "むずかしい";
+    difficultyName = 'むずかしい';
     enemySpeed = 8;
     enemyCount = 3;
     clearTime = 60;
@@ -55,28 +57,28 @@ function startGame(level) {
   playerY = height - 55;
   score = 0;
   startTime = millis();
-  resultText = "";
-  enemies = [];  // ← 敵の配列をリセット
+  resultText = '';
+  enemies = []; // ← 敵の配列をリセット
 
   for (let i = 0; i < enemyCount; i++) {
     enemies.push({
       x: random(enemySize, width - enemySize),
       y: random(-300, -50),
-      speed: enemySpeed + random(0, 2)
+      speed: enemySpeed + random(0, 2),
     });
   }
 
-  gameState = "play";
+  gameState = 'play';
 }
 ```
 
 ### 難易度による敵の数の違い
 
-| 難易度 | `enemyCount` | 敵の数 |
-|--------|-------------|--------|
-| かんたん | 1 | 1個 |
-| ふつう | 2 | 2個 |
-| むずかしい | 3 | 3個 |
+| 難易度     | `enemyCount` | 敵の数 |
+| ---------- | ------------ | ------ |
+| かんたん   | 1            | 1個    |
+| ふつう     | 2            | 2個    |
+| むずかしい | 3            | 3個    |
 
 ### 敵の初期データ
 
@@ -97,13 +99,13 @@ function startGame(level) {
 **例：**
 
 ```javascript
-x: random(enemySize, width - enemySize)
+x: random(enemySize, width - enemySize);
 ```
 
 `enemySize = 35` の場合：
 
 ```javascript
-x: random(35, 565)  // 35〜565の間でランダムに選ばれる
+x: random(35, 565); // 35〜565の間でランダムに選ばれる
 ```
 
 敵がランダムな位置から落ちてくるため、毎回異なるゲームになります。
@@ -111,7 +113,7 @@ x: random(35, 565)  // 35〜565の間でランダムに選ばれる
 ### 敵のY座標がマイナス？
 
 ```javascript
-y: random(-300, -50)
+y: random(-300, -50);
 ```
 
 **なぜマイナスなのか？**
@@ -138,7 +140,7 @@ Y = 400   ← 画面の下端
 
 ### `moveEnemy()` 関数
 
-**`sketch.js` の141〜152行目：**
+**`sketch.js` の対応箇所（関数名で検索）：**
 
 ```javascript
 function moveEnemy(enemy) {
@@ -182,7 +184,7 @@ if (enemy.y > height + enemySize) {
   enemy.y = random(-300, -50);
   enemy.x = random(enemySize, width - enemySize);
   enemy.speed = enemySpeed + random(0, 2);
-  score += 1;  // ← スコア加算
+  score += 1; // ← スコア加算
 }
 ```
 
@@ -216,7 +218,7 @@ enemy.speed = enemySpeed + random(0, 2);
 
 ### `isHit()` 関数
 
-**`sketch.js` の154〜157行目：**
+**`sketch.js` の対応箇所（関数名で検索）：**
 
 ```javascript
 function isHit(enemy) {
@@ -306,7 +308,7 @@ playerSize / 2 + enemySize / 2 = 20 + 17.5 = 37.5
 プレイヤー（半径20）    敵（半径17.5）
       ●───────────●
       ←── 距離 ──→
-      
+
 距離 < 37.5 ならば、衝突している
 距離 ≥ 37.5 ならば、まだ接触していない
 ```
@@ -315,7 +317,7 @@ playerSize / 2 + enemySize / 2 = 20 + 17.5 = 37.5
 
 ## 🎮 ゲーム中の敵の処理フロー
 
-**`sketch.js` の105〜129行目（`playGame()` 関数）：**
+**`sketch.js` の対応箇所（関数名で検索）（`playGame()` 関数）：**
 
 ```javascript
 function playGame() {
@@ -323,8 +325,8 @@ function playGame() {
   const remaining = clearTime - elapsed;
 
   if (remaining <= 0) {
-    resultText = "CLEAR!";
-    gameState = "end";
+    resultText = 'CLEAR!';
+    gameState = 'end';
     return;
   }
 
@@ -333,12 +335,13 @@ function playGame() {
   drawPlayer();
 
   for (const enemy of enemies) {
-    moveEnemy(enemy);           // ① 敵を移動
-    drawEnemy(enemy);           // ② 敵を描く
+    moveEnemy(enemy); // ① 敵を移動
+    drawEnemy(enemy); // ② 敵を描く
 
-    if (isHit(enemy)) {         // ③ 衝突判定
-      resultText = "GAME OVER";
-      gameState = "end";
+    if (isHit(enemy)) {
+      // ③ 衝突判定
+      resultText = 'GAME OVER';
+      gameState = 'end';
       return;
     }
   }
@@ -355,8 +358,8 @@ function playGame() {
 **もし衝突が検出されたら：**
 
 ```javascript
-resultText = "GAME OVER";
-gameState = "end";
+resultText = 'GAME OVER';
+gameState = 'end';
 return;
 ```
 
@@ -369,11 +372,11 @@ return;
 ### 初期状態
 
 ```javascript
-enemyCount = 2
+enemyCount = 2;
 enemies = [
   { x: 150, y: -100, speed: 6.5 },
-  { x: 450, y: -200, speed: 5.8 }
-]
+  { x: 450, y: -200, speed: 5.8 },
+];
 ```
 
 ### フレーム1
@@ -457,15 +460,15 @@ gameState = "end"
 
 ## 📝 重要な用語のまとめ
 
-| 用語 | 意味 | このゲームでの例 |
-|------|------|-----------------|
-| **配列** | 複数の値をまとめて保存する仕組み | `enemies = []` |
-| **要素** | 配列の中の1つの値 | `enemies[0]` — 最初の敵 |
-| **ループ** | 複数の値に同じ処理を繰り返す | `for (const enemy of enemies)` |
-| **`random(a, b)`** | a〜bの間のランダムな値 | 敵の位置や速度 |
-| **距離計算** | 2点間の距離を計算する | `dist()` 関数 |
-| **当たり判定** | 2つのオブジェクトが衝突しているか判定する | プレイヤーと敵の距離 |
-| **スコア** | ゲーム中の得点 | 敵が画面を通り過ぎるたびに+1 |
+| 用語               | 意味                                      | このゲームでの例               |
+| ------------------ | ----------------------------------------- | ------------------------------ |
+| **配列**           | 複数の値をまとめて保存する仕組み          | `enemies = []`                 |
+| **要素**           | 配列の中の1つの値                         | `enemies[0]` — 最初の敵        |
+| **ループ**         | 複数の値に同じ処理を繰り返す              | `for (const enemy of enemies)` |
+| **`random(a, b)`** | a〜bの間のランダムな値                    | 敵の位置や速度                 |
+| **距離計算**       | 2点間の距離を計算する                     | `dist()` 関数                  |
+| **当たり判定**     | 2つのオブジェクトが衝突しているか判定する | プレイヤーと敵の距離           |
+| **スコア**         | ゲーム中の得点                            | 敵が画面を通り過ぎるたびに+1   |
 
 ---
 
@@ -478,6 +481,7 @@ gameState = "end"
 **ヒント：** `startGame()` 関数の `enemyCount` を見てください。
 
 **選択肢：**
+
 - A. 1個
 - B. 2個
 - C. 3個
@@ -489,6 +493,7 @@ gameState = "end"
 敵が画面の下を通り過ぎたとき、どうなりますか？
 
 **選択肢：**
+
 - A. 敵が削除される
 - B. 敵がリセットされて、画面の上の外から再び落ちてくる
 - C. 画面の下の外に留まったままになる
@@ -502,6 +507,7 @@ gameState = "end"
 **ヒント：** `playerSize / 2 + enemySize / 2` を計算してください。
 
 **選択肢：**
+
 - A. 20
 - B. 35
 - C. 37.5
@@ -513,6 +519,7 @@ gameState = "end"
 スコアが+1される場合はいつですか？
 
 **選択肢：**
+
 - A. 敵を避けるたびに
 - B. 敵が画面を通り過ぎるたびに
 - C. 敵とプレイヤーが衝突したとき
@@ -540,4 +547,3 @@ gameState = "end"
 次は、**レッスン5『改造ミッションの指導』** です。
 
 参加者が実際に行う改造ミッションを、難易度ごとに分析し、コーチが生徒をサポートする方法を学びます。
-

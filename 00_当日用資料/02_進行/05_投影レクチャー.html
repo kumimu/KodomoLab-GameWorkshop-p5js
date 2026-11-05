@@ -1,0 +1,51 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>投影レクチャー</title><style>*{box-sizing:border-box}body{margin:0;background:#101a30;color:white;font-family:'Hiragino Sans','Yu Gothic',sans-serif}.slide{display:none;min-height:90vh;padding:5vh 6vw}.slide.active{display:block}.time{font-size:2vw;color:#82e8de}h1{font-size:4.1vw;line-height:1.4;margin:3vh 0 6vh}p{font-size:2.65vw;line-height:1.6;white-space:pre-line}pre{font-size:2.35vw;color:#ffe5a3;white-space:pre-wrap;line-height:1.6}nav{position:fixed;bottom:0;left:0;width:100%;display:flex;justify-content:center;align-items:center;gap:25px;background:#101a30;padding:12px}button{font-size:18px;padding:8px 20px;border:1px solid #82e8de;background:#101a30;color:white;cursor:pointer}button:disabled{opacity:.4}#count{font-size:18px}@media print{nav{display:none}.slide{display:block;page-break-after:always;min-height:0;height:180mm}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4 landscape;margin:10mm}}.tableSlide h1{margin-bottom:2vh}.tableSlide table{width:100%;border-collapse:collapse;font-size:2vw;line-height:1.3}.tableSlide td,.tableSlide th{border:1px solid #30465d;text-align:left;padding:5px 12px}.tableSlide th{background:#203a51}.tableSlide .today{background:#153d43}.tableSlide .caption{font-size:2vw;color:#82e8de;margin-top:3vh}.tableSlide h1{margin-bottom:2vh}.tableSlide table{width:100%;border-collapse:collapse;font-size:2vw;line-height:1.3}.tableSlide td,.tableSlide th{border:1px solid #30465d;text-align:left;padding:5px 12px}.tableSlide th{background:#203a51}.tableSlide .today{background:#153d43}.tableSlide .caption{font-size:2vw;color:#82e8de;margin-top:3vh}.tableSlide h1{margin-bottom:2vh}.tableSlide table{width:100%;border-collapse:collapse;font-size:2vw;line-height:1.3}.tableSlide td,.tableSlide th{border:1px solid #30465d;text-align:left;padding:5px 12px}.tableSlide th{background:#203a51}.tableSlide .today{background:#153d43}.tableSlide .caption{font-size:2vw;color:#82e8de;margin-top:3vh}</style><section class="slide active"><div class="time">S01　0:00–0:05　｜生徒アジェンダ／テキストT01</div><h1>自分だけの避けゲーム</h1><p>1つ変えて、ほかの参加者に遊んでもらう。
+最後は作品を保存して持ち帰ります。</p></section><section class="slide "><div class="time">S02　0:00–0:05　｜生徒アジェンダ／テキストT01</div><h1>今日の90分</h1><p>試遊→15分の基礎練習→コード全体の地図。
+35分から好きな機能を実装します。
+60分から確認、試遊、共有、保存。</p></section><section class="slide "><div class="time">S03　0:05–0:10　｜生徒テキストT02／ノートN01</div><h1>まずはゲームを体験</h1><p>1・2・3で難易度を選び、左右キーで移動。
+終了後はSpaceで開始画面へ。
+操作とゲームの動きを確かめ、ノートN01へ。</p></section><section class="slide "><div class="time">S04　0:10–0:12　｜生徒テキストT03／ノートN02</div><h1>基礎練習の画面</h1><p>ワーク用のJS_15分入門でpractice.jsを編集。
+保存したら、Chromeの練習画面を更新。</p><pre>let playerSize = 40;
+let playerColor = &quot;cyan&quot;;
+let gameTitle = &quot;わたしのゲーム&quot;;</pre></section><section class="slide "><div class="time">S05　0:12–0:15　｜生徒テキストT03／ノートN02</div><h1>数値と大きさ</h1><p>40を80にしたら、どうなるでしょう。
+予想して変更し、保存→Chrome更新で確認。
+20でも試してみましょう。</p><pre>let playerSize = 40;</pre></section><section class="slide "><div class="time">S06　0:15–0:18　｜生徒テキストT03／ノートN02</div><h1>色と文字列</h1><p>cyanをyellowに変更します。
+引用符は残します。
+文字列は半角の引用符で囲みます。</p><pre>let playerColor = &quot;cyan&quot;;</pre></section><section class="slide "><div class="time">S07　0:18–0:20　｜生徒テキストT03／ノートN02</div><h1>自分のタイトル</h1><p>引用符の内側を、自分の言葉に変更。
+半角の引用符は残しましょう。</p><pre>let gameTitle = &quot;わたしのゲーム&quot;;</pre></section><section class="slide "><div class="time">S08　0:20–0:23　｜生徒テキストT03／ノートN02</div><h1>変数の名前と値</h1><p>playerSizeは変数の名前、80は値。
+円の大きさに、その値を使います。</p><pre>let playerSize = 80;
+circle(200, 150, playerSize);</pre></section><section class="slide "><div class="time">S09　0:23–0:25　｜生徒テキストT03／ノートN02</div><h1>確認クイズ</h1><p>円を大きく、青くするには？
+100と&quot;blue&quot;に変えて確認します。
+発見をノートN02へ。</p><pre>let playerSize = 40;
+let playerColor = &quot;cyan&quot;;</pre></section><section class="slide "><div class="time">S10　0:25–0:26　｜生徒テキストT04前半</div><h1>ゲームが動くまで</h1><p>index.html：ブラウザが開く入口。
+p5.min.js：描画と入力を助ける道具。
+sketch.js：自分のゲームの動き。
+HTMLはp5.js→ゲーム本体の順に読み込む。</p></section><section class="slide "><div class="time">S11　0:26–0:27　｜生徒テキストT04前半</div><h1>準備と、画面を描く繰り返し</h1><p>setup()は最初に1回、画面を用意。
+draw()は繰り返し、背景を描き直す。
+gameStateでstart・play・endを切り替える。
+playGame()が移動・描画・判定を進める。</p></section><section class="slide "><div class="time">S12　0:27–0:28:30　｜生徒テキストT04前半</div><h1>変数・敵の一覧・1体の情報</h1><p>変数は今の値を記録します。
+enemiesは敵の一覧、enemyはその中の1体。
+forで一覧を順に調べ、x・y・speedを使う。</p><pre>let enemies = [];
+const enemy = { x: 200, y: 100, speed: 4 };</pre></section><section class="slide "><div class="time">S13　0:28:30–0:30　｜生徒テキストT04前半</div><h1>位置を変え、当たったか調べる</h1><p>左右はx、落下はyの値を変えます。
+constrainは画面の端で止める処理。
+isHitは距離を調べ、当たればendへ。</p><pre>playerX += playerSpeed;
+enemy.y += enemy.speed;</pre></section><section class="slide "><div class="time">S14　0:30–0:32　｜生徒テキストT04前半</div><h1>IDごとに機能を登録する</h1><p>registerWorkshopOption(&quot;B&quot;, {...})で登録。
+A・B・G・H・MはIDごとに別々に保存。
+次の機能は、同じ欄の下へ追加します。
+this.bulletsはB専用の弾の一覧。
+本体が登録済みの各機能を順に呼びます。</p></section><section class="slide "><div class="time">S15　0:32–0:35　｜生徒テキストT04後半</div><h1>本体の色を変えて確かめる</h1><p>ワーク用のsketch.jsでCUSTOM AREAを開きます。
+cyanをyellowへ変更。
+保存して、ワーク用のゲームを更新します。</p><pre>let playerColor = &quot;yellow&quot;;</pre></section><section class="slide tableSlide "><div class="time">S16　0:35–0:36　｜生徒テキストT05／課題一覧</div><h1>改造テーマ A〜F</h1><table><thead><tr><th>記号</th><th>機能</th><th>本日の改造対象</th></tr></thead><tbody><tr class="today"><td>A</td><td>敵の多様化</td><td>○</td></tr><tr class="today"><td>B</td><td>射撃機能</td><td>○</td></tr><tr class=""><td>C</td><td>パワーアップシステム</td><td>ー</td></tr><tr class=""><td>D</td><td>ボスバトル</td><td>ー</td></tr><tr class=""><td>E</td><td>ステージシステム</td><td>ー</td></tr><tr class=""><td>F</td><td>隠しコマンド</td><td>ー</td></tr></tbody></table><p class="caption">本日は「○」の5テーマから選びます。「ー」も持ち帰る完成版で自宅で改造できます。</p></section><section class="slide tableSlide "><div class="time">S17　0:36–0:37　｜生徒テキストT05／課題一覧</div><h1>改造テーマ G〜N</h1><table><thead><tr><th>記号</th><th>機能</th><th>本日の改造対象</th></tr></thead><tbody><tr class="today"><td>G</td><td>BGMのカスタマイズ</td><td>○</td></tr><tr class="today"><td>H</td><td>ビジュアルカスタマイズ</td><td>○</td></tr><tr class=""><td>I</td><td>効果音の追加</td><td>ー</td></tr><tr class=""><td>J</td><td>パーティクル効果</td><td>ー</td></tr><tr class=""><td>K</td><td>コンボシステム</td><td>ー</td></tr><tr class=""><td>L</td><td>難易度調整</td><td>ー</td></tr><tr class="today"><td>M</td><td>スコアシステムの工夫</td><td>○</td></tr><tr class=""><td>N</td><td>ボーナスステージ</td><td>ー</td></tr></tbody></table><p class="caption">本日は「○」の5テーマから選びます。「ー」も持ち帰る完成版で自宅で改造できます。</p></section><section class="slide "><div class="time">S18　0:35–0:55　｜生徒テキストT05／ノートN03</div><h1>まず1つ、できたら次の機能へ</h1><p>A 敵　B 射撃　G BGM　H 見た目　M スコア
+まず1つを動かし、できたら次の機能へ。
+同じ欄へ追加して、一緒に動くか確かめる。</p></section><section class="slide "><div class="time">S19　0:35–0:55　｜生徒テキストT05／ノートN03</div><h1>コピーして虫食いを埋める</h1><p>ワーク用のsketch.js末尾の共通欄へ貼る。
+課題ページのヒントで虫食いを埋める。
+保存し、ワーク用のゲームを更新します。</p></section><section class="slide "><div class="time">S20　0:55–1:00　｜生徒テキストT06／ノートN03</div><h1>仕上げの5分</h1><p>新しい改造を止め、ワーク用を保存。
+動かないときは直前の変更を確認。
+講師とオリジナルを見比べて直します。</p></section><section class="slide "><div class="time">S21　1:00–1:10　｜生徒テキストT07／ノートN04</div><h1>動作確認</h1><p>開始、移動、改造箇所、終了と再開。
+ノートN04で確認します。
+試していないことも書いておきましょう。</p></section><section class="slide "><div class="time">S22　1:10–1:20　｜生徒テキストT08</div><h1>入れ替えプレイ</h1><p>近くの参加者と席を入れ替えます。
+お互いの作品を遊びましょう。
+終了の案内で、自分の席へ戻ります。</p></section><section class="slide "><div class="time">S23　1:20–1:25　｜生徒テキストT09</div><h1>今日の発見</h1><p>私は○○を変えました。
+△△になると思ったら、実際には□□でした。
+全体共有は希望者2～3名です。</p></section><section class="slide "><div class="time">S24　1:25–1:30　｜生徒テキストT10／ノートN06</div><h1>保存して持ち帰る</h1><p>ワーク用フォルダ全体をUSBへコピー。
+USB内のindex.htmlで作品を確認。
+保存先をノートに書いて持ち帰ります。</p></section><nav><button id="prev">前へ</button><span id="count"></span><button id="next">次へ</button></nav><script>let i=0;const s=[...document.querySelectorAll('.slide')];function show(){s.forEach((e,n)=>e.classList.toggle('active',n===i));document.getElementById('count').textContent=(i+1)+' / '+s.length;document.getElementById('prev').disabled=i===0;document.getElementById('next').disabled=i===s.length-1;}document.getElementById('prev').onclick=()=>{if(i>0)i--;show()};document.getElementById('next').onclick=()=>{if(i<s.length-1)i++;show()};show();</script></html>
