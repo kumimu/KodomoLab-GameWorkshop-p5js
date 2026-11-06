@@ -1,6 +1,6 @@
 # OPTION G　BGMの追加
 
-ゲームの開始に合わせて短いメロディを鳴らします。プレイ中にMキーでオン・オフできます。ヘッドホンを使い、音量を小さくして始めます。
+ゲームの開始に合わせて短いメロディを鳴らします。プレイ中にMキーでオン・オフできます。音量を小さくして始めます。
 
 [音名の早見表へ](#notes) ／ [貼り付け手順へ](#steps) ／ [空欄の説明へ](#holes)
 
@@ -207,7 +207,7 @@ registerWorkshopOption("G", {
 
 <ul class="operation-checks">
 <li><label><input type="checkbox"><span>開始キーでBGMが鳴り、Mで切り替えられる。</span></label></li>
-<li><label><input type="checkbox"><span>音程や間隔の変更を確認できる。ヘッドホンを使う。</span></label></li>
+<li><label><input type="checkbox"><span>音程や間隔の変更を確認できる。</span></label></li>
 <li><label><input type="checkbox"><span>終了後は新しい音が鳴らず、再開で最初の音へ戻る。最後の音は約0.13秒で消える。</span></label></li>
 </ul>
 
@@ -220,7 +220,7 @@ registerWorkshopOption("G", {
 
 ## 動いたら挑戦！ 自分のゲームに合うBGMのテンポを作ろう
 
-ここからは、自分のルールや見た目を作る時間です。3～5分を目安に進めます。比較する間はmelodyの音の並びを変えず、intervalだけを変えます。ヘッドホンで聴き比べます。
+ここからは、自分のルールや見た目を作る時間です。3～5分を目安に進めます。比較する間はmelodyの音の並びを変えず、intervalだけを変えます。小さい音量で聴き比べます。
 
 ### 1．予想クイズ：実行する前に考えよう
 
