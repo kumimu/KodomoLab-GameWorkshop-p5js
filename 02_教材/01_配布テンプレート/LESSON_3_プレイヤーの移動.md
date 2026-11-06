@@ -1,7 +1,12 @@
 # レッスン3：プレイヤーの移動
 
-コードの仕組みを詳しく読む資料です。授業では当日用テキストの全体像を確認してから改造します。コードの場所は関数名で探せます。実際に貼る機能コードは当日用の課題ページからコピーします。
+## 当日の使い方
 
+対応する時間帯は、**25～32分「ゲーム全体の仕組みを知る」の移動の説明**です。授業で画面共有する中心資料は[生徒用テキスト](../../00_当日用資料/01_生徒/02_ワークショップテキスト.html)です。このLESSONは、仕組みを詳しく読みたい人やコーチの参考用で、全編を投影して読む時間は設けません。
+
+10～25分はpractice.jsで数値・色・タイトル・変数を体験し、25～32分は生徒テキストの「ゲーム全体の地図」、32～35分はゲーム本体の色変更を扱います。必要なときだけ、この資料の該当箇所を補足に使います。
+
+「現在のコード」と示す例はシンプル版sketch.jsの対応する関数です。「抜粋」「考え方の例」は説明用で、そのまま本体へ追加するコードではありません。改造では既存の値を変更し、応用機能は[当日用の課題ページ](../../00_当日用資料/01_生徒/応用課題/00_課題の選び方.html)からコピーします。
 
 ## 🎯 学習目標
 
@@ -16,7 +21,7 @@
 
 ## 🎮 プレイヤーが「移動して見える」仕組み
 
-レッスン1で学んだとおり、ゲームは毎フレーム（1秒間に60回）、背景を消して新しい画像を描き直しています。
+レッスン1で学んだとおり、ゲームは毎フレーム（1秒間に約60回を目安に）、背景を消して新しい画像を描き直しています。
 
 **プレイヤーの移動も、これと同じです。**
 
@@ -65,15 +70,16 @@
 **`sketch.js` の対応箇所（関数名で検索）：**
 
 ```javascript
+// 【役割】キーに応じて自機を動かします。
 function movePlayer() {
-  if (keyIsDown(LEFT_ARROW)) playerX -= playerSpeed;
-  if (keyIsDown(RIGHT_ARROW)) playerX += playerSpeed;
+  if (keyIsDown(LEFT_ARROW)) {
+    playerX -= playerSpeed;
+  }
+  if (keyIsDown(RIGHT_ARROW)) {
+    playerX += playerSpeed;
+  }
 
-  playerX = constrain(
-    playerX,
-    playerSize / 2,
-    width - playerSize / 2
-  );
+  playerX = constrain(playerX, playerSize / 2, width - playerSize / 2);
 }
 ```
 
@@ -89,7 +95,9 @@ function movePlayer() {
 ### 左矢印キーが押された場合
 
 ```javascript
-if (keyIsDown(LEFT_ARROW)) playerX -= playerSpeed;
+if (keyIsDown(LEFT_ARROW)) {
+  playerX -= playerSpeed;
+}
 ```
 
 このコードを読む：
@@ -109,7 +117,9 @@ playerX -= 7;  // playerX = 300 - 7 = 293
 ### 右矢印キーが押された場合
 
 ```javascript
-if (keyIsDown(RIGHT_ARROW)) playerX += playerSpeed;
+if (keyIsDown(RIGHT_ARROW)) {
+  playerX += playerSpeed;
+}
 ```
 
 このコードを読む：
@@ -130,27 +140,23 @@ playerX += 7;  // playerX = 300 + 7 = 307
 
 ## 🔄 毎フレーム何が起こるのか
 
-**レッスン1で学んだゲームループを思い出してください。**
+**レッスン1で学んだゲームループを思い出してください。** 次は移動と描画だけに絞った説明用の抜粋です。開始・終了画面やその他の処理を省略しているので、本体の関数全体とは区別して読みます。
 
 ```javascript
+// 【役割】プレイ中の描画を呼ぶ部分だけを示す、説明用の抜粋です。
 function draw() {
   background(backgroundColor);
-
   if (gameState === "play") {
     playGame();
   }
 }
 
+// 【役割】移動してから描く順序を示します。他の処理は省略しています。
 function playGame() {
-  drawGameInfo(remaining);
-  movePlayer();           // ← ここで移動が計算される
-  drawPlayer();           // ← ここで新しい位置に描かれる
-  
-  for (const enemy of enemies) {
-    moveEnemy(enemy);
-    drawEnemy(enemy);
-    if (isHit(enemy)) { ... }
-  }
+  movePlayer();
+  // 本体では、この間に追加機能の更新と情報表示があります。
+  drawPlayer();
+  // 時間判定、追加の描画、敵の処理はここでは省略しています。
 }
 ```
 
@@ -173,10 +179,16 @@ function playGame() {
 もし `constrain()` がなければ、こうなります：
 
 ```javascript
+// 【役割】キーに応じて自機を動かします。
 function movePlayer() {
-  if (keyIsDown(LEFT_ARROW)) playerX -= playerSpeed;
-  if (keyIsDown(RIGHT_ARROW)) playerX += playerSpeed;
-  // constrain()がない！
+  if (keyIsDown(LEFT_ARROW)) {
+    playerX -= playerSpeed;
+  }
+  if (keyIsDown(RIGHT_ARROW)) {
+    playerX += playerSpeed;
+  }
+
+  playerX = constrain(playerX, playerSize / 2, width - playerSize / 2);
 }
 ```
 
@@ -256,7 +268,7 @@ playerX = constrain(
 
 プレイヤーは三角形で、中心が `(playerX, playerY)` です。
 
-三角形の半径は `playerSize / 2` なので、
+三角形の横幅の半分は `playerSize / 2` なので、
 
 - プレイヤーの左端 = `playerX - playerSize / 2` = `20 - 20` = `0`（画面の左端）
 - プレイヤーの右端 = `playerX + playerSize / 2` = `580 + 20` = `600`（画面の右端）
@@ -280,7 +292,9 @@ playerSpeed = 7
 **フレーム1：**
 
 ```javascript
-if (keyIsDown(LEFT_ARROW)) playerX -= 7;  // playerX = 300 - 7 = 293
+if (keyIsDown(LEFT_ARROW)) {
+  playerX -= 7; // playerX = 300 - 7 = 293
+}
 playerX = constrain(293, 20, 580);        // 293は範囲内なので変わらない
 // playerX = 293
 ```
@@ -288,7 +302,9 @@ playerX = constrain(293, 20, 580);        // 293は範囲内なので変わら�
 **フレーム2：**
 
 ```javascript
-if (keyIsDown(LEFT_ARROW)) playerX -= 7;  // playerX = 293 - 7 = 286
+if (keyIsDown(LEFT_ARROW)) {
+  playerX -= 7; // playerX = 293 - 7 = 286
+}
 playerX = constrain(286, 20, 580);        // 286は範囲内
 // playerX = 286
 ```
@@ -296,7 +312,9 @@ playerX = constrain(286, 20, 580);        // 286は範囲内
 **フレーム3：**
 
 ```javascript
-if (keyIsDown(LEFT_ARROW)) playerX -= 7;  // playerX = 286 - 7 = 279
+if (keyIsDown(LEFT_ARROW)) {
+  playerX -= 7; // playerX = 286 - 7 = 279
+}
 playerX = constrain(279, 20, 580);        // 279は範囲内
 // playerX = 279
 ```
@@ -308,7 +326,9 @@ playerX = constrain(279, 20, 580);        // 279は範囲内
 プレイヤーが左端に近づいて、`playerX = 25` の状態で、さらに左矢印を押した場合：
 
 ```javascript
-if (keyIsDown(LEFT_ARROW)) playerX -= 7;  // playerX = 25 - 7 = 18
+if (keyIsDown(LEFT_ARROW)) {
+  playerX -= 7; // playerX = 25 - 7 = 18
+}
 playerX = constrain(18, 20, 580);         // 18 < 20 なので、20に制限される
 // playerX = 20（画面の端で止まる）
 ```
@@ -316,7 +336,9 @@ playerX = constrain(18, 20, 580);         // 18 < 20 なので、20に制限さ�
 次のフレーム：
 
 ```javascript
-if (keyIsDown(LEFT_ARROW)) playerX -= 7;  // playerX = 20 - 7 = 13
+if (keyIsDown(LEFT_ARROW)) {
+  playerX -= 7; // playerX = 20 - 7 = 13
+}
 playerX = constrain(13, 20, 580);         // 13 < 20 なので、20に制限
 // playerX = 20（そのまま）
 ```
@@ -345,7 +367,7 @@ playerX = constrain(13, 20, 580);         // 13 < 20 なので、20に制限
 
 ### ゲーム画面全体の幅
 
-```javascript
+```text
 width = 600ピクセル
 ```
 
@@ -398,7 +420,9 @@ width = 600ピクセル
 ### 演習1：このコードは何をしている？
 
 ```javascript
-if (keyIsDown(RIGHT_ARROW)) playerX += playerSpeed;
+if (keyIsDown(RIGHT_ARROW)) {
+  playerX += playerSpeed;
+}
 ```
 
 **答え：** 右矢印キーが押されていれば、プレイヤーを右に `playerSpeed` ピクセル移動させる。
@@ -415,8 +439,12 @@ playerX = constrain(playerX, playerSize / 2, width - playerSize / 2);
 
 ```javascript
 // constrain() がない場合
-if (keyIsDown(LEFT_ARROW)) playerX -= playerSpeed;
-if (keyIsDown(RIGHT_ARROW)) playerX += playerSpeed;
+if (keyIsDown(LEFT_ARROW)) {
+  playerX -= playerSpeed;
+}
+if (keyIsDown(RIGHT_ARROW)) {
+  playerX += playerSpeed;
+}
 ```
 
 **答え：** プレイヤーが画面外に移動してしまい、見えなくなる可能性がある。

@@ -1,7 +1,14 @@
 # レッスン2：変数と設定値
 
-コードの仕組みを詳しく読む資料です。授業では当日用テキストの全体像を確認してから改造します。コードの場所は関数名で探せます。実際に貼る機能コードは当日用の課題ページからコピーします。
+## 当日の使い方
 
+対応する時間帯は、**10～25分「JavaScriptの基礎練習」と32～35分「ゲーム本体で最初の改造」**です。授業で画面共有する中心資料は[生徒用テキスト](../../00_当日用資料/01_生徒/02_ワークショップテキスト.html)です。このLESSONは、仕組みを詳しく読みたい人やコーチの参考用で、全編を投影して読む時間は設けません。
+
+10～25分はpractice.jsで数値・色・タイトル・変数を体験し、25～32分は生徒テキストの「ゲーム全体の地図」、32～35分はゲーム本体の色変更を扱います。必要なときだけ、この資料の該当箇所を補足に使います。
+
+「現在のコード」と示す例はシンプル版sketch.jsの対応する関数です。「抜粋」「考え方の例」は説明用で、そのまま本体へ追加するコードではありません。改造では既存の値を変更し、応用機能は[当日用の課題ページ](../../00_当日用資料/01_生徒/応用課題/00_課題の選び方.html)からコピーします。
+
+変更例で複数の値を並べている場合は候補の比較です。使う値を1つ選び、既存の設定行を書き換えます。新しい設定行を末尾へ追加しません。
 
 ## 🎯 学習目標
 
@@ -70,16 +77,19 @@ let playerColor = "cyan";
 
 ```javascript
 // 悪い例：色を書きまくる
+// 【役割】自機を画面へ描きます。
 function drawPlayer() {
   fill("cyan");
-  triangle(...);
+  // 三角形を描く座標の指定は、この説明例では省略しています。
 }
 
+// 【役割】開始画面のタイトルと案内を表示します。
 function showStartScreen() {
   fill("white");
   text("プレイヤーの色は、青です", width / 2, 100);
 }
 
+// 【役割】得点などのゲーム情報を描きます。
 function drawGameInfo() {
   fill("white");
   text("プレイヤーの色", 20, 28);  // ← またプレイヤーの色について書いてる
@@ -95,9 +105,10 @@ function drawGameInfo() {
 let playerColor = "cyan";
 
 // あとはこの変数を使うだけ
+// 【役割】自機を画面へ描きます。
 function drawPlayer() {
   fill(playerColor);
-  triangle(...);
+  // 三角形を描く座標の指定は、この説明例では省略しています。
 }
 
 // 色を変えたいときは、1行目だけを変更する
@@ -121,13 +132,19 @@ let playerColor = "cyan";
 **使われている場所：** `sketch.js` の対応箇所（関数名で検索）
 
 ```javascript
+// 【役割】自機を画面へ描きます。
 function drawPlayer() {
-  fill(playerColor);  // ← ここで使われている
+  // Hなどへ「自機を描く直前です」と伝え、光を先に描きます。
+  runOption("beforePlayer");
+  fill(playerColor);
   noStroke();
   triangle(
-    playerX, playerY - playerSize / 2,
-    playerX - playerSize / 2, playerY + playerSize / 2,
-    playerX + playerSize / 2, playerY + playerSize / 2
+    playerX,
+    playerY - playerSize / 2,
+    playerX - playerSize / 2,
+    playerY + playerSize / 2,
+    playerX + playerSize / 2,
+    playerY + playerSize / 2,
   );
 }
 ```
@@ -136,8 +153,8 @@ function drawPlayer() {
 
 ```javascript
 let playerColor = "lime";      // 緑色
-let playerColor = "#FF6B9D";   // ピンク色（16進数）
-let playerColor = "yellow";    // 黄色
+playerColor = "#FF6B9D";   // ピンク色（16進数）
+playerColor = "yellow";    // 黄色
 ```
 
 ---
@@ -148,13 +165,18 @@ let playerColor = "yellow";    // 黄色
 let enemyColor = "red";
 ```
 
-**役割：** 敵（円）の色を指定します。
+**役割：** 基本の敵（円）の色を指定します。現在のdrawEnemyは、追加機能が描画済みなら戻り、そうでなければoptionEnemyColorで色を決めて描きます。追加機能の色指定がなければ、このenemyColorを使います。
 
 **使われている場所：** `sketch.js` の対応箇所（関数名で検索）
 
 ```javascript
+// 【役割】敵の色と形を決めて描きます。
 function drawEnemy(enemy) {
-  fill(enemyColor);  // ← ここで使われている
+  // Hがtrue（描画済み）を返したら、下にある通常の円は描きません。
+  if (runOption("drawEnemy", enemy) === true) {
+    return;
+  }
+  fill(optionEnemyColor(enemy));
   noStroke();
   circle(enemy.x, enemy.y, enemySize);
 }
@@ -164,8 +186,8 @@ function drawEnemy(enemy) {
 
 ```javascript
 let enemyColor = "orange";     // オレンジ
-let enemyColor = "#00D9FF";    // シアン色
-let enemyColor = "purple";     // 紫
+enemyColor = "#00D9FF";    // シアン色
+enemyColor = "purple";     // 紫
 ```
 
 ---
@@ -181,6 +203,7 @@ let backgroundColor = "black";
 **使われている場所：** `sketch.js` の対応箇所（関数名で検索）（毎フレーム）
 
 ```javascript
+// 【役割】画面を描き直し、現在の状態に応じた処理を呼びます。
 function draw() {
   background(backgroundColor);  // ← ここで使われている
   
@@ -195,8 +218,8 @@ function draw() {
 
 ```javascript
 let backgroundColor = "navy";   // 濃い青
-let backgroundColor = "#1a1a2e"; // 暗い紫（16進数）
-let backgroundColor = "white";   // 白（見えにくくなる可能性）
+backgroundColor = "#1a1a2e"; // 暗い紫（16進数）
+backgroundColor = "white";   // 白（見えにくくなる可能性）
 ```
 
 ---
@@ -212,15 +235,16 @@ let playerSize = 40;
 **使われている場所：** `sketch.js` の対応箇所（関数名で検索）の `drawPlayer()` と、156行目の `movePlayer()`
 
 ```javascript
+// 【役割】キーに応じて自機を動かします。
 function movePlayer() {
-  if (keyIsDown(LEFT_ARROW)) playerX -= playerSpeed;
-  if (keyIsDown(RIGHT_ARROW)) playerX += playerSpeed;
+  if (keyIsDown(LEFT_ARROW)) {
+    playerX -= playerSpeed;
+  }
+  if (keyIsDown(RIGHT_ARROW)) {
+    playerX += playerSpeed;
+  }
 
-  playerX = constrain(
-    playerX,
-    playerSize / 2,          // ← ここで使われている（左の端）
-    width - playerSize / 2   // ← ここで使われている（右の端）
-  );
+  playerX = constrain(playerX, playerSize / 2, width - playerSize / 2);
 }
 ```
 
@@ -229,8 +253,8 @@ function movePlayer() {
 **変更例：**
 
 ```javascript
-let playerSize = 60;  // 大きくなる（移動が楽になる）
-let playerSize = 20;  // 小さくなる（難しくなる）
+let playerSize = 60;  // 大きくなる（当たりやすくなる）
+playerSize = 20;  // 小さくなる（当たりにくくなる）
 ```
 
 ---
@@ -246,6 +270,7 @@ let enemySize = 35;
 **使われている場所：** `sketch.js` の対応箇所（関数名で検索）の `drawEnemy()` と、当たり判定
 
 ```javascript
+// 【役割】自機と敵の距離で衝突を調べます。
 function isHit(enemy) {
   const distance = dist(playerX, playerY, enemy.x, enemy.y);
   return distance < playerSize / 2 + enemySize / 2;  // ← ここで使われている
@@ -260,7 +285,7 @@ function isHit(enemy) {
 
 ```javascript
 let enemySize = 50;  // 大きくなる（当たりやすくなる、難しくなる）
-let enemySize = 20;  // 小さくなる（当たりにくくなる、簡単になる）
+enemySize = 20;  // 小さくなる（当たりにくくなる、簡単になる）
 ```
 
 ---
@@ -276,9 +301,14 @@ let playerSpeed = 7;
 **使われている場所：** `sketch.js` の対応箇所（関数名で検索）
 
 ```javascript
+// 【役割】キーに応じて自機を動かします。
 function movePlayer() {
-  if (keyIsDown(LEFT_ARROW)) playerX -= playerSpeed;  // ← ここで使われている
-  if (keyIsDown(RIGHT_ARROW)) playerX += playerSpeed; // ← ここで使われている
+  if (keyIsDown(LEFT_ARROW)) {
+    playerX -= playerSpeed;
+  }
+  if (keyIsDown(RIGHT_ARROW)) {
+    playerX += playerSpeed;
+  }
 
   playerX = constrain(playerX, playerSize / 2, width - playerSize / 2);
 }
@@ -292,7 +322,7 @@ function movePlayer() {
 
 ```javascript
 let playerSpeed = 10;  // 速くなる（移動が楽になる、簡単）
-let playerSpeed = 3;   // 遅くなる（難しくなる）
+playerSpeed = 3;   // 遅くなる（難しくなる）
 ```
 
 **重要：** このゲームでは、敵の速度（`enemySpeed`）は難易度ごとに異なります。レッスン4で詳しく説明します。
@@ -310,6 +340,7 @@ let gameTitle = "隕石をよけろ！";
 **使われている場所：** `sketch.js` の対応箇所（関数名で検索）
 
 ```javascript
+// 【役割】開始画面のタイトルと案内を表示します。
 function showStartScreen() {
   fill("white");
   textAlign(CENTER);
@@ -327,8 +358,8 @@ function showStartScreen() {
 
 ```javascript
 let gameTitle = "宇宙を守れ！";
-let gameTitle = "敵戦闘機を避けろ！";
-let gameTitle = "My Game";
+gameTitle = "敵戦闘機を避けろ！";
+gameTitle = "My Game";
 ```
 
 ---
@@ -365,7 +396,7 @@ let backgroundColor = "black";
 
 全ての色名は、p5.js公式ドキュメント（Color Reference）に載っています。
 
-https://p5js.org/reference/#/p5/color
+https://v1.p5js.org/reference/#/p5/color
 
 ### 方法2：16進数（ヘックスカラー）
 
@@ -385,7 +416,7 @@ let backgroundColor = "#1a1a2e"; // 暗い紫
 
 **例：**
 
-```javascript
+```text
 #FF0000  // 赤（赤100%、緑0%、青0%）
 #00FF00  // 緑
 #0000FF  // 青
@@ -398,11 +429,11 @@ let backgroundColor = "#1a1a2e"; // 暗い紫
 ### 方法3：RGB値
 
 ```javascript
-let playerColor = rgb(255, 107, 157);  // ピンク
-let enemyColor = rgb(0, 217, 255);     // シアン
+let playerColor = "rgb(255, 107, 157)";  // ピンク
+let enemyColor = "rgb(0, 217, 255)";     // シアン
 ```
 
-RGB値は、赤・緑・青の3つの値（各0〜255）で色を指定します。
+RGB値は、赤・緑・青の3つの値（各0〜255）で色を指定します。この例はCSSの色指定を文字列で渡すため、rgb(...)全体を引用符で囲みます。rgbという関数を呼び出す書き方ではありません。
 
 ---
 
@@ -442,7 +473,7 @@ let gameTitle = "敵を避けまくれ！";  // タイトル変更
 
 ---
 
-### 例2：難易度を易しくする
+### 例2：サイズと速さを比べる（考え方の例）
 
 **変更後：**
 
@@ -521,15 +552,16 @@ playerY = height - 55;    // 画面の下から少し上 = 345
 **`movePlayer()` 関数（156行目）：**
 
 ```javascript
+// 【役割】キーに応じて自機を動かします。
 function movePlayer() {
-  if (keyIsDown(LEFT_ARROW)) playerX -= playerSpeed;   // 左矢印キーが押されている
-  if (keyIsDown(RIGHT_ARROW)) playerX += playerSpeed;  // 右矢印キーが押されている
+  if (keyIsDown(LEFT_ARROW)) {
+    playerX -= playerSpeed;
+  }
+  if (keyIsDown(RIGHT_ARROW)) {
+    playerX += playerSpeed;
+  }
 
-  playerX = constrain(
-    playerX,
-    playerSize / 2,
-    width - playerSize / 2
-  );
+  playerX = constrain(playerX, playerSize / 2, width - playerSize / 2);
 }
 ```
 

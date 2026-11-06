@@ -1,6 +1,12 @@
 # レッスン4：敵と当たり判定
 
-コードの仕組みを詳しく読む資料です。授業では当日用テキストの全体像を確認してから改造します。コードの場所は関数名で探せます。実際に貼る機能コードは当日用の課題ページからコピーします。
+## 当日の使い方
+
+対応する時間帯は、**25～32分「ゲーム全体の仕組みを知る」の敵・当たり判定の説明**です。授業で画面共有する中心資料は[生徒用テキスト](../../00_当日用資料/01_生徒/02_ワークショップテキスト.html)です。このLESSONは、仕組みを詳しく読みたい人やコーチの参考用で、全編を投影して読む時間は設けません。
+
+10～25分はpractice.jsで数値・色・タイトル・変数を体験し、25～32分は生徒テキストの「ゲーム全体の地図」、32～35分はゲーム本体の色変更を扱います。必要なときだけ、この資料の該当箇所を補足に使います。
+
+「現在のコード」と示す例はシンプル版sketch.jsの対応する関数です。「抜粋」「考え方の例」は説明用で、そのまま本体へ追加するコードではありません。改造では既存の値を変更し、応用機能は[当日用の課題ページ](../../00_当日用資料/01_生徒/応用課題/00_課題の選び方.html)からコピーします。
 
 ## 🎯 学習目標
 
@@ -35,19 +41,20 @@ let enemies = []; // 敵の配列（最初は空）
 **`sketch.js` の対応箇所（関数名で検索）（`startGame()` 関数）：**
 
 ```javascript
+// 【役割】選んだ難易度でゲームを初期化して開始します。
 function startGame(level) {
   if (level === 1) {
-    difficultyName = 'かんたん';
+    difficultyName = "かんたん";
     enemySpeed = 4;
     enemyCount = 1;
     clearTime = 30;
   } else if (level === 2) {
-    difficultyName = 'ふつう';
+    difficultyName = "ふつう";
     enemySpeed = 6;
     enemyCount = 2;
     clearTime = 45;
   } else {
-    difficultyName = 'むずかしい';
+    difficultyName = "むずかしい";
     enemySpeed = 8;
     enemyCount = 3;
     clearTime = 60;
@@ -57,8 +64,8 @@ function startGame(level) {
   playerY = height - 55;
   score = 0;
   startTime = millis();
-  resultText = '';
-  enemies = []; // ← 敵の配列をリセット
+  resultText = "";
+  enemies = [];
 
   for (let i = 0; i < enemyCount; i++) {
     enemies.push({
@@ -68,7 +75,11 @@ function startGame(level) {
     });
   }
 
-  gameState = 'play';
+  runOption("start");
+  for (const enemy of enemies) {
+    runOption("spawnEnemy", enemy);
+  }
+  gameState = "play";
 }
 ```
 
@@ -85,11 +96,11 @@ function startGame(level) {
 各敵は、以下のデータを持ちます：
 
 ```javascript
-{
+const sampleEnemy = {
   x: random(enemySize, width - enemySize),  // 敵のX座標（ランダム）
   y: random(-300, -50),                     // 敵のY座標（画面上の外から出現）
   speed: enemySpeed + random(0, 2)          // 敵の速度（基本速度 + ランダム値）
-}
+};
 ```
 
 ### `random()` 関数とは
@@ -138,20 +149,33 @@ Y = 400   ← 画面の下端
 
 ## 🔄 敵の移動（落下）
 
-### `moveEnemy()` 関数
+### `moveEnemy()` と `respawnEnemy()`（現在のコード）
 
 **`sketch.js` の対応箇所（関数名で検索）：**
 
 ```javascript
+// 【役割】敵を動かし、通過したときの得点と再登場を処理します。
 function moveEnemy(enemy) {
-  enemy.y += enemy.speed;
-
+  // Aの① 本体から追加機能へ「この敵は何倍の速さ？」と聞きます。
+  const multiplier = runOption("speedMultiplier", enemy);
+  // Aの③ 返ってきた倍率を元の速さに掛けます。返事がなければ1倍です。
+  enemy.y += enemy.speed * (multiplier === undefined ? 1 : multiplier);
   if (enemy.y > height + enemySize) {
-    enemy.y = random(-300, -50);
-    enemy.x = random(enemySize, width - enemySize);
-    enemy.speed = enemySpeed + random(0, 2);
-    score += 1;
+    // 応用側で得点を計算した場合は、標準の1点を重ねて加えません。
+    // Mがtrue（計算済み）を返したら、標準の1点は重ねて足しません。
+    if (runOption("avoid", enemy) !== true) {
+      score += 1;
+    }
+    respawnEnemy(enemy);
   }
+}
+
+// 【役割】敵の位置・速さ・追加機能の情報を決め直します。
+function respawnEnemy(enemy) {
+  enemy.y = random(-300, -50);
+  enemy.x = random(enemySize, width - enemySize);
+  enemy.speed = enemySpeed + random(0, 2);
+  runOption("spawnEnemy", enemy);
 }
 ```
 
@@ -161,7 +185,7 @@ function moveEnemy(enemy) {
 enemy.y += enemy.speed;
 ```
 
-このコードは、毎フレーム敵のY座標を増やします。
+これは追加機能がない場合の考え方を示す1行です。現在の本体は、元の速さに追加機能から返された倍率（未指定なら1）を掛け、毎フレーム敵のY座標を増やします。
 
 **敵のY座標が増える = 画面の下へ移動する**
 
@@ -172,27 +196,28 @@ enemy.y += enemy.speed;
 フレーム2：enemy.y = -44 + 6 = -38
 フレーム3：enemy.y = -38 + 6 = -32
 ...
-フレーム100：enemy.y = 550
+フレーム80：enemy.y = 430
+フレーム81：enemy.y = 436になり、435を超えるので再登場の処理へ
 ```
 
 敵が画面に見えるようになり、下へ落ちていきます。
 
 ### 敵が画面の下を通り過ぎた場合
 
+現在のmoveEnemyの該当部分です。
+
 ```javascript
 if (enemy.y > height + enemySize) {
-  enemy.y = random(-300, -50);
-  enemy.x = random(enemySize, width - enemySize);
-  enemy.speed = enemySpeed + random(0, 2);
-  score += 1; // ← スコア加算
+  if (runOption("avoid", enemy) !== true) {
+    score += 1;
+  }
+  respawnEnemy(enemy);
 }
 ```
 
-敵が画面の下を完全に通り過ぎると（`enemy.y > 400 + 35 = 435`）、敵が画面の上の外に戻ります。
+敵が画面の下を完全に通り過ぎると（enemy.y > 400 + 35、つまり435）、追加機能が得点を計算していなければ1点を足します。その後、respawnEnemyが敵の位置と速さを決め直し、追加機能へ登場を知らせます。
 
-**つまり、敵は無限に再利用される** — 新しい敵を作るのではなく、既存の敵をリサイクルします。
-
-**スコア加算：** 敵が画面を通り過ぎるたびに、`score += 1` でスコアが1増えます。
+新しい敵へ入れ替えるのではなく、同じ敵の情報を書き換えて再利用します。追加機能がない初期状態では、画面下を通過するたびに1点です。
 
 ### 敵の速度のランダム化
 
@@ -221,6 +246,7 @@ enemy.speed = enemySpeed + random(0, 2);
 **`sketch.js` の対応箇所（関数名で検索）：**
 
 ```javascript
+// 【役割】自機と敵の距離で衝突を調べます。
 function isHit(enemy) {
   const distance = dist(playerX, playerY, enemy.x, enemy.y);
   return distance < playerSize / 2 + enemySize / 2;
@@ -320,28 +346,29 @@ playerSize / 2 + enemySize / 2 = 20 + 17.5 = 37.5
 **`sketch.js` の対応箇所（関数名で検索）（`playGame()` 関数）：**
 
 ```javascript
+// 【役割】プレイ中の移動・描画・判定を進めます。
 function playGame() {
   const elapsed = floor((millis() - startTime) / 1000);
   const remaining = clearTime - elapsed;
-
   if (remaining <= 0) {
-    resultText = 'CLEAR!';
-    gameState = 'end';
+    resultText = "CLEAR!";
+    gameState = "end";
     return;
   }
 
-  drawGameInfo(remaining);
   movePlayer();
+  // Bの弾移動、Gの音の時刻、Mのコンボ期限などを、各update関数で確かめます。
+  runOption("update"); // 選んだ機能を更新します。未選択なら何もしません。
+  drawGameInfo(remaining);
   drawPlayer();
-
+  // Bなどのdraw関数を呼び、追加した弾を画面へ描きます。
+  runOption("draw");
   for (const enemy of enemies) {
-    moveEnemy(enemy); // ① 敵を移動
-    drawEnemy(enemy); // ② 敵を描く
-
+    moveEnemy(enemy);
+    drawEnemy(enemy);
     if (isHit(enemy)) {
-      // ③ 衝突判定
-      resultText = 'GAME OVER';
-      gameState = 'end';
+      resultText = "GAME OVER";
+      gameState = "end";
       return;
     }
   }
@@ -367,94 +394,23 @@ return;
 
 ---
 
-## 📊 具体的な流れ（シミュレーション）
+## 📊 具体的な流れ（条件を揃えたシミュレーション）
 
-### 初期状態
+追加機能なし、キーを押さず、自機は(300, 345)のまま、playerSize = 40、enemySize = 35とします。敵1体の初期位置を(300, -100)、速さを5に固定して考えます。これは計算を追うための例で、実際の登場位置と速さは抽選されます。
 
-```javascript
-enemyCount = 2;
-enemies = [
-  { x: 150, y: -100, speed: 6.5 },
-  { x: 450, y: -200, speed: 5.8 },
-];
-```
+| 進んだフレーム | 敵のy | 自機との距離 | 判定 |
+|---|---:|---:|---|
+| 0 | -100 | 445 | 当たらない |
+| 1 | -95 | 440 | 当たらない |
+| 80 | 300 | 45 | 当たらない |
+| 81 | 305 | 40 | 当たらない |
+| 82 | 310 | 35 | 当たる |
 
-### フレーム1
+横の位置が同じなので、距離は縦の差だけです。衝突のしきい値は40 / 2 + 35 / 2 = 37.5。82フレーム目に35 < 37.5となり、ゲームが終了します。その先のフレームを計算し続ける例ではありません。
 
-```javascript
-// 敵1の処理
-moveEnemy(敵1)：
-  敵1.y = -100 + 6.5 = -93.5
+横にも差がある場合はdistで距離を調べます。例えば自機(300, 345)、敵(200, 400)なら、距離は約114.13です。37.5より大きいので、この座標では衝突しません。
 
-drawEnemy(敵1)：敵1を(150, -93.5)に描く
-
-isHit(敵1)：
-  distance = dist(300, 345, 150, -93.5) = 約442（遠い）
-  442 < 37.5？ → false（衝突なし）
-
-// 敵2の処理
-moveEnemy(敵2)：
-  敵2.y = -200 + 5.8 = -194.2
-
-drawEnemy(敵2)：敵2を(450, -194.2)に描く
-
-isHit(敵2)：
-  distance = 約330（遠い）
-  330 < 37.5？ → false（衝突なし）
-```
-
-### フレーム200（敵が画面に見える）
-
-```javascript
-// 敵1の処理
-敵1.y ≈ 200（画面内に見える）
-敵2.y ≈ 100
-
-// 衝突判定
-敵1の中心 = (150, 200)
-プレイヤーの中心 = (300, 345)
-distance ≈ 200（まだ遠い）
-200 < 37.5？ → false
-```
-
-### フレーム260（敵とプレイヤーが接近）
-
-```javascript
-敵1.y ≈ 380
-プレイヤー位置 = (300, 345)
-敵1位置 = (150, 380)
-
-distance = dist(300, 345, 150, 380)
-        = √((150-300)² + (380-345)²)
-        = √((-150)² + (35)²)
-        = √(22500 + 1225)
-        = √23725
-        ≈ 154
-
-154 < 37.5？ → false（まだ接触していない）
-```
-
-### フレーム270（衝突）
-
-```javascript
-敵1.y ≈ 400
-プレイヤー位置 = (300, 345)
-敵1位置 = (200, 400)
-
-distance = dist(300, 345, 200, 400)
-        = √((200-300)² + (400-345)²)
-        = √((-100)² + (55)²)
-        = √(10000 + 3025)
-        = √13025
-        ≈ 36
-
-36 < 37.5？ → true（衝突！）
-
-resultText = "GAME OVER"
-gameState = "end"
-```
-
-ゲーム終了。
+当たり判定は中心とサイズから円で近似するため、三角形の輪郭と完全に一致する判定ではありません。
 
 ---
 
@@ -516,11 +472,11 @@ gameState = "end"
 
 ### クイズ4：スコア加算のタイミング
 
-スコアが+1される場合はいつですか？
+追加機能がない初期状態で、スコアが+1される場合はいつですか？
 
 **選択肢：**
 
-- A. 敵を避けるたびに
+- A. 敵がまだ画面内にいる状態で、左右へ動いて避けたとき
 - B. 敵が画面を通り過ぎるたびに
 - C. 敵とプレイヤーが衝突したとき
 
