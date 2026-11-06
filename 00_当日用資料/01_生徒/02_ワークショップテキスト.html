@@ -170,20 +170,9 @@
 </tbody></table>
 <p>左右へ動くときはx、下へ落ちるときはyの値が変わります。例えば<code>enemy.y += enemy.speed;</code>は、敵の縦位置に速さの分だけ足す処理です。</p>
 <p>追加機能はA・B・G・H・MのIDごとに記録されます。例えばBのthis.bulletsは、Bが使う弾の一覧です。動き始めに弾の一覧を空にし、Spaceで弾を増やし、毎回動かして描きます。実際に追加するときは、選んだ課題のページで手順を確認します。</p>
-<h3>後半：ゲーム本体で色を変える（32～35分）</h3>
-<ol>
-<li>sketch.jsの上の方にある「CUSTOM AREA」を探します。</li>
-<li>playerColorの引用符の内側をyellowにします。</li>
-</ol>
-<pre><code class="language-javascript">let playerColor = &quot;yellow&quot;;
-</code></pre>
-<ol start="3">
-<li>VS Codeで「ファイル→保存」を選びます。</li>
-<li>Chromeで<strong>ゲーム本体の画面</strong>を更新します。円の練習画面とは別です。</li>
-<li>1でゲームを始め、自機が黄色になったことを確かめます。</li>
-</ol>
-<p>もともと黄色なら、その表示が続いていれば大丈夫です。練習のpractice.jsとゲームのsketch.jsは別々のファイルなので、練習で変えた円の大きさ・色・タイトルはゲームへ自動では移りません。</p>
-<p>ここまでは全員で同じ手順を進めます。次に、追加したい機能を選びます。</p>
+<h3>後半：ゲーム本体の色とスピードを変える（32～35分）</h3><p>先ほどの練習と同じように、変数の値を変えて、実際のゲームもカスタムしてみましょう。まずは自機を好きな色に。さらに今回は、自機のスピードも変えて、操作した感じがどう変わるか試してみましょう。</p><ol><li>sketch.jsの上の方にある「CUSTOM AREA」を探します。</li><li>playerColorの引用符の内側を好きな色にします。例はyellowです。引用符は残します。</li></ol><pre><code class="language-javascript">let playerColor = &quot;yellow&quot;;
+</code></pre><ol start="3"><li>playerSpeedの値を7から12に変えます。数値には引用符を付けません。</li></ol><pre><code class="language-javascript">let playerSpeed = 12;
+</code></pre><ol start="4"><li>VS Codeで「ファイル→保存」を選びます。</li><li>Chromeで<strong>ゲーム本体の画面</strong>を更新します。円の練習画面とは別です。</li><li>1でゲームを始め、← →で動かします。選んだ色になったか、試遊のときより素早く動くかを確かめます。</li></ol><p>速いと避けやすいでしょうか。それとも動きすぎて難しいでしょうか。クリアまで待たず、数秒操作して違いを確かめましょう。</p><p>練習のpractice.jsとゲームのsketch.jsは別々のファイルなので、練習で変えた円の大きさ・色・タイトルはゲームへ自動では移りません。すでに色を変えてある場合は、その色のまま速さを試しても構いません。</p><p>ここまでは全員で同じ手順を進めます。次に、追加したい機能を選びます。</p>
 <h2 id="t05">T05　好きな応用課題を1つ実装（35～55分）</h2>
 <p><a href="%E5%BF%9C%E7%94%A8%E8%AA%B2%E9%A1%8C/00_%E8%AA%B2%E9%A1%8C%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9.html">応用課題の選択ページ</a>を開きます。本日はA・B・G・H・Mから1つ選びます。各ページに、追加するコード・空欄の説明・確認する動きが載っています。</p>
 <table>
