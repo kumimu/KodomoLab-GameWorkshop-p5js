@@ -36,7 +36,7 @@ bulletsはBが持つ弾の一覧です。this.bulletsは「このBの弾の一�
 5. このページの「空欄の意味とヒント」を読み、虫食いを全て埋め、保存します。迷ったら表の例を使えます。
 6. Chromeでゲーム本体を更新して始め、機能の動作を確認します。
 
-**ゲーム全体を置き換えません。** CUSTOM AREAの色・大きさ・速さ・タイトルはそのまま残ります。自機をyellowに変えていれば、そのままです。
+**ゲーム全体を置き換えません。** CUSTOM AREAの色・大きさ・速さ・タイトルはそのまま残ります。プレイヤーをyellowに変えていれば、そのままです。
 
 貼り付け欄が見つからない場合は、「ワーク用」のsketch.jsを開いているか確認します。[困ったときの手順](../02_ワークショップテキスト.html#help)も使えます。
 
@@ -75,7 +75,7 @@ registerWorkshopOption("B", {
   start() {
     this.bullets = []; // 再開始時に前の弾を残しません。
   },
-  // 【役割】プレイ中にSpaceが押されたら、自機の位置から弾を1発追加します。
+  // 【役割】プレイ中にSpaceが押されたら、プレイヤーの位置から弾を1発追加します。
   key(k) {
     if (gameState === "play" && k === " ") {
       // ① Spaceが押されたので、弾を1つ作って一覧へ追加します。
@@ -137,7 +137,7 @@ registerWorkshopOption("B", {
 <ul class="operation-checks">
 <li><label><input type="checkbox"><span>プレイ中にSpaceを押すたびに弾が1発、上へ進む。</span></label></li>
 <li><label><input type="checkbox"><span>命中で指定した点が増え、敵が再登場する。</span></label></li>
-<li><label><input type="checkbox"><span>終了・再開で弾がリセットされる。自機の色は元のまま。</span></label></li>
+<li><label><input type="checkbox"><span>終了・再開で弾がリセットされる。プレイヤーの色は元のまま。</span></label></li>
 </ul>
 
 ## うまく動かないとき

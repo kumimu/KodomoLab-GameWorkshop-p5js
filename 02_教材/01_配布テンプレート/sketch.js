@@ -4,6 +4,8 @@
 // =====================================
 
 // ===== CUSTOM AREA：まずはここを改造しよう！ =====
+// 色を変えるときは、" " の中を好きな色の名前に変えます。例は "yellow"（黄色）です。
+// 色の見本と名前：https://docodoor.co.jp/staffblog/html60/
 let playerColor = "cyan";
 let enemyColor = "red";
 let backgroundColor = "black";
@@ -31,74 +33,9 @@ let startTime = 0;
 let score = 0;
 let resultText = "";
 
-// ===== このファイルで使う関数・用語の早見表 =====
-// 必要な名前を探し、次の行のURLから詳しい説明を確認できます。
-// p5.js 1.x 公式リファレンス：https://v1.p5js.org/reference/
-//
-// 【p5.jsが用意する関数】
-// createCanvas(幅, 高さ)：描画する画面を作る。
-// https://v1.p5js.org/reference/p5/createCanvas/
-// background(色)：背景を塗り直す。
-// https://v1.p5js.org/reference/p5/background/
-// fill(色)：この後に描く図形や文字の塗り色を決める。
-// https://v1.p5js.org/reference/p5/fill/
-// noStroke()：図形の輪郭線を描かない設定にする。
-// https://v1.p5js.org/reference/p5/noStroke/
-// circle(x, y, 直径)：中心(x, y)に円を描く。
-// https://v1.p5js.org/reference/p5/circle/
-// triangle(x1, y1, x2, y2, x3, y3)：3つの頂点を指定して三角形を描く。
-// https://v1.p5js.org/reference/p5/triangle/
-// text(文字, x, y)：指定した位置に文字を描く。
-// https://v1.p5js.org/reference/p5/text/
-// textFont(フォント名)：文字の書体を決める。
-// https://v1.p5js.org/reference/p5/textFont/
-// textSize(大きさ)：文字の大きさを決める。
-// https://v1.p5js.org/reference/p5/textSize/
-// textAlign(横, 縦)：文字を配置する基準を決める。CENTERは中央、LEFTは左。
-// https://v1.p5js.org/reference/p5/textAlign/
-// millis()：スケッチ開始からの経過時間をミリ秒で得る。1000ミリ秒で1秒。
-// https://v1.p5js.org/reference/p5/millis/
-// floor(数)：その数以下の最大の整数にする。例：1.8 → 1。
-// https://v1.p5js.org/reference/p5/floor/
-// random(下限, 上限)：範囲内の乱数を得る。上限は含まない。引数なしでは0以上1未満。
-// https://v1.p5js.org/reference/p5/random/
-// dist(x1, y1, x2, y2)：2点の間の距離を求める。
-// https://v1.p5js.org/reference/p5/dist/
-// constrain(値, 下限, 上限)：値を指定した範囲内に収める。
-// https://v1.p5js.org/reference/p5/constrain/
-// keyIsDown(キー番号)：そのキーを押している間はtrueを返す。
-// https://v1.p5js.org/reference/p5/keyIsDown/
-//
-// 【p5.jsが呼び出す入口：中身はこのコードに書く】
-// setup()：p5.jsが最初に1回呼ぶ。画面などを準備する。
-// https://v1.p5js.org/reference/p5/setup/
-// draw()：p5.jsが繰り返し呼ぶ。移動の計算や描画を進める。
-// https://v1.p5js.org/reference/p5/draw/
-// keyPressed()：キーを押したときにp5.jsが呼ぶ。
-// https://v1.p5js.org/reference/p5/keyPressed/
-//
-// 【p5.jsが用意する値：関数ではないので()を付けない】
-// width：描画する画面の幅。
-// https://v1.p5js.org/reference/p5/width/
-// height：描画する画面の高さ。
-// https://v1.p5js.org/reference/p5/height/
-// key：直近に押されたキーの文字。
-// https://v1.p5js.org/reference/p5/key/
-// LEFT_ARROW / RIGHT_ARROW：左右の矢印キーを表す定数。
-// https://v1.p5js.org/reference/p5/keyIsDown/
-// CENTER / LEFT：文字の配置の基準を表す定数。
-// https://v1.p5js.org/reference/p5/textAlign/
-//
-// 【JavaScript標準の機能：p5.jsとは別】
-// 配列.push(値)：一覧の末尾に値を追加する。描画設定のpush()とは別の機能。
-// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/push
-// 配列.sort()：要素を並べ替える。この教材では課題IDの順を揃える。
-// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
-// 関数.apply(対象, 引数の一覧)：thisに対象を指定して関数を呼ぶ。課題ごとのデータを使う。
-// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Function/apply
-// new Map() / set() / get() / keys()：IDと機能を組にして保存・取得・列挙する。
-// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Map
-// ===== 早見表ここまで =====
+// p5.jsは、円や文字を画面に描くときに使う道具です。
+// 円を描く circle など、p5.jsの道具の使い方はここで調べられます。
+// https://v1.p5js.org/reference/
 
 // 【役割】最初に1回、ゲームの画面と文字の設定を用意します。
 function setup() {

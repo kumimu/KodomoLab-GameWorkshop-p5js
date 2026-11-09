@@ -1,13 +1,13 @@
 <!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OPTION H　ビジュアルカスタマイズ</title><style>@page{size:A4;margin:16mm}*{box-sizing:border-box}body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;color:#162234;font-size:11pt;line-height:1.7;max-width:190mm;margin:24px auto;padding:0 12px}h1{font-size:23pt;line-height:1.35;border-bottom:3px solid #197c7c;padding-bottom:9px}h2{font-size:16pt;break-after:avoid;margin-top:24px}h3{font-size:13pt;break-after:avoid}p,li{overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:10pt}th,td{border:1px solid #b7c3ca;padding:6px 8px;text-align:left;vertical-align:top}th{background:#eaf3f3}tr,pre{break-inside:avoid}pre{padding:12px;background:#f0f4f6;border-left:3px solid #197c7c;font-size:10pt;white-space:pre-wrap;overflow-wrap:anywhere}code{font-family:Menlo,Consolas,monospace}a{color:#156c70}input{accent-color:#197c7c}.sheet{min-height:257mm;break-after:page}.sheet:last-child{break-after:auto}.write{height:19mm;border-bottom:1px solid #7c8b97;margin-bottom:7mm}.short{height:11mm} .label{font-weight:600;margin-bottom:0}.screenonly{font-size:10pt;color:#607080}@media print{body{max-width:none;padding:0;margin:0}.screenonly{display:none}}.copy{padding:7px 14px;background:#197c7c;color:white;border:0;cursor:pointer;font-size:11pt}.copy-status{font-size:10pt;margin-left:12px}@media print{.copy,.copy-status,.back{display:none}}.copy{padding:7px 14px;background:#197c7c;color:white;border:0;cursor:pointer;font-size:11pt}.copy-status{font-size:10pt;margin-left:12px}@media print{.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}h2[id]{scroll-margin-top:20px}h2[id]{scroll-margin-top:20px}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}.prediction-quiz{border:1px solid #a9bdca;border-radius:8px;padding:12px 16px;margin:18px 0;background:#f5f9fb;min-width:0}.prediction-quiz legend{font-weight:700;padding:0 6px}.prediction-quiz label{display:flex;align-items:flex-start;gap:10px;padding:10px 8px;cursor:pointer;line-height:1.65}.prediction-quiz input{flex-shrink:0;width:20px;height:20px;margin-top:3px;accent-color:#087f83}.prediction-quiz label:has(input:checked){background:#e0f2f1;border-radius:4px}.prediction-quiz label:focus-within{outline:2px solid #087f83;outline-offset:2px}
 .operation-checks{list-style:none;padding-left:0}.operation-checks label{display:flex;align-items:flex-start;gap:10px;padding:9px 8px;cursor:pointer;line-height:1.65}.operation-checks input{flex-shrink:0;width:20px;height:20px;margin-top:3px;accent-color:#087f83}.operation-checks label:has(input:checked){background:#e0f2f1;border-radius:4px}.operation-checks label:focus-within{outline:2px solid #087f83;outline-offset:2px}
 </style><body><p class="back"><a href="../../index.html">当日資料一覧へ</a></p><h1>OPTION H　ビジュアルカスタマイズ</h1>
-<p>敵を回転する四角形にし、自機の周りに光を描きます。自機の色の設定は引き継ぎます。</p>
+<p>敵を回転する四角形にし、プレイヤーの周りに光を描きます。プレイヤーの色の設定は引き継ぎます。</p>
 <h2>まず、仕組みを3つでつかもう</h2>
 <p><strong>本体「敵を描いて」 → Hが回る四角を描く → 本体「描いてくれたので、通常の円は描かない」。</strong></p>
 <p><strong>①</strong> 本体が敵を描くとき、HのdrawEnemyへ敵1体を渡します。</p>
 <p><strong>②</strong> Hが敵の位置へ移動し、回転させた四角を描きます。</p>
 <p><strong>③</strong> Hがtrue（描画済み）を返すと、本体は通常の円を重ねて描きません。</p>
-<p>自機を描く直前には、beforePlayerが周りの光を描きます。pushとpopは、回転などの描画設定をこの処理の中だけに留めるための組です。</p>
+<p>プレイヤーを描く直前には、beforePlayerが周りの光を描きます。pushとpopは、回転などの描画設定をこの処理の中だけに留めるための組です。</p>
 <h3>今回変えるのはここ</h3>
 <table>
 <thead>
@@ -22,7 +22,7 @@
 </tr>
 <tr>
 <td><code>__H2__</code></td>
-<td>beforePlayerで描く、自機の光の濃さ</td>
+<td>beforePlayerで描く、プレイヤーの光の濃さ</td>
 </tr>
 </tbody></table>
 <p>まずは①②③の流れと、自分が変える値を追えれば大丈夫です。コード内にも同じ番号のコメントがあります。</p>
@@ -36,7 +36,7 @@
 <li>このページの「空欄の意味とヒント」を読み、虫食いを全て埋め、保存します。迷ったら表の例を使えます。</li>
 <li>Chromeでゲーム本体を更新して始め、機能の動作を確認します。</li>
 </ol>
-<p><strong>ゲーム全体を置き換えません。</strong> CUSTOM AREAの色・大きさ・速さ・タイトルはそのまま残ります。自機をyellowに変えていれば、そのままです。</p>
+<p><strong>ゲーム全体を置き換えません。</strong> CUSTOM AREAの色・大きさ・速さ・タイトルはそのまま残ります。プレイヤーをyellowに変えていれば、そのままです。</p>
 <p>貼り付け欄が見つからない場合は、「ワーク用」のsketch.jsを開いているか確認します。<a href="../02_%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88.html#help">困ったときの手順</a>も使えます。</p>
 <h2>貼るコード（この1枠だけ）</h2>
 <pre><code class="language-javascript">// ===== このファイルで使う関数・用語の早見表 =====
@@ -95,9 +95,9 @@ registerWorkshopOption(&quot;H&quot;, {
     // ③ 本体へ「描画済み」と伝え、通常の円を重ねないようにします。
     return true;
   },
-  // 【役割】自機を描く前に、自機と同じ色の半透明の光を周りに描きます。
+  // 【役割】プレイヤーを描く前に、プレイヤーと同じ色の半透明の光を周りに描きます。
   beforePlayer() {
-    const glow = color(playerColor); // 自分で決めた自機の色を使います。
+    const glow = color(playerColor); // 自分で決めたプレイヤーの色を使います。
     glow.setAlpha(__H2__);
     fill(glow);
     noStroke();
@@ -124,7 +124,7 @@ registerWorkshopOption(&quot;H&quot;, {
 </tr>
 <tr>
 <td><code>__H2__</code></td>
-<td>自機の光の濃さ</td>
+<td>プレイヤーの光の濃さ</td>
 <td>0は透明、255は不透明</td>
 <td><code>80</code></td>
 </tr>
@@ -135,7 +135,7 @@ registerWorkshopOption(&quot;H&quot;, {
 </ul>
 <h2>動作確認</h2>
 <ul class="operation-checks">
-<li><label><input type="checkbox"><span>四角い敵が回転する。自機の周りに元の自機色の光が見える。</span></label></li>
+<li><label><input type="checkbox"><span>四角い敵が回転する。プレイヤーの周りに元のプレイヤーの色の光が見える。</span></label></li>
 <li><label><input type="checkbox"><span>文字は回転しない。当たり判定は従来の円による近似。</span></label></li>
 </ul>
 

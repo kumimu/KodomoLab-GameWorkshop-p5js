@@ -40,7 +40,7 @@
 <li>このページの「空欄の意味とヒント」を読み、虫食いを全て埋め、保存します。迷ったら表の例を使えます。</li>
 <li>Chromeでゲーム本体を更新して始め、機能の動作を確認します。</li>
 </ol>
-<p><strong>ゲーム全体を置き換えません。</strong> CUSTOM AREAの色・大きさ・速さ・タイトルはそのまま残ります。自機をyellowに変えていれば、そのままです。</p>
+<p><strong>ゲーム全体を置き換えません。</strong> CUSTOM AREAの色・大きさ・速さ・タイトルはそのまま残ります。プレイヤーをyellowに変えていれば、そのままです。</p>
 <p>貼り付け欄が見つからない場合は、「ワーク用」のsketch.jsを開いているか確認します。<a href="../02_%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88.html#help">困ったときの手順</a>も使えます。</p>
 <h2>貼るコード（この1枠だけ）</h2>
 <pre><code class="language-javascript">// ===== このファイルで使う関数・用語の早見表 =====
@@ -75,7 +75,7 @@ registerWorkshopOption(&quot;B&quot;, {
   start() {
     this.bullets = []; // 再開始時に前の弾を残しません。
   },
-  // 【役割】プレイ中にSpaceが押されたら、自機の位置から弾を1発追加します。
+  // 【役割】プレイ中にSpaceが押されたら、プレイヤーの位置から弾を1発追加します。
   key(k) {
     if (gameState === &quot;play&quot; &amp;&amp; k === &quot; &quot;) {
       // ① Spaceが押されたので、弾を1つ作って一覧へ追加します。
@@ -155,7 +155,7 @@ registerWorkshopOption(&quot;B&quot;, {
 <ul class="operation-checks">
 <li><label><input type="checkbox"><span>プレイ中にSpaceを押すたびに弾が1発、上へ進む。</span></label></li>
 <li><label><input type="checkbox"><span>命中で指定した点が増え、敵が再登場する。</span></label></li>
-<li><label><input type="checkbox"><span>終了・再開で弾がリセットされる。自機の色は元のまま。</span></label></li>
+<li><label><input type="checkbox"><span>終了・再開で弾がリセットされる。プレイヤーの色は元のまま。</span></label></li>
 </ul>
 
 <h2>うまく動かないとき</h2>

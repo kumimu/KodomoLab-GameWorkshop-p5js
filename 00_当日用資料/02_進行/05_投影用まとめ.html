@@ -1,20 +1,174 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>基礎練習とゲームの仕組み｜投影用まとめ</title>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ゲームの仕組み｜投影用まとめ</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#182b3a;font-family:"Hiragino Sans","Yu Gothic",sans-serif;color:#172e3d}.slide{width:1600px;height:900px;background:#f7faf9;padding:48px 56px;position:absolute;transform-origin:top left;overflow:hidden}header{margin-bottom:30px}.eyebrow{margin:0 0 10px;color:#47636a;font-size:24px;font-weight:700}h1{font-size:44px;line-height:1.3;margin:0}.columns{display:grid;grid-template-columns:1.18fr 1fr .88fr;gap:24px}.card{background:white;border:2px solid #d9e5e6;border-top:8px solid #197c7c;border-radius:14px;padding:22px 24px;height:590px}.time{font-size:24px;font-weight:700;color:#136666;margin:0 0 8px}h2{font-size:30px;line-height:1.4;margin:0 0 12px}p,li{font-size:24px;line-height:1.4}p{margin:8px 0}code{font-family:Menlo,Consolas,monospace;font-size:23px}pre{background:#edf4f4;padding:10px 12px;margin:10px 0;border-radius:8px;line-height:1.4;white-space:pre-wrap}pre code{font-size:25px}.muted{color:#45616b}.small{font-size:22px}.flow{border:2px solid #c5dada;border-radius:10px;padding:10px;background:#f6faf9;text-align:center}.flow strong{display:block;font-size:25px}.flow p{font-size:23px;margin:5px 0}.arrow{text-align:center;margin:2px;font-size:20px;color:#197c7c}.coordinates{font-size:25px;font-weight:700;margin-top:10px}ol{padding-left:30px;margin:16px 0}li{margin:8px 0}.result{background:#fff2d7;border-radius:8px;padding:12px 14px;font-size:24px;font-weight:700}.bar{position:absolute;bottom:40px;left:56px;right:56px;background:#173e48;color:white;border-radius:10px;padding:15px 24px;font-size:26px;display:flex;justify-content:space-between;align-items:center}.bar span:last-child{font-size:23px}.label{font-weight:700;color:#136666}.step{font-weight:700;margin-bottom:6px}@media print{@page{size:400mm 225mm;margin:0}body{background:white}.slide{position:static;transform:none!important;width:400mm;height:225mm;zoom:.94488;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-.flow-card{padding:14px 20px}.flow-card h2{margin-bottom:8px}.stage{border:1px solid #bcd4d5;border-radius:7px;padding:6px 10px;background:#f6faf9}.stage strong{font-size:22px;line-height:1.25;display:block}.stage p{font-size:20px;line-height:1.25;margin:3px 0 0}.down{font-size:18px;text-align:center;line-height:1;color:#197c7c}.repeat{border:2px solid #197c7c;border-radius:10px;padding:7px;margin-top:0}.repeat-title{font-size:21px;font-weight:700;color:#136666;margin:0 0 7px}.loop{text-align:center;color:#136666;font-size:20px;font-weight:700;margin-top:7px}.flow-card h2 a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px}</style></head><body><main class="slide" aria-label="10～35分の投影用まとめ">
-<header><p class="eyebrow">基礎練習 → ゲームの仕組み → 最初の改造</p><h1>コードを変えて、動きを確かめよう</h1></header>
-<div class="columns">
-<section class="card"><p class="time">10～25分</p><h2>① 円で練習する</h2><p class="label">編集：practice.js</p><pre><code>let playerSize = 80;
-let playerColor = "yellow";
-let gameTitle = "今日のゲーム";</code></pre><p>大きさ：<strong>80 → 20</strong> で比べる<br>色・タイトル：<strong>引用符の中</strong>を変える</p><p class="small muted"><code>playerSize</code> は名前、<code>80</code> は値。</p><p class="small"><code>circle(200, 150, playerSize);</code><br>横の位置・縦の位置・直径の順。<br>この行は読むだけ。</p><p class="result">最後は、直径100の青い円に！</p></section>
-<section class="card flow-card"><p class="time">25～32分</p><h2><a href="06_コードと解説.html" title="コードと解説を開く">② ゲームの流れを知る</a></h2>
-<div class="stage"><strong>最初の準備：setup()</strong><p>最初に1回、画面を用意する。</p></div><div class="down">↓</div>
-<div class="repeat"><div class="repeat-title">ここからくり返す：draw()</div>
-<div class="stage"><strong>前の絵を消す</strong><p>背景を描いて、前の絵を消す。</p></div><div class="down">↓</div>
-<div class="stage"><strong>自機と敵の位置を変えて描く</strong><p>自機：← → で横へ。敵：下へ。</p></div><div class="down">↓</div>
-<div class="stage"><strong>当たり判定</strong><p>自機と敵が重なったか調べる。<br><b>当たる → 終了 ／ 避ける → 続行</b></p></div>
+*{box-sizing:border-box}
+body{margin:0;background:#182b3a;color:#172e3d;font-family:"Hiragino Sans","Yu Gothic",sans-serif}
+.slide{width:1600px;height:900px;background:#f7faf9;padding:34px 56px;position:absolute;transform-origin:top left;overflow:hidden}
+.slide header{margin-bottom:12px}
+.slide .eyebrow{margin:0 0 10px;color:#47636a;font-size:24px;font-weight:700}
+.slide h1{font-size:44px;line-height:1.3;margin:0}
+.slide .flow-card{background:white;border:2px solid #d9e5e6;border-top:8px solid #197c7c;border-radius:14px;padding:12px 20px;max-width:1060px;margin:0 auto}
+.slide .time{font-size:24px;font-weight:700;color:#136666;margin:0 0 8px}
+.slide h2{font-size:30px;line-height:1.4;margin:0 0 12px}
+.slide p{font-size:24px;line-height:1.4}
+.slide p{margin:8px 0}
+.slide code{font-family:Menlo,Consolas,monospace;font-size:23px}
+.slide .bar{position:absolute;bottom:40px;left:56px;right:56px;background:#173e48;color:white;border-radius:10px;padding:15px 24px;font-size:26px;display:flex;justify-content:space-between;align-items:center}
+.slide .bar a{color:inherit}
+.slide .flow-card h2{margin-bottom:8px}
+.slide .stage{border:1px solid #bcd4d5;border-radius:7px;padding:4px 10px;background:#f6faf9}
+.slide .stage strong{font-size:22px;line-height:1.25;display:block}
+.slide .stage code{font-size:inherit}
+.slide .stage p{font-size:20px;line-height:1.2;margin:2px 0 0}
+.slide .down{font-size:15px;text-align:center;line-height:1;color:#197c7c}
+.slide .repeat{border:2px solid #197c7c;border-radius:10px;padding:7px;margin-top:0}
+.slide .repeat-title{font-size:21px;font-weight:700;color:#136666;margin:0 0 7px}
+.slide .loop{text-align:center;color:#136666;font-size:20px;font-weight:700;margin-top:7px}
+.slide .bar a:first-child{font-weight:700}
+.deck{width:1600px;height:900px;position:absolute;transform-origin:top left;background:#f7faf9;padding:32px 46px}
+.deck .top{display:flex;justify-content:space-between;align-items:center;height:42px;font-size:21px}
+.deck .top a{color:#176c70}
+.deck .progress{font-weight:700;color:#176c70}
+.deck section{display:none}
+.deck section.active{display:block}
+.deck h1{font-size:38px;margin:16px 0 7px}
+.deck .lead{font-size:26px;margin:0 0 18px}
+.deck .layout{display:grid;grid-template-columns:1fr 1.08fr;gap:26px;height:610px}
+.deck .source,.deck .explanation{border:2px solid #d6e4e4;border-radius:12px;background:white;padding:16px 20px;overflow:auto}
+.deck .source{background:#f1f5f5;color:#405660}
+.deck .code-block h3{font-size:18px;color:#526a72;margin:0 0 10px}
+.deck .code-block+ .code-block{margin-top:20px}
+.deck pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.deck code{font-family:Menlo,Consolas,monospace}
+.deck pre code{font-size:22px;line-height:1.4}
+.deck .explanation h3{font-size:25px;margin:0 0 9px}
+.deck .explanation h3:not(:first-child){margin-top:21px}
+.deck .explanation p{font-size:23px;line-height:1.5;margin:7px 0}
+.deck .explanation code{font-size:22px}
+.deck .takeaway{font-size:24px;font-weight:700;background:#fff1d2;border-radius:9px;padding:13px 15px;margin-top:22px;line-height:1.4}
+.deck .navigation{position:absolute;bottom:22px;left:46px;right:46px;display:flex;gap:10px;align-items:center}
+.deck .navigation a{font-size:20px;color:#176c70;padding:9px 12px;white-space:nowrap}
+.deck button{cursor:pointer;border:1px solid #bdd3d5;border-radius:7px;padding:9px 12px;background:white;color:#17313e;font-size:20px}
+.deck button[aria-current="step"]{background:#176c70;color:white}
+.deck #s3 pre code{font-size:21px;line-height:1.3}
+.deck #s3 .code-block+ .code-block{margin-top:16px}
+.deck #s4 pre code{font-size:21px;line-height:1.3}
+
+.deck .label{font-weight:700}
+.deck .optional{color:#637785}
+.deck mark{background:#ffe5a2;color:#16313e;border-radius:3px}
+.deck .optional-note{font-size:18px;color:#536c73;margin:7px 0 0}
+.deck #s3 .takeaway{margin-top:14px}
+
+@media print{
+  @page{size:400mm 225mm;margin:0}
+  .slide,.deck,.slide[hidden],.deck[hidden]{display:block;position:static;width:1600px;height:auto;transform:none!important;zoom:.94488;print-color-adjust:exact}
+  .slide{height:900px;position:relative;break-after:page}
+  .deck{padding:0}
+  .deck .top,.deck .navigation{display:none}
+  .deck section{display:block;padding:32px 46px;height:900px;break-after:page}
+  .deck section:last-of-type{break-after:auto}
+}
+</style></head><body>
+<main class="slide" aria-label="25～32分の投影用まとめ">
+<header><p class="eyebrow">投影用まとめ</p><h1>ゲームの仕組みを知ろう</h1><p><strong>コードを覚える必要はありません。ゲームがどう動くかを一緒に見ていきましょう。</strong></p></header>
+<section class="card flow-card"><p class="time">25～32分</p><h2>ゲームの流れを知る</h2>
+<div class="stage"><p><code>index.html</code> を開く → <code>p5.min.js</code> と <code>sketch.js</code> を読み込む</p></div><div class="down">↓</div>
+<div class="stage"><strong>ゲーム画面の準備</strong></div><div class="down">↓</div>
+<div class="repeat"><div class="repeat-title">ここからくり返し</div>
+<div class="stage"><strong>背景を描く</strong><p>前の絵をクリアする</p></div><div class="down">↓</div>
+<div class="stage"><strong>プレイヤーと敵の位置を変えて描く</strong><p>プレイヤー：← → で横へ。敵：下へ。</p></div><div class="down">↓</div>
+<div class="stage"><strong>当たり判定</strong><p>プレイヤーと敵が重なったか調べる。<br><b>当たる → 終了 ／ 避ける → 続行</b></p></div>
 <div class="loop">↻ 続行なら、次の描画へ</div></div></section>
-<section class="card"><p class="time">32～35分</p><h2>③ ゲームもカスタム</h2><p class="label">編集：sketch.js</p><ol><li><strong>CUSTOM AREA</strong>の<br><code>playerColor</code>を好きな色に。<br><span class="small">例：<code>"yellow"</code></span></li><li><code>playerSpeed</code>を<br><strong>7 → 12</strong> に変える。</li><li>保存 → ゲーム本体を更新。<br><strong>1</strong>で始める。</li><li><strong>← →</strong>で操作してみる。</li></ol><p class="result">動く速さを比べよう！</p><p class="small muted">速いと楽？ 動きすぎる？</p></section>
-</div><footer class="bar"><strong>既存の値を変更 → 保存 → Chromeの対応する画面を更新</strong><span>編集・実行は「ワーク用」</span></footer>
-</main><script>function fit(){const s=document.querySelector('.slide'),scale=Math.min(innerWidth/1600,innerHeight/900);s.style.transform='scale('+scale+')';s.style.left=(innerWidth-1600*scale)/2+'px';s.style.top=(innerHeight-900*scale)/2+'px';}addEventListener('resize',fit);fit();</script></body></html>
+<footer class="bar"><a href="#s1">コードと解説を開く →</a></footer>
+</main>
+<div class="deck" hidden aria-label="コードと解説"><div class="top"><a href="#summary">← 投影用まとめ</a><strong>コードを覚える必要はありません。ゲームの動きに注目しましょう。</strong><span class="progress" id="counter">1 / 5</span></div><section id="s1" class="active"><h1>1　最初の準備</h1><p class="lead">画面を作る準備は、最初に1回。</p><div class="layout"><div class="explanation"><h3>① 最初の準備をします（<code>setup()</code>）</h3><p>ゲームを開いたときに1度だけ動きます。</p><h3>② ゲームの画面を作ります（<code>createCanvas()</code>）</h3><p>横600・縦400の大きさのゲーム画面を作ります。</p><h3>③ 文字のスタイルを決めます（<code>textFont()</code>）</h3><p>画面に表示する文字の書体を決めます。</p><div class="takeaway">準備が終わったら、draw() でゲームの画面をくり返し描きます。</div></div><div class="source"><div class="code-block"><h3>sketch.js：setup() 全体</h3><pre><code>function <mark>setup()</mark> {
+  <mark>createCanvas(600, 400)</mark>;
+  <mark>textFont(&quot;sans-serif&quot;)</mark>;
+}</code></pre></div></div></div></section><section id="s2" class=""><h1>2　画面を描き直す</h1><p class="lead">p5.js が draw() を何度も呼び、画面を描き直します。</p><div class="layout"><div class="explanation"><h3>① 背景を塗り直します（<code>background()</code>）</h3><p>ゲーム画面の絵1枚が「フレーム」です。背景を塗ると、1フレーム前の絵が消えます。</p><h3>② ゲームの状態に合わせて処理を選びます（<code>gameState</code>）</h3><p><code>start</code>：開始画面を描く<br><code>play</code>：プレイ中の処理を呼ぶ<br><code>end</code>：結果画面を描く</p><h3>③ プレイ中の動きを処理します（<code>playGame()</code>）</h3><p>プレイヤーと敵を動かす・描く・当たりを調べる処理へ進みます。次の描画でも draw() が呼ばれます。</p><div class="takeaway">ひとつ前の絵を消す → 新しい位置で描く。<br>これをくり返すと、パラパラ漫画のように動いて見えます。</div></div><div class="source"><div class="code-block"><h3>sketch.js：draw() 全体</h3><pre><code>function draw() {
+  <mark>background(backgroundColor)</mark>;
+
+  if (<mark>gameState === &quot;start&quot;</mark>) {
+    showStartScreen();
+  } else if (<mark>gameState === &quot;play&quot;</mark>) {
+    <mark>playGame();</mark>
+  } else if (<mark>gameState === &quot;end&quot;</mark>) {
+    showEndScreen();
+  }
+}</code></pre></div></div></div></section><section id="s3" class=""><h1>3　プレイヤーと敵の移動</h1><p class="lead">位置の数値を変えてから描くと、動いて見える。</p><div class="layout"><div class="explanation"><h3>① プレイヤーを左右に動かします（<code>playerX</code>）</h3><p><code>keyIsDown()</code>で、キーが押されているか調べます。</p><p>←：<code>playerSpeed</code>を引く → 左へ<br>→：<code>playerSpeed</code>を足す → 右へ</p><h3>② プレイヤーを画面の端で止めます（<code>constrain()</code>）</h3><p>画面の端まで来たら、それ以上は進みません。</p><h3>③ 敵を下に動かします（<code>enemy.y</code>）</h3><p><strong>xは横、yは縦。</strong><br>敵の縦位置に速さを足すと、下へ動きます。</p><div class="takeaway">位置を更新 → 描く。次の描画でまた更新。</div></div><div class="source"><div class="code-block"><h3>sketch.js：movePlayer() 全体</h3><pre><code>function movePlayer() {
+  if (<mark>keyIsDown(LEFT_ARROW)</mark>) {
+    <mark>playerX -= playerSpeed</mark>;
+  }
+  if (<mark>keyIsDown(RIGHT_ARROW)</mark>) {
+    <mark>playerX += playerSpeed</mark>;
+  }
+
+  playerX = <mark>constrain</mark>(playerX, playerSize / 2, width - playerSize / 2);
+}</code></pre></div><div class="code-block"><h3>sketch.js：moveEnemy() 前半（次ページへ続く）</h3><p class="optional-note">色付きの移動部分を説明します。灰色は応用用です。</p><pre><code>function moveEnemy(enemy) {
+<span class="optional">  const multiplier = runOption(&quot;speedMultiplier&quot;, enemy);</span>
+  <mark>enemy.y += enemy.speed</mark><span class="optional"> * (multiplier === undefined ? 1 : multiplier)</span>;
+  // ↓ 続き（得点・再登場）は次のページへ</code></pre></div></div></div></section><section id="s4" class=""><h1>4　得点と敵の再登場</h1><p class="lead">下まで避けた敵を、画面の上へ戻して再利用する。</p><div class="layout"><div class="explanation"><h3>① 敵が画面の下を通ったか調べます</h3><p><code>enemy.y &gt; height + enemySize</code>で、敵が画面の下まで進んだかを調べます。</p><h3>② 敵を避けたら得点を加えます（<code>score</code>）</h3><p><code>score += 1</code>は「今の得点に1を足す」という意味です。</p><h3>③ 敵を画面の上に戻します（<code>respawnEnemy()</code>）</h3><p><code>y</code>は画面より上の位置へ。<br><code>x</code>と速さもランダムに決め直します。</p><div class="takeaway">同じ敵を上へ戻す → また落ちてくる。</div></div><div class="source"><div class="code-block"><h3>sketch.js：moveEnemy() 後半（前ページの続き・コメントを除く）</h3><pre><code>  if (<mark>enemy.y &gt; height + enemySize</mark>) {
+<span class="optional">    if (runOption(&quot;avoid&quot;, enemy) !== true) {</span>
+      <mark>score += 1;</mark>
+<span class="optional">    }</span>
+    <mark>respawnEnemy(enemy);</mark>
+  }
+}</code></pre></div><div class="code-block"><h3>sketch.js：respawnEnemy() 全体</h3><pre><code>function respawnEnemy(enemy) {
+  <mark>enemy.y = random(-300, -50)</mark>;
+  <mark>enemy.x = random(enemySize, width - enemySize)</mark>;
+  <mark>enemy.speed = enemySpeed + random(0, 2)</mark>;
+<span class="optional">  runOption(&quot;spawnEnemy&quot;, enemy);</span>
+}</code></pre></div></div></div></section><section id="s5" class=""><h1>5　当たり判定</h1><p class="lead">プレイヤーが敵に当たったら、ゲームオーバー！</p><div class="layout"><div class="explanation"><h3>① プレイヤーと敵の中心の距離を測ります（<code>dist()</code>）</h3><p>プレイヤーの位置と、敵の位置の間がどれだけ離れているかを求めます。</p><h3>② 近ければ当たったと判定します（<code>isHit()</code>）</h3><p>距離が「プレイヤーのサイズの半分＋敵のサイズの半分」より小さいと、当たりとします。プレイヤーも円の範囲で近さを判定する簡単な方法です。</p><h3>③ 当たったらゲームを終えます</h3><p><code>true</code>なら結果をGAME OVERにし、状態を<code>end</code>へ。<code>return</code>で今の処理を終えます。</p><div class="takeaway">次の draw() では結果画面を描く。<br>当たらなければプレイを続ける。</div></div><div class="source"><div class="code-block"><h3>sketch.js：isHit() 全体</h3><pre><code>function isHit(enemy) {
+  const distance = <mark>dist(playerX, playerY, enemy.x, enemy.y)</mark>;
+  return <mark>distance &lt; playerSize / 2 + enemySize / 2</mark>;
+}</code></pre></div><div class="code-block"><h3>sketch.js：playGame() の当たり判定部分</h3><pre><code>if (<mark>isHit(enemy)</mark>) {
+  <mark>resultText = &quot;GAME OVER&quot;</mark>;
+  <mark>gameState = &quot;end&quot;</mark>;
+  return;
+}</code></pre></div></div></div></section><nav class="navigation" aria-label="説明する場面"><button type="button" data-page="1" aria-current="step">1 最初の準備</button><button type="button" data-page="2" aria-current="false">2 画面を描き直す</button><button type="button" data-page="3" aria-current="false">3 プレイヤーと敵の移動</button><button type="button" data-page="4" aria-current="false">4 得点と敵の再登場</button><button type="button" data-page="5" aria-current="false">5 当たり判定</button><a href="../01_生徒/02_ワークショップテキスト.html#game-custom">ワークショップテキストに戻る</a></nav></div>
+<script>
+const summary = document.querySelector(".slide");
+const deck = document.querySelector(".deck");
+const sections = [...deck.querySelectorAll("section")];
+const buttons = [...deck.querySelectorAll("[data-page]")];
+let page = 0;
+
+function fit() {
+  const scale = Math.min(innerWidth / 1600, innerHeight / 900);
+  for (const view of [summary, deck]) {
+    view.style.transform = "scale(" + scale + ")";
+    view.style.left = (innerWidth - 1600 * scale) / 2 + "px";
+    view.style.top = (innerHeight - 900 * scale) / 2 + "px";
+  }
+}
+
+function show() {
+  const match = location.hash.match(/^#s([1-5])$/);
+  page = match ? Number(match[1]) : 0;
+  summary.hidden = page !== 0;
+  deck.hidden = page === 0;
+  sections.forEach((section, index) => {
+    section.classList.toggle("active", index + 1 === page);
+  });
+  buttons.forEach(button => {
+    button.setAttribute("aria-current", Number(button.dataset.page) === page ? "step" : "false");
+  });
+  document.getElementById("counter").textContent = page + " / " + sections.length;
+}
+
+buttons.forEach(button => {
+  button.addEventListener("click", () => { location.hash = "s" + button.dataset.page; });
+});
+addEventListener("keydown", event => {
+  if (event.altKey || event.ctrlKey || event.metaKey || !["ArrowRight", "ArrowLeft"].includes(event.key)) return;
+  event.preventDefault();
+  const next = page + (event.key === "ArrowRight" ? 1 : -1);
+  if (next < 0 || next > sections.length + 1) return;
+  location.hash = next === 0 || next > sections.length ? "summary" : "s" + next;
+});
+addEventListener("hashchange", show);
+addEventListener("resize", fit);
+show();
+fit();
+</script>
+</body></html>

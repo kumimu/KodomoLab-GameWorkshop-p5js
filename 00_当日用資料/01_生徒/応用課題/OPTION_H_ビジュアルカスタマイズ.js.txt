@@ -54,9 +54,9 @@ registerWorkshopOption("H", {
     // ③ 本体へ「描画済み」と伝え、通常の円を重ねないようにします。
     return true;
   },
-  // 【役割】自機を描く前に、自機と同じ色の半透明の光を周りに描きます。
+  // 【役割】プレイヤーを描く前に、プレイヤーと同じ色の半透明の光を周りに描きます。
   beforePlayer() {
-    const glow = color(playerColor); // 自分で決めた自機の色を使います。
+    const glow = color(playerColor); // 自分で決めたプレイヤーの色を使います。
     glow.setAlpha(__H2__);
     fill(glow);
     noStroke();

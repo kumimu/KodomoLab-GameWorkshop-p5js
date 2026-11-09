@@ -30,7 +30,7 @@ registerWorkshopOption("B", {
   start() {
     this.bullets = []; // 再開始時に前の弾を残しません。
   },
-  // 【役割】プレイ中にSpaceが押されたら、自機の位置から弾を1発追加します。
+  // 【役割】プレイ中にSpaceが押されたら、プレイヤーの位置から弾を1発追加します。
   key(k) {
     if (gameState === "play" && k === " ") {
       // ① Spaceが押されたので、弾を1つ作って一覧へ追加します。
