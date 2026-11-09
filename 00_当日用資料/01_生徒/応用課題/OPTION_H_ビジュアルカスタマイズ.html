@@ -3,10 +3,10 @@
 </style><body><p class="back"><a href="../../index.html">当日資料一覧へ</a></p><h1>OPTION H　ビジュアルカスタマイズ</h1>
 <p>敵を回転する四角形にし、プレイヤーの周りに光を描きます。プレイヤーの色の設定は引き継ぎます。</p>
 <h2>まず、仕組みを3つでつかもう</h2>
-<p><strong>本体「敵を描いて」 → Hが回る四角を描く → 本体「描いてくれたので、通常の円は描かない」。</strong></p>
-<p><strong>①</strong> 本体が敵を描くとき、HのdrawEnemyへ敵1体を渡します。</p>
+<p><strong>ゲームのコード「敵を描いて」 → Hが回る四角を描く → ゲームのコード「描いてくれたので、通常の円は描かない」。</strong></p>
+<p><strong>①</strong> ゲームのコードが敵を描くとき、HのdrawEnemyへ敵1体を渡します。</p>
 <p><strong>②</strong> Hが敵の位置へ移動し、回転させた四角を描きます。</p>
-<p><strong>③</strong> Hがtrue（描画済み）を返すと、本体は通常の円を重ねて描きません。</p>
+<p><strong>③</strong> Hがtrue（描画済み）を返すと、ゲームのコードは通常の円を重ねて描きません。</p>
 <p>プレイヤーを描く直前には、beforePlayerが周りの光を描きます。pushとpopは、回転などの描画設定をこの処理の中だけに留めるための組です。</p>
 <h3>今回変えるのはここ</h3>
 <table>
@@ -26,7 +26,7 @@
 </tr>
 </tbody></table>
 <p>まずは①②③の流れと、自分が変える値を追えれば大丈夫です。コード内にも同じ番号のコメントがあります。</p>
-<p><a href="%E4%BB%95%E7%B5%84%E3%81%BF_%E6%9C%AC%E4%BD%93%E3%81%A8%E8%BF%BD%E5%8A%A0%E6%A9%9F%E8%83%BD.html">もっと知りたい人へ：本体と追加機能のつながり</a></p>
+<p><a href="%E4%BB%95%E7%B5%84%E3%81%BF_%E6%9C%AC%E4%BD%93%E3%81%A8%E8%BF%BD%E5%8A%A0%E6%A9%9F%E8%83%BD.html">もっと知りたい人へ：ゲームのコードと追加機能のつながり</a></p>
 <h2 id="steps">選んだ機能だけを1か所へ貼る</h2>
 <ol>
 <li>「ワーク用」のsketch.jsを保存します。この後も同じワーク用フォルダで作業します。オリジナルは編集しません。</li>
@@ -34,54 +34,37 @@
 <li>VS Codeで「ワーク用」のsketch.jsを開き、末尾の「応用コード貼り付け欄」を探します。</li>
 <li>「ここから」と「ここまで」の間に、この課題のコードを1回貼ります。別の機能を追加するときは、先のコードを残したまま、その下へ貼ります。同じ課題を修正する場合は、その課題のコードを置き換えます。</li>
 <li>このページの「空欄の意味とヒント」を読み、虫食いを全て埋め、保存します。迷ったら表の例を使えます。</li>
-<li>Chromeでゲーム本体を更新して始め、機能の動作を確認します。</li>
+<li>Chromeで避けゲームの画面を更新して始め、機能の動作を確認します。</li>
 </ol>
 <p><strong>ゲーム全体を置き換えません。</strong> CUSTOM AREAの色・大きさ・速さ・タイトルはそのまま残ります。プレイヤーをyellowに変えていれば、そのままです。</p>
 <p>貼り付け欄が見つからない場合は、「ワーク用」のsketch.jsを開いているか確認します。<a href="../02_%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88.html#help">困ったときの手順</a>も使えます。</p>
 <h2>貼るコード（この1枠だけ）</h2>
 <pre><code class="language-javascript">// ===== このファイルで使う関数・用語の早見表 =====
-// 必要な名前を探し、次の行のURLから詳しい説明を確認できます。
-// p5.js 1.x 公式リファレンス：https://v1.p5js.org/reference/
+// p5.jsは、円や文字を画面に描くときに使う道具です。
+// 円を描く circle など、p5.jsの道具の使い方はここで調べられます。
+// https://v1.p5js.org/reference/
 //
 // 【p5.jsが用意する関数】
 // fill(色)：この後に描く図形や文字の塗り色を決める。
-// https://v1.p5js.org/reference/p5/fill/
 // noStroke()：図形の輪郭線を描かない設定にする。
-// https://v1.p5js.org/reference/p5/noStroke/
 // circle(x, y, 直径)：中心(x, y)に円を描く。
-// https://v1.p5js.org/reference/p5/circle/
 // rect(x, y, 幅, 高さ)：四角形を描く。位置の基準はrectModeで決まる。
-// https://v1.p5js.org/reference/p5/rect/
 // rectMode(CENTER)：四角形の位置を中心座標で指定する設定にする。
-// https://v1.p5js.org/reference/p5/rectMode/
 // push()：現在の描画設定や座標の変換を保存する。pop()と組にして使う。
-// https://v1.p5js.org/reference/p5/push/
 // pop()：直前のpush()で保存した描画設定や座標の変換へ戻す。
-// https://v1.p5js.org/reference/p5/pop/
 // translate(x, y)：この後に描く図形の原点を移動する。
-// https://v1.p5js.org/reference/p5/translate/
 // rotate(角度)：この後に描く図形の座標を回転する。この教材では角度はラジアン。
-// https://v1.p5js.org/reference/p5/rotate/
 // color(色)：透明度などを変更できる色の情報を作る。
-// https://v1.p5js.org/reference/p5/color/
 //
 // 【p5.jsが用意する値：関数ではないので()を付けない】
 // frameCount：draw()が呼ばれた回数。
-// https://v1.p5js.org/reference/p5/frameCount/
 // CENTER：四角形の中心を位置の基準にする定数。
-// https://v1.p5js.org/reference/p5/rectMode/
 // 色.setAlpha(濃さ)：色の透明度を変更する。標準では0が透明、255が不透明。
-// https://v1.p5js.org/reference/p5.Color/setAlpha/
-//
-// 【ゲーム本体にある自作関数】
-// registerWorkshopOption(ID, 機能)：本体の共通関数へ、課題IDごとに機能を登録する。
-// optionEnemyColor(敵)：基本設定と追加機能から敵の色を選ぶ。本体に定義がある。
-// 定義と【役割】の説明は、同じ教材フォルダのsketch.jsで確認できます。
 // ===== 早見表ここまで =====
 
 registerWorkshopOption(&quot;H&quot;, {
   // 【役割】敵の位置で四角形を回転させて描き、標準の円の描画に代えます。
-  // ① 本体が敵を描くとき、この敵1体を受け取ります。
+  // ① ゲームのコードが敵を描くとき、この敵1体を受け取ります。
   drawEnemy(enemy) {
     // ② この敵の位置で、回転した四角を描きます。
     push();
@@ -92,7 +75,7 @@ registerWorkshopOption(&quot;H&quot;, {
     rectMode(CENTER);
     rect(0, 0, enemySize * 0.7, enemySize * 0.7);
     pop(); // 座標や描画設定を元に戻します。
-    // ③ 本体へ「描画済み」と伝え、通常の円を重ねないようにします。
+    // ③ ゲームのコードへ「描画済み」と伝え、通常の円を重ねないようにします。
     return true;
   },
   // 【役割】プレイヤーを描く前に、プレイヤーと同じ色の半透明の光を周りに描きます。
@@ -142,7 +125,7 @@ registerWorkshopOption(&quot;H&quot;, {
 <h2>うまく動かないとき</h2>
 <ul>
 <li>この課題の<code>__H1__</code>などの印が残っていないか探します。</li>
-<li>保存後、円の練習画面ではなくゲーム本体を更新し、1で始めます。</li>
+<li>保存後、Chromeで避けゲームの画面を更新し、1で始めます。</li>
 <li>別の機能も入っている場合、そのコードを残したまま追加したか確かめます。同じ課題は1つだけにします。</li>
 <li>それでも直らなければ<a href="../02_%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88.html#help">テキストの対処手順</a>へ進みます。</li>
 </ul>

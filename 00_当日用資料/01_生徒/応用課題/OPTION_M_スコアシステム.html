@@ -3,10 +3,10 @@
 .prediction-quiz{border:1px solid #a9bdca;border-radius:8px;padding:12px 16px;margin:18px 0;background:#f5f9fb;min-width:0}.prediction-quiz legend{font-weight:700;padding:0 6px}.prediction-quiz label{display:flex;align-items:flex-start;gap:10px;padding:10px 8px;cursor:pointer;line-height:1.65}.prediction-quiz input{flex-shrink:0;width:20px;height:20px;margin-top:3px;accent-color:#087f83}.prediction-quiz label:has(input:checked){background:#e0f2f1;border-radius:4px}.prediction-quiz label:focus-within{outline:2px solid #087f83;outline-offset:2px}</style><body><p class="back"><a href="../../index.html">当日資料一覧へ</a></p><h1>OPTION M　スコアシステム</h1>
 <p>敵を画面下まで通過させると「回避」になり、続けて回避すると回避得点の倍率が上がります。射撃を先に作る必要はありません。</p>
 <h2>まず、仕組みを3つでつかもう</h2>
-<p><strong>敵を避ける → Mが得点とコンボを計算 → 本体は通常得点を重ねて足さない。</strong></p>
-<p><strong>①</strong> 敵が画面下を通り過ぎると、本体がavoidへその敵を渡します。</p>
+<p><strong>敵を避ける → Mが得点とコンボを計算 → ゲームのコードは通常得点を重ねて足さない。</strong></p>
+<p><strong>①</strong> 敵が画面下を通り過ぎると、ゲームのコードがavoidへその敵を渡します。</p>
 <p><strong>②</strong> Mがコンボと得点を計算し、次のコンボ期限も決めます。</p>
-<p><strong>③</strong> Mがtrue（得点の計算済み）を返すと、本体は標準の1点を重ねて足しません。</p>
+<p><strong>③</strong> Mがtrue（得点の計算済み）を返すと、ゲームのコードは標準の1点を重ねて足しません。</p>
 <p>敵が登場するときにspawnEnemyが通常・レアを抽選し、回避得点を決めます。updateは期限切れのコンボを0へ戻し、drawInfoがコンボ数と倍率を表示します。</p>
 <h3>今回変えるのはここ</h3>
 <table>
@@ -30,7 +30,7 @@
 </tr>
 </tbody></table>
 <p>まずは①②③の流れと、自分が変える値を追えれば大丈夫です。コード内にも同じ番号のコメントがあります。</p>
-<p><a href="%E4%BB%95%E7%B5%84%E3%81%BF_%E6%9C%AC%E4%BD%93%E3%81%A8%E8%BF%BD%E5%8A%A0%E6%A9%9F%E8%83%BD.html">もっと知りたい人へ：本体と追加機能のつながり</a></p>
+<p><a href="%E4%BB%95%E7%B5%84%E3%81%BF_%E6%9C%AC%E4%BD%93%E3%81%A8%E8%BF%BD%E5%8A%A0%E6%A9%9F%E8%83%BD.html">もっと知りたい人へ：ゲームのコードと追加機能のつながり</a></p>
 <h2 id="steps">選んだ機能だけを1か所へ貼る</h2>
 <ol>
 <li>「ワーク用」のsketch.jsを保存します。この後も同じワーク用フォルダで作業します。オリジナルは編集しません。</li>
@@ -38,34 +38,24 @@
 <li>VS Codeで「ワーク用」のsketch.jsを開き、末尾の「応用コード貼り付け欄」を探します。</li>
 <li>「ここから」と「ここまで」の間に、この課題のコードを1回貼ります。別の機能を追加するときは、先のコードを残したまま、その下へ貼ります。同じ課題を修正する場合は、その課題のコードを置き換えます。</li>
 <li>このページの「空欄の意味とヒント」を読み、虫食いを全て埋め、保存します。迷ったら表の例を使えます。</li>
-<li>Chromeでゲーム本体を更新して始め、機能の動作を確認します。</li>
+<li>Chromeで避けゲームの画面を更新して始め、機能の動作を確認します。</li>
 </ol>
 <p><strong>ゲーム全体を置き換えません。</strong> CUSTOM AREAの色・大きさ・速さ・タイトルはそのまま残ります。プレイヤーをyellowに変えていれば、そのままです。</p>
 <p>貼り付け欄が見つからない場合は、「ワーク用」のsketch.jsを開いているか確認します。<a href="../02_%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88.html#help">困ったときの手順</a>も使えます。</p>
 <h2>貼るコード（この1枠だけ）</h2>
 <pre><code class="language-javascript">// ===== このファイルで使う関数・用語の早見表 =====
-// 必要な名前を探し、次の行のURLから詳しい説明を確認できます。
-// p5.js 1.x 公式リファレンス：https://v1.p5js.org/reference/
+// p5.jsは、円や文字を画面に描くときに使う道具です。
+// 円を描く circle など、p5.jsの道具の使い方はここで調べられます。
+// https://v1.p5js.org/reference/
 //
 // 【p5.jsが用意する関数】
 // fill(色)：この後に描く図形や文字の塗り色を決める。
-// https://v1.p5js.org/reference/p5/fill/
 // text(文字, x, y)：指定した位置に文字を描く。
-// https://v1.p5js.org/reference/p5/text/
 // textSize(大きさ)：文字の大きさを決める。
-// https://v1.p5js.org/reference/p5/textSize/
 // millis()：スケッチ開始からの経過時間をミリ秒で得る。1000ミリ秒で1秒。
-// https://v1.p5js.org/reference/p5/millis/
 // floor(数)：その数以下の最大の整数にする。例：1.8 → 1。
-// https://v1.p5js.org/reference/p5/floor/
 // random(下限, 上限)：範囲内の乱数を得る。上限は含まない。引数なしでは0以上1未満。
-// https://v1.p5js.org/reference/p5/random/
 // max(値1, 値2, ...)：指定した値のうち最大のものを返す。
-// https://v1.p5js.org/reference/p5/max/
-//
-// 【ゲーム本体にある自作関数】
-// registerWorkshopOption(ID, 機能)：本体の共通関数へ、課題IDごとに機能を登録する。
-// 定義と【役割】の説明は、同じ教材フォルダのsketch.jsで確認できます。
 // ===== 早見表ここまで =====
 
 registerWorkshopOption(&quot;M&quot;, {
@@ -90,7 +80,7 @@ registerWorkshopOption(&quot;M&quot;, {
     }
   },
   // 【役割】敵を避けたときにコンボと倍率を計算し、得点と次の期限を更新します。
-  // ① 敵が画面下を通り過ぎると、本体がこの敵を渡して呼びます。
+  // ① 敵が画面下を通り過ぎると、ゲームのコードがこの敵を渡して呼びます。
   avoid(enemy) {
     if (millis() &gt;= this.until) {
       this.combo = 0;
@@ -100,7 +90,7 @@ registerWorkshopOption(&quot;M&quot;, {
     const multiplier = 1 + floor((this.combo - 1) / 5);
     score += enemy.value * multiplier;
     this.until = millis() + this.duration;
-    // ③ 本体へ「計算済み」と伝え、標準の1点を重ねて足さないようにします。
+    // ③ ゲームのコードへ「計算済み」と伝え、標準の1点を重ねて足さないようにします。
     return true; // この課題で得点を計算しました。
   },
   // 【役割】レア敵なら黄色を返します。それ以外は基本や別の機能の色を使います。
@@ -149,7 +139,7 @@ registerWorkshopOption(&quot;M&quot;, {
 <p>まず自分で考え、迷ったら例の値を使って動きを確かめます。動いた後に1つずつ変えて試せます。空欄が残っている間は、まだ動かない場合があります。</p>
 <ul>
 <li>敵を画面下まで避けると得点が入り、連続回避の1～5回目は1倍、6～10回目は2倍です。射撃を先に作る必要はありません。</li>
-<li>表示する行は本体が割り当てるので、BGM表示とコンボ表示は重なりません。</li>
+<li>表示する行はゲームのコードが割り当てるので、BGM表示とコンボ表示は重なりません。</li>
 </ul>
 <h2>回避コンボを試す準備</h2>
 <p>敵が1体だけだと、次の敵を回避するまでにコンボの期限が切れやすくなります。<strong>「かんたん」の速さのまま、敵だけ複数にして試します。</strong></p>
@@ -171,7 +161,7 @@ registerWorkshopOption(&quot;M&quot;, {
 <h2>うまく動かないとき</h2>
 <ul>
 <li>この課題の<code>__M1__</code>などの印が残っていないか探します。</li>
-<li>保存後、円の練習画面ではなくゲーム本体を更新し、1で始めます。</li>
+<li>保存後、Chromeで避けゲームの画面を更新し、1で始めます。</li>
 <li>別の機能も入っている場合、そのコードを残したまま追加したか確かめます。同じ課題は1つだけにします。</li>
 <li>それでも直らなければ<a href="../02_%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88.html#help">テキストの対処手順</a>へ進みます。</li>
 </ul>

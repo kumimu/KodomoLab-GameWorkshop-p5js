@@ -1,27 +1,17 @@
 // ===== このファイルで使う関数・用語の早見表 =====
-// 必要な名前を探し、次の行のURLから詳しい説明を確認できます。
-// p5.js 1.x 公式リファレンス：https://v1.p5js.org/reference/
+// p5.jsは、円や文字を画面に描くときに使う道具です。
+// 円を描く circle など、p5.jsの道具の使い方はここで調べられます。
+// https://v1.p5js.org/reference/
 //
 // 【p5.jsが用意する関数】
 // fill(色)：この後に描く図形や文字の塗り色を決める。
-// https://v1.p5js.org/reference/p5/fill/
 // noStroke()：図形の輪郭線を描かない設定にする。
-// https://v1.p5js.org/reference/p5/noStroke/
 // circle(x, y, 直径)：中心(x, y)に円を描く。
-// https://v1.p5js.org/reference/p5/circle/
 // dist(x1, y1, x2, y2)：2点の間の距離を求める。
-// https://v1.p5js.org/reference/p5/dist/
 //
 // 【JavaScript標準の機能：p5.jsとは別】
 // 配列.push(値)：一覧の末尾に値を追加する。描画設定のpush()とは別の機能。
-// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/push
 // 配列.splice(位置, 個数)：指定位置から要素を取り除く。この教材では弾の削除に使う。
-// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
-//
-// 【ゲーム本体にある自作関数】
-// registerWorkshopOption(ID, 機能)：本体の共通関数へ、課題IDごとに機能を登録する。
-// respawnEnemy(敵)：敵を上へ戻して再登場させる。本体に定義がある。
-// 定義と【役割】の説明は、同じ教材フォルダのsketch.jsで確認できます。
 // ===== 早見表ここまで =====
 
 registerWorkshopOption("B", {

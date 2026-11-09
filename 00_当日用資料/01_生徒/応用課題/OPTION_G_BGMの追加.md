@@ -48,9 +48,9 @@
 
 ## まず、仕組みを3つでつかもう
 
-**本体が毎回Gへ声を掛ける → Gが音を鳴らす時刻か確かめる → メロディから1音鳴らす。**
+**ゲームのコードが毎回Gへ声を掛ける → Gが音を鳴らす時刻か確かめる → メロディから1音鳴らす。**
 
-**①** 本体がupdateを呼びます。音が使え、BGMがオンなら先へ進みます。
+**①** ゲームのコードがupdateを呼びます。音が使え、BGMがオンなら先へ進みます。
 
 **②** まだ次の時刻でなければ待ちます。時刻になったら、次に鳴らす時刻をintervalで決めます。
 
@@ -68,7 +68,7 @@ startはゲーム開始時に音の準備をします。keyはMキーでオン�
 
 まずは①②③の流れと、自分が変える値を追えれば大丈夫です。コード内にも同じ番号のコメントがあります。
 
-[もっと知りたい人へ：本体と追加機能のつながり](仕組み_本体と追加機能.md)
+[もっと知りたい人へ：ゲームのコードと追加機能のつながり](仕組み_本体と追加機能.md)
 
 ## 選んだ機能だけを1か所へ貼る
 
@@ -77,7 +77,7 @@ startはゲーム開始時に音の準備をします。keyはMキーでオン�
 3. VS Codeで「ワーク用」のsketch.jsを開き、末尾の「応用コード貼り付け欄」を探します。
 4. 「ここから」と「ここまで」の間に、この課題のコードを1回貼ります。別の機能を追加するときは、先のコードを残したまま、その下へ貼ります。同じ課題を修正する場合は、その課題のコードを置き換えます。
 5. このページの「空欄の意味とヒント」を読み、虫食いを全て埋め、保存します。迷ったら表の例を使えます。
-6. Chromeでゲーム本体を更新して始め、機能の動作を確認します。
+6. Chromeで避けゲームの画面を更新して始め、機能の動作を確認します。
 
 **ゲーム全体を置き換えません。** CUSTOM AREAの色・大きさ・速さ・タイトルはそのまま残ります。プレイヤーをyellowに変えていれば、そのままです。
 
@@ -87,40 +87,26 @@ startはゲーム開始時に音の準備をします。keyはMキーでオン�
 
 ```javascript
 // ===== このファイルで使う関数・用語の早見表 =====
-// 必要な名前を探し、次の行のURLから詳しい説明を確認できます。
-// p5.js 1.x 公式リファレンス：https://v1.p5js.org/reference/
+// p5.jsは、円や文字を画面に描くときに使う道具です。
+// 円を描く circle など、p5.jsの道具の使い方はここで調べられます。
+// https://v1.p5js.org/reference/
 //
 // 【p5.jsが用意する関数】
 // fill(色)：この後に描く図形や文字の塗り色を決める。
-// https://v1.p5js.org/reference/p5/fill/
 // text(文字, x, y)：指定した位置に文字を描く。
-// https://v1.p5js.org/reference/p5/text/
 // textSize(大きさ)：文字の大きさを決める。
-// https://v1.p5js.org/reference/p5/textSize/
 // millis()：スケッチ開始からの経過時間をミリ秒で得る。1000ミリ秒で1秒。
-// https://v1.p5js.org/reference/p5/millis/
 //
 // 【JavaScript標準の機能：p5.jsとは別】
 // 文字列.toLowerCase()：英字を小文字に揃える。
-// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/String/toLowerCase
 //
 // 【ブラウザの音声機能：Web Audio API】
 // AudioContext / createOscillator() / createGain()：音の処理、音源、音量調節の部品を用意する。
-// https://developer.mozilla.org/ja/docs/Web/API/AudioContext
 // resume()：一時停止中の音声処理を動かす。
-// https://developer.mozilla.org/ja/docs/Web/API/AudioContext/resume
 // connect() / disconnect()：音の部品をつなぐ・切り離す。
-// https://developer.mozilla.org/ja/docs/Web/API/AudioNode
 // start() / stop() / onended：音の開始・停止・終了後の処理を扱う。
-// https://developer.mozilla.org/ja/docs/Web/API/AudioScheduledSourceNode
 // frequency.value / setValueAtTime() / linearRampToValueAtTime()：音の高さや音量を時刻に合わせて変える。
-// https://developer.mozilla.org/ja/docs/Web/API/AudioParam
 // audio.currentTime：音声処理の時刻（秒）。millis()のミリ秒と区別する。
-// https://developer.mozilla.org/ja/docs/Web/API/BaseAudioContext/currentTime
-//
-// 【ゲーム本体にある自作関数】
-// registerWorkshopOption(ID, 機能)：本体の共通関数へ、課題IDごとに機能を登録する。
-// 定義と【役割】の説明は、同じ教材フォルダのsketch.jsで確認できます。
 // ===== 早見表ここまで =====
 
 registerWorkshopOption("G", {
@@ -151,7 +137,7 @@ registerWorkshopOption("G", {
     }
   },
   // 【役割】次の音の時刻になったら短い音を1つ鳴らし、メロディを次へ進めます。
-  // ① 本体から毎回呼ばれ、音を鳴らせる状態か確かめます。
+  // ① ゲームのコードから毎回呼ばれ、音を鳴らせる状態か確かめます。
   update() {
     if (!this.enabled || !this.audio || this.audio.state !== "running") {
       return;
@@ -201,7 +187,7 @@ registerWorkshopOption("G", {
 まず自分で考え、迷ったら例の値を使って動きを確かめます。動いた後に1つずつ変えて試せます。空欄が残っている間は、まだ動かない場合があります。
 
 - メロディの配列を順に読みます。Mでオン・オフし、終了すると新しい音の再生を止めます。p5.soundの追加は不要です。
-- 表示する行は本体が割り当てるので、BGM表示とコンボ表示は重なりません。
+- 表示する行はゲームのコードが割り当てるので、BGM表示とコンボ表示は重なりません。
 
 ## 動作確認
 
@@ -214,7 +200,7 @@ registerWorkshopOption("G", {
 ## うまく動かないとき
 
 - この課題の`__G1__`などの印が残っていないか探します。
-- 保存後、円の練習画面ではなくゲーム本体を更新し、1で始めます。
+- 保存後、Chromeで避けゲームの画面を更新し、1で始めます。
 - 別の機能も入っている場合、そのコードを残したまま追加したか確かめます。同じ課題は1つだけにします。
 - それでも直らなければ[テキストの対処手順](../02_ワークショップテキスト.html#help)へ進みます。
 

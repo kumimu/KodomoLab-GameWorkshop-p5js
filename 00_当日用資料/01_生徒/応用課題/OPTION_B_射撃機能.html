@@ -4,8 +4,8 @@
 <p>プレイ中にSpaceを押すと弾を撃ち、敵に当てると点数が入ります。</p>
 <h2>まず、仕組みを3つでつかもう</h2>
 <p><strong>Spaceを押す → Bが弾を作って動かす → 弾が画面に現れ、当たると得点が入る。</strong></p>
-<p><strong>①</strong> 本体からキー操作が届くと、keyがSpaceを確かめ、bulletsへ弾を1つ追加します。</p>
-<p><strong>②</strong> 本体から毎回呼ばれるupdateが弾を動かし、命中なら得点を足して弾を消します。</p>
+<p><strong>①</strong> ゲームのコードからキー操作が届くと、keyがSpaceを確かめ、bulletsへ弾を1つ追加します。</p>
+<p><strong>②</strong> ゲームのコードから毎回呼ばれるupdateが弾を動かし、命中なら得点を足して弾を消します。</p>
 <p><strong>③</strong> drawが残っている弾を描き、画面に見えるようにします。</p>
 <p>bulletsはBが持つ弾の一覧です。this.bulletsは「このBの弾の一覧」という意味です。startで空にするので、前のゲームの弾は残りません。</p>
 <h3>今回変えるのはここ</h3>
@@ -30,7 +30,7 @@
 </tr>
 </tbody></table>
 <p>まずは①②③の流れと、自分が変える値を追えれば大丈夫です。コード内にも同じ番号のコメントがあります。</p>
-<p><a href="%E4%BB%95%E7%B5%84%E3%81%BF_%E6%9C%AC%E4%BD%93%E3%81%A8%E8%BF%BD%E5%8A%A0%E6%A9%9F%E8%83%BD.html">もっと知りたい人へ：本体と追加機能のつながり</a></p>
+<p><a href="%E4%BB%95%E7%B5%84%E3%81%BF_%E6%9C%AC%E4%BD%93%E3%81%A8%E8%BF%BD%E5%8A%A0%E6%A9%9F%E8%83%BD.html">もっと知りたい人へ：ゲームのコードと追加機能のつながり</a></p>
 <h2 id="steps">選んだ機能だけを1か所へ貼る</h2>
 <ol>
 <li>「ワーク用」のsketch.jsを保存します。この後も同じワーク用フォルダで作業します。オリジナルは編集しません。</li>
@@ -38,35 +38,25 @@
 <li>VS Codeで「ワーク用」のsketch.jsを開き、末尾の「応用コード貼り付け欄」を探します。</li>
 <li>「ここから」と「ここまで」の間に、この課題のコードを1回貼ります。別の機能を追加するときは、先のコードを残したまま、その下へ貼ります。同じ課題を修正する場合は、その課題のコードを置き換えます。</li>
 <li>このページの「空欄の意味とヒント」を読み、虫食いを全て埋め、保存します。迷ったら表の例を使えます。</li>
-<li>Chromeでゲーム本体を更新して始め、機能の動作を確認します。</li>
+<li>Chromeで避けゲームの画面を更新して始め、機能の動作を確認します。</li>
 </ol>
 <p><strong>ゲーム全体を置き換えません。</strong> CUSTOM AREAの色・大きさ・速さ・タイトルはそのまま残ります。プレイヤーをyellowに変えていれば、そのままです。</p>
 <p>貼り付け欄が見つからない場合は、「ワーク用」のsketch.jsを開いているか確認します。<a href="../02_%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88.html#help">困ったときの手順</a>も使えます。</p>
 <h2>貼るコード（この1枠だけ）</h2>
 <pre><code class="language-javascript">// ===== このファイルで使う関数・用語の早見表 =====
-// 必要な名前を探し、次の行のURLから詳しい説明を確認できます。
-// p5.js 1.x 公式リファレンス：https://v1.p5js.org/reference/
+// p5.jsは、円や文字を画面に描くときに使う道具です。
+// 円を描く circle など、p5.jsの道具の使い方はここで調べられます。
+// https://v1.p5js.org/reference/
 //
 // 【p5.jsが用意する関数】
 // fill(色)：この後に描く図形や文字の塗り色を決める。
-// https://v1.p5js.org/reference/p5/fill/
 // noStroke()：図形の輪郭線を描かない設定にする。
-// https://v1.p5js.org/reference/p5/noStroke/
 // circle(x, y, 直径)：中心(x, y)に円を描く。
-// https://v1.p5js.org/reference/p5/circle/
 // dist(x1, y1, x2, y2)：2点の間の距離を求める。
-// https://v1.p5js.org/reference/p5/dist/
 //
 // 【JavaScript標準の機能：p5.jsとは別】
 // 配列.push(値)：一覧の末尾に値を追加する。描画設定のpush()とは別の機能。
-// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/push
 // 配列.splice(位置, 個数)：指定位置から要素を取り除く。この教材では弾の削除に使う。
-// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
-//
-// 【ゲーム本体にある自作関数】
-// registerWorkshopOption(ID, 機能)：本体の共通関数へ、課題IDごとに機能を登録する。
-// respawnEnemy(敵)：敵を上へ戻して再登場させる。本体に定義がある。
-// 定義と【役割】の説明は、同じ教材フォルダのsketch.jsで確認できます。
 // ===== 早見表ここまで =====
 
 registerWorkshopOption(&quot;B&quot;, {
@@ -161,7 +151,7 @@ registerWorkshopOption(&quot;B&quot;, {
 <h2>うまく動かないとき</h2>
 <ul>
 <li>この課題の<code>__B1__</code>などの印が残っていないか探します。</li>
-<li>保存後、円の練習画面ではなくゲーム本体を更新し、1で始めます。</li>
+<li>保存後、Chromeで避けゲームの画面を更新し、1で始めます。</li>
 <li>別の機能も入っている場合、そのコードを残したまま追加したか確かめます。同じ課題は1つだけにします。</li>
 <li>それでも直らなければ<a href="../02_%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88.html#help">テキストの対処手順</a>へ進みます。</li>
 </ul>

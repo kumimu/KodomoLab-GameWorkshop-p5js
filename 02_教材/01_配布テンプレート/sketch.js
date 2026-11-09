@@ -170,7 +170,7 @@ function movePlayer() {
 
 // 【役割】敵1体を下へ動かし、下まで避けたら得点と再登場を処理します。
 function moveEnemy(enemy) {
-  // Aの① 本体から追加機能へ「この敵は何倍の速さ？」と聞きます。
+  // Aの① ゲームのコードから追加機能へ「この敵は何倍の速さ？」と聞きます。
   const multiplier = runOption("speedMultiplier", enemy);
   // Aの③ 返ってきた倍率を元の速さに掛けます。返事がなければ1倍です。
   enemy.y += enemy.speed * (multiplier === undefined ? 1 : multiplier);

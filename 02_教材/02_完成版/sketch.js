@@ -1134,7 +1134,7 @@ function drawSelect() {
     noStroke();
     text(num + '   ' + label, CONFIG.canvasW / 2, y - 8);
     
-    // 本体テキスト（ネオン色）
+    // 文字の表面（ネオン色）
     fill(col);
     text(num + '   ' + label, CONFIG.canvasW / 2, y - 8);
     
@@ -1236,7 +1236,7 @@ function burst(x, y, col, n) {
 // ユーティリティ: 音声出力
 // 【役割】音を鳴らす道具。freqは音の高さ（Hz）、durationは鳴らす秒数。外部音声ファイルは使いません。
 function playSound(freq, duration) {
-  // try/catch：音を出せない環境でも、ゲーム本体は止めないための仕組み。
+  // try/catch：音を出せない環境でも、ゲームは止めないための仕組み。
   try {
     // グローバル Audio Context を初期化（最初の1回のみ）
     if (!audioContext) {

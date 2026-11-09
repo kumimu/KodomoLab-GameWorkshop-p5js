@@ -1,7 +1,7 @@
 <!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ワークショップテキスト</title><style>@page{size:A4;margin:16mm}*{box-sizing:border-box}body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;color:#162234;font-size:11pt;line-height:1.7;max-width:190mm;margin:24px auto;padding:0 12px}h1{font-size:23pt;line-height:1.35;border-bottom:3px solid #197c7c;padding-bottom:9px}h2{font-size:16pt;break-after:avoid;margin-top:24px}h3{font-size:13pt;break-after:avoid}p,li{overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:10pt}th,td{border:1px solid #b7c3ca;padding:6px 8px;text-align:left;vertical-align:top}th{background:#eaf3f3}tr,pre{break-inside:avoid}pre{padding:12px;background:#f0f4f6;border-left:3px solid #197c7c;font-size:10pt;white-space:pre-wrap;overflow-wrap:anywhere}code{font-family:Menlo,Consolas,monospace}a{color:#156c70}input{accent-color:#197c7c}.sheet{min-height:257mm;break-after:page}.sheet:last-child{break-after:auto}.write{height:19mm;border-bottom:1px solid #7c8b97;margin-bottom:7mm}.short{height:11mm} .label{font-weight:600;margin-bottom:0}.screenonly{font-size:10pt;color:#607080}@media print{body{max-width:none;padding:0;margin:0}.screenonly{display:none}}.copy{padding:7px 14px;background:#197c7c;color:white;border:0;cursor:pointer;font-size:11pt}.copy-status{font-size:10pt;margin-left:12px}@media print{.copy,.copy-status,.back{display:none}}.copy{padding:7px 14px;background:#197c7c;color:white;border:0;cursor:pointer;font-size:11pt}.copy-status{font-size:10pt;margin-left:12px}@media print{.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}button.copy{font:inherit;padding:10px 18px;border:0;background:#197c7c;color:white;cursor:pointer}.copy-status{display:block;margin:8px 0}@media print{button.copy,.copy-status,.back{display:none}}h2[id]{scroll-margin-top:20px}.quote-highlight{background:#fff0c4;border-radius:2px}</style><body><p class="back"><a href="../index.html">当日資料一覧へ</a></p><h1>ワークショップテキスト</h1>
 <p>このページを上から順に進めます。前半は全員で同じ練習をし、後半は好きな機能を1つ追加します。</p>
 <p>記録にはゲーム改造ワークシートを使います。</p>
-<p><a href="#t02">まず遊んでみよう</a> ／ <a href="#t03">基礎練習へ</a> ／ <a href="#t04">ゲーム本体へ</a> ／ <a href="#t05">応用課題へ</a> ／ <a href="#help">困ったとき</a></p>
+<p><a href="#t02">まず遊んでみよう</a> ／ <a href="#t03">基礎練習へ</a> ／ <a href="#t04">ゲームの仕組みと改造へ</a> ／ <a href="#t05">応用課題へ</a> ／ <a href="#help">困ったとき</a></p>
 <h2 id="t01">T01　今日使うゲームと2つのフォルダ</h2>
 <p>ゲームを作るための教材は、最初に「オリジナル」と「ワーク用」の2つのフォルダに用意されています。</p>
 <table>
@@ -116,11 +116,10 @@
 <p>最後に<strong>直径100の黄色い円</strong>になるように改造できれば確認完了です。</p>
 <h2 id="t04">T04　ゲームの全体像と最初の改造（25～35分）</h2>
 <h3>前半：ゲーム全体の地図（25～32分）</h3>
-<p>VS Codeで「ワーク用」のsketch.jsを開きます。ここからはゲーム本体を扱います。最初は読むだけです。</p>
 <p>モニターの説明を見ながら、ゲームがどう動くかを確かめましょう。</p>
-<h3 id="game-custom">後半：ゲーム本体の色とスピードを変える（32～35分）</h3><p>先ほどの練習と同じように、変数の値を変えて、実際のゲームもカスタムしてみましょう。まずはプレイヤーを好きな色に。さらに今回は、プレイヤーのスピードも変えて、操作した感じがどう変わるか試してみましょう。</p><ol><li>sketch.jsの上の方にある「CUSTOM AREA」を探します。</li><li>playerColorの引用符の内側を好きな色にします。例はyellowです。引用符は残します。</li></ol><pre><code class="language-javascript">let playerColor = &quot;yellow&quot;;
+<h3 id="game-custom">後半：プレイヤーの色とスピードを変える（32～35分）</h3><p>VS Codeで「ワーク用」のsketch.jsを開きます。先ほどの練習と同じように、変数の値を変えて、実際のゲームもカスタムしてみましょう。まずはプレイヤーを好きな色に。さらに今回は、プレイヤーのスピードも変えて、操作した感じがどう変わるか試してみましょう。</p><ol><li>sketch.jsの上の方にある「CUSTOM AREA」を探します。</li><li>playerColorの引用符の内側を好きな色にします。例はyellowです。引用符は残します。</li></ol><pre><code class="language-javascript">let playerColor = &quot;yellow&quot;;
 </code></pre><ol start="3"><li>playerSpeedの値を7から12に変えます。数値には引用符を付けません。</li></ol><pre><code class="language-javascript">let playerSpeed = 12;
-</code></pre><ol start="4"><li>VS Codeで「ファイル→保存」を選びます。</li><li>Chromeで<strong>ゲーム本体の画面</strong>を更新します。円の練習画面とは別です。</li><li>1でゲームを始め、← →で動かします。選んだ色になったか、最初に遊んだときより素早く動くかを確かめます。</li></ol><p>速いと避けやすいでしょうか。それとも動きすぎて難しいでしょうか。クリアまで待たず、数秒操作して違いを確かめましょう。</p><p>練習のpractice.jsとゲームのsketch.jsは別々のファイルなので、練習で変えた円の大きさ・色・タイトルはゲームへ自動では移りません。すでに色を変えてある場合は、その色のまま速さを試しても構いません。</p><p>ここまでは全員で同じ手順を進めます。次に、追加したい機能を選びます。</p>
+</code></pre><ol start="4"><li>VS Codeで「ファイル→保存」を選びます。</li><li>Chromeで「ワーク用」の <code>index.html</code> で開いた<strong>避けゲームの画面</strong>を更新します。</li><li>1でゲームを始め、← →で動かします。選んだ色になったか、最初に遊んだときより素早く動くかを確かめます。</li></ol><p>速いと避けやすいでしょうか。それとも動きすぎて難しいでしょうか。クリアまで待たず、数秒操作して違いを確かめましょう。</p><p>ここまでは全員で同じ手順を進めます。次に、追加したい機能を選びます。</p>
 <h2 id="t05">T05　好きな応用課題を1つ実装（35～55分）</h2>
 <p><a href="%E5%BF%9C%E7%94%A8%E8%AA%B2%E9%A1%8C/00_%E8%AA%B2%E9%A1%8C%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9.html">応用課題の選択ページ</a>を開きます。本日はA・B・G・H・Mから1つ選びます。各ページに、追加するコード・空欄の説明・確認する動きが載っています。</p>
 <table>
@@ -157,7 +156,7 @@
 <li>選んだ課題ページを開き、「この機能のコードをコピー」を押します。</li>
 <li>ワーク用のsketch.jsの一番下にある「応用コード貼り付け欄：ここから」と「ここまで」の間へ貼り付けます。</li>
 <li>課題ページの「空欄の意味とヒント」を読み、<code>__B1__</code>などの印全体を値へ置き換えます。迷ったら同じページの例で確かめられます。</li>
-<li>保存し、Chromeのゲーム本体を更新して、1で始めます。課題ページの「動作確認」を確かめます。</li>
+<li>保存し、Chromeの避けゲームの画面を更新して、1で始めます。課題ページの「動作確認」を確かめます。</li>
 <li>動いたら1つの値だけを変えて試し、予想と結果をノートに残します。</li>
 </ol>
 <p>プレイヤーの色など、CUSTOM AREAで変更した内容は残ります。貼り付け欄の外のコードはそのまま使います。<strong>共通の登録関数を名前変更したり、let bulletsを別の場所へ追加したりする作業は不要です。</strong></p>
@@ -172,7 +171,7 @@
 </ol>
 <p>オリジナルは最初の状態です。sketch.jsを丸ごと戻すと、それまでの改造も元に戻ります。ワーク用を削除したり原本で上書きしたりする前に、講師と確認しましょう。</p>
 <h2 id="t07">T07　動作確認（60～70分）</h2>
-<p>ゲーム本体を更新して、次を確かめます。</p>
+<p>避けゲームの画面を更新して、次を確かめます。</p>
 <ul>
 <li><input disabled="" type="checkbox"> 開始画面が出る。</li>
 <li><input disabled="" type="checkbox"> 1で始め、左右へ動ける。</li>
