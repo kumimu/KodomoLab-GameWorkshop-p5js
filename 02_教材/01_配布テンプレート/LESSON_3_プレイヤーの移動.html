@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>レッスン3：プレイヤーの移動</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: #f5f9fa; color: #17293a; font: 17px/1.75 system-ui, sans-serif; }
+main { max-width: 920px; margin: auto; padding: 24px clamp(16px, 4vw, 40px) 48px; background: white; min-height: 100vh; }
+nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+nav a, nav span { padding: 4px 10px; border: 1px solid #bfd6d8; border-radius: 6px; }
+nav span { background: #dceff0; font-weight: 700; }
+a { color: #15676e; }
+h1 { font-size: clamp(24px, 5vw, 34px); line-height: 1.3; border-bottom: 3px solid #197c7c; padding-bottom: 12px; }
+h2 { margin-top: 32px; font-size: 23px; }
+h3 { margin-top: 24px; font-size: 19px; }
+pre { overflow-x: auto; padding: 14px; background: #edf4f6; border-radius: 8px; line-height: 1.5; }
+code { font-family: Menlo, Consolas, monospace; font-size: .92em; }
+:not(pre) > code { background: #edf4f6; padding: 1px 4px; border-radius: 3px; }
+table { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; }
+th, td { border: 1px solid #becdd2; padding: 7px 10px; text-align: left; }
+th { background: #e8f2f2; }
+blockquote { margin-left: 0; padding-left: 16px; border-left: 3px solid #197c7c; }
+hr { border: 0; border-top: 1px solid #d8e4e7; margin: 24px 0; }
+
+.lesson-screen, .lesson-diagram { margin: 16px 0; padding: 16px; border: 1px solid #bfd6d8; border-radius: 8px; background: #f5f9fa; }
+.lesson-screen p:first-child { margin-top: 0; }
+.lesson-screen p:last-child { margin-bottom: 0; }
+.playfield { border-top: 1px solid #bfd6d8; text-align: center; }
+.player-symbol { color: #15676e; }
+.lesson-diagram svg { display: block; max-width: 100%; height: auto; margin: auto; }
+.lesson-diagram figcaption { margin-top: 10px; }
+</style>
+</head>
+<body>
+<main>
+<nav aria-label="レッスン一覧">
+<a href="LESSON_1_ゲームの全体像.html">レッスン1</a>
+<a href="LESSON_2_変数と設定値.html">レッスン2</a>
+<span aria-current="page">レッスン3</span>
+<a href="LESSON_4_敵と当たり判定.html">レッスン4</a>
+<a href="LESSON_5_改造ミッションの指導.html">レッスン5</a>
+<a href="LESSON_6_発展版について.html">レッスン6</a>
+</nav>
+<h1>レッスン3：プレイヤーの移動</h1>
+<blockquote>
+<p><strong>コードを全部覚える必要はありません。</strong></p>
+<p>仕事でプログラムを書く人も、分からないことは調べながら書いています。このレッスンも、気になるところから読んで、試したいところを一つ試してみましょう。</p>
+</blockquote>
+<h2>この資料の使い方</h2>
+<p>左右キーで動く仕組みや、画面の端で止まる計算を詳しく知りたいときに参照します。</p>
+<p>当日の進行と投影手順は<a href="../../00_%E5%BD%93%E6%97%A5%E7%94%A8%E8%B3%87%E6%96%99/README.html">当日用資料の使い方</a>を参照してください。</p>
+<p>「現在のコード」と示す例はシンプル版sketch.jsの対応する関数です。「抜粋」「考え方の例」は説明用で、そのままsketch.jsへ追加するコードではありません。改造では既存の値を変更し、応用機能は<a href="../../00_%E5%BD%93%E6%97%A5%E7%94%A8%E8%B3%87%E6%96%99/01_%E7%94%9F%E5%BE%92/%E5%BF%9C%E7%94%A8%E8%AA%B2%E9%A1%8C/00_%E8%AA%B2%E9%A1%8C%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9.html">当日用の課題ページ</a>からコピーします。</p>
+<h2>🎯 学習目標</h2>
+<p>プレイヤーがキー入力で左右に移動する仕組みを、深く理解する。</p>
+<ul>
+<li>キー入力の受け取り方</li>
+<li>座標の更新とゲームループの関係</li>
+<li><code>constrain()</code> 関数で画面の端を制御する理由</li>
+<li>1秒間の移動距離を計算する方法</li>
+</ul>
+<hr>
+<h2>🎮 プレイヤーが「移動して見える」仕組み</h2>
+<p>レッスン1で学んだとおり、ゲームは毎フレーム（1秒間に約60回を目安に）、背景を消して新しい画像を描き直しています。</p>
+<p><strong>プレイヤーの移動も、これと同じです。</strong></p>
+<p>毎フレーム、プレイヤーの位置（<code>playerX</code>）が少しずつ変わります。</p>
+<p>だから、プレイヤーが移動しているように「見える」のです。</p>
+<pre><code>フレーム1：playerX = 300
+フレーム2：playerX = 293  (左矢印を押した)  ← 300 - 7 = 293
+フレーム3：playerX = 286  ← 293 - 7 = 286
+フレーム4：playerX = 279  ← 286 - 7 = 279
+フレーム5：playerX = 272  ← 279 - 7 = 272（連続して変わるから、移動に見える）
+</code></pre>
+<hr>
+<h2>📍 座標システムの確認</h2>
+<p>ゲーム画面の座標は、左上を基準にしています。</p>
+<figure class="lesson-diagram">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 200" width="420" role="img" aria-label="ゲーム画面の座標" font-size="16" fill="#17293a">
+<rect x="46" y="32" width="328" height="136" fill="#edf4f6" stroke="#197c7c" stroke-width="2"/>
+<text x="46" y="23">(0, 0)</text><text x="374" y="23" text-anchor="end">(600, 0)</text>
+<text x="46" y="190">(0, 400)</text><text x="374" y="190" text-anchor="end">(600, 400)</text>
+<circle cx="210" cy="128" r="6" fill="#197c7c"/><text x="222" y="134">(playerX, playerY)</text>
+</svg>
+<figcaption>画面は横600・縦400ピクセル。右へ行くほどxが、下へ行くほどyが大きくなります。</figcaption>
+</figure>
+<ul>
+<li><strong>左端</strong> = X座標 0</li>
+<li><strong>右端</strong> = X座標 600</li>
+<li><strong>上端</strong> = Y座標 0</li>
+<li><strong>下端</strong> = Y座標 400</li>
+</ul>
+<p>プレイヤーが画面中央にいれば、<code>playerX</code> はおよそ 300 です。</p>
+<hr>
+<h2>⌨️ キー入力の受け取り方</h2>
+<h3><code>movePlayer()</code> 関数</h3>
+<p><strong><code>sketch.js</code> の対応箇所（関数名で検索）：</strong></p>
+<pre><code class="language-javascript">// 【役割】キーに応じて自機を動かします。
+function movePlayer() {
+  if (keyIsDown(LEFT_ARROW)) {
+    playerX -= playerSpeed;
+  }
+  if (keyIsDown(RIGHT_ARROW)) {
+    playerX += playerSpeed;
+  }
+
+  playerX = constrain(playerX, playerSize / 2, width - playerSize / 2);
+}
+</code></pre>
+<h3><code>keyIsDown()</code> 関数とは</h3>
+<p><strong><code>keyIsDown(LEFT_ARROW)</code></strong> は、p5.jsが提供する関数です。</p>
+<p>「この瞬間、LEFT_ARROW（左矢印キー）が押されていますか？」と確認します。</p>
+<ul>
+<li>押されている → <code>true</code>（真）</li>
+<li>押されていない → <code>false</code>（偽）</li>
+</ul>
+<h3>左矢印キーが押された場合</h3>
+<pre><code class="language-javascript">if (keyIsDown(LEFT_ARROW)) {
+  playerX -= playerSpeed;
+}
+</code></pre>
+<p>このコードを読む：</p>
+<ol>
+<li><code>if (...)</code> — もし〜なら</li>
+<li><code>keyIsDown(LEFT_ARROW)</code> — 左矢印キーが押されていたら</li>
+<li><code>playerX -= playerSpeed</code> — <code>playerX</code> から <code>playerSpeed</code> を引く（左に移動）</li>
+</ol>
+<p><strong>例：</strong> <code>playerX = 300</code>、<code>playerSpeed = 7</code> の場合</p>
+<pre><code class="language-javascript">playerX -= 7;  // playerX = 300 - 7 = 293
+</code></pre>
+<p>プレイヤーが左に7ピクセル移動します。</p>
+<h3>右矢印キーが押された場合</h3>
+<pre><code class="language-javascript">if (keyIsDown(RIGHT_ARROW)) {
+  playerX += playerSpeed;
+}
+</code></pre>
+<p>このコードを読む：</p>
+<ol>
+<li><code>if (...)</code> — もし〜なら</li>
+<li><code>keyIsDown(RIGHT_ARROW)</code> — 右矢印キーが押されていたら</li>
+<li><code>playerX += playerSpeed</code> — <code>playerX</code> に <code>playerSpeed</code> を足す（右に移動）</li>
+</ol>
+<p><strong>例：</strong> <code>playerX = 300</code>、<code>playerSpeed = 7</code> の場合</p>
+<pre><code class="language-javascript">playerX += 7;  // playerX = 300 + 7 = 307
+</code></pre>
+<p>プレイヤーが右に7ピクセル移動します。</p>
+<hr>
+<h2>🔄 毎フレーム何が起こるのか</h2>
+<p><strong>レッスン1で学んだゲームループを思い出してください。</strong> 次は移動と描画だけに絞った説明用の抜粋です。開始・終了画面やその他の処理を省略しているので、sketch.jsにある関数全体とは区別して読みます。</p>
+<pre><code class="language-javascript">// 【役割】プレイ中の描画を呼ぶ部分だけを示す、説明用の抜粋です。
+function draw() {
+  background(backgroundColor);
+  if (gameState === &quot;play&quot;) {
+    playGame();
+  }
+}
+
+// 【役割】移動してから描く順序を示します。他の処理は省略しています。
+function playGame() {
+  movePlayer();
+  // ゲームのコードでは、この間に追加機能の更新と情報表示があります。
+  drawPlayer();
+  // 時間判定、追加の描画、敵の処理はここでは省略しています。
+}
+</code></pre>
+<p><strong>毎フレーム、以下の順で起こります：</strong></p>
+<ol>
+<li>背景を描き直す（前フレームの画像を消す）</li>
+<li><code>playGame()</code> が実行される</li>
+<li><code>movePlayer()</code> で、キー入力に基づいて <code>playerX</code> を更新する</li>
+<li><code>drawPlayer()</code> で、新しい位置にプレイヤーを描く</li>
+<li>敵も同様に移動・描画される</li>
+</ol>
+<p>この処理を毎フレーム繰り返します。</p>
+<hr>
+<h2>🛑 <code>constrain()</code> 関数で画面の端を制御</h2>
+<h3>なぜ <code>constrain()</code> が必要なのか</h3>
+<p>もし <code>constrain()</code> がなければ、こうなります：</p>
+<pre><code class="language-javascript">// 【役割】キーに応じて自機を動かします。
+function movePlayer() {
+  if (keyIsDown(LEFT_ARROW)) {
+    playerX -= playerSpeed;
+  }
+  if (keyIsDown(RIGHT_ARROW)) {
+    playerX += playerSpeed;
+  }
+
+  playerX = constrain(playerX, playerSize / 2, width - playerSize / 2);
+}
+</code></pre>
+<p>プレイヤーが左矢印を押し続けると、<code>playerX</code> はどんどん小さくなります。</p>
+<pre><code>playerX = 300
+playerX = 293
+playerX = 286
+playerX = 279
+playerX = 50
+playerX = -20    ← 画面の左側の外へ出てしまう！
+playerX = -100
+...
+</code></pre>
+<p>マイナスの座標に描かれたプレイヤーは、画面に見えません。</p>
+<p>これは、ゲームとして不自然です。</p>
+<h3><code>constrain()</code> 関数の役割</h3>
+<pre><code class="language-javascript">playerX = constrain(
+  playerX,
+  playerSize / 2,
+  width - playerSize / 2
+);
+</code></pre>
+<p><strong><code>constrain()</code> は、値を指定の範囲内に制限します。</strong></p>
+<p>引数（中身）は3つ：</p>
+<table>
+<thead>
+<tr>
+<th>引数</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第1引数：<code>playerX</code></td>
+<td>制限したい値</td>
+</tr>
+<tr>
+<td>第2引数：<code>playerSize / 2</code></td>
+<td>最小値</td>
+</tr>
+<tr>
+<td>第3引数：<code>width - playerSize / 2</code></td>
+<td>最大値</td>
+</tr>
+</tbody></table>
+<p><strong>つまり：</strong></p>
+<pre><code class="language-javascript">constrain(playerX, 左の端, 右の端);
+</code></pre>
+<hr>
+<h2>📐 具体的な計算</h2>
+<h3>画面のサイズ</h3>
+<pre><code class="language-javascript">width = 600   // 画面の幅
+height = 400  // 画面の高さ
+</code></pre>
+<h3>プレイヤーのサイズ</h3>
+<pre><code class="language-javascript">playerSize = 40
+</code></pre>
+<h3><code>constrain()</code> の範囲</h3>
+<pre><code class="language-javascript">playerX = constrain(
+  playerX,
+  playerSize / 2,        // 40 / 2 = 20
+  width - playerSize / 2 // 600 - 20 = 580
+);
+</code></pre>
+<p><strong>つまり、<code>playerX</code> は 20〜580 の範囲に制限されます。</strong></p>
+<h3>なぜ <code>playerSize / 2</code> なのか</h3>
+<p>プレイヤーは三角形で、中心が <code>(playerX, playerY)</code> です。</p>
+<p>三角形の横幅の半分は <code>playerSize / 2</code> なので、</p>
+<ul>
+<li>プレイヤーの左端 = <code>playerX - playerSize / 2</code> = <code>20 - 20</code> = <code>0</code>（画面の左端）</li>
+<li>プレイヤーの右端 = <code>playerX + playerSize / 2</code> = <code>580 + 20</code> = <code>600</code>（画面の右端）</li>
+</ul>
+<p><strong>プレイヤー全体が画面内に収まるようにしています。</strong></p>
+<hr>
+<h2>📊 移動の流れ（完全版）</h2>
+<h3>状態1：初期状態</h3>
+<pre><code class="language-javascript">playerX = 300      // 画面中央
+playerSize = 40
+playerSpeed = 7
+</code></pre>
+<h3>状態2：左矢印キーを3フレーム押し続けた場合</h3>
+<p><strong>フレーム1：</strong></p>
+<pre><code class="language-javascript">if (keyIsDown(LEFT_ARROW)) {
+  playerX -= 7; // playerX = 300 - 7 = 293
+}
+playerX = constrain(293, 20, 580);        // 293は範囲内なので変わらない
+// playerX = 293
+</code></pre>
+<p><strong>フレーム2：</strong></p>
+<pre><code class="language-javascript">if (keyIsDown(LEFT_ARROW)) {
+  playerX -= 7; // playerX = 293 - 7 = 286
+}
+playerX = constrain(286, 20, 580);        // 286は範囲内
+// playerX = 286
+</code></pre>
+<p><strong>フレーム3：</strong></p>
+<pre><code class="language-javascript">if (keyIsDown(LEFT_ARROW)) {
+  playerX -= 7; // playerX = 286 - 7 = 279
+}
+playerX = constrain(279, 20, 580);        // 279は範囲内
+// playerX = 279
+</code></pre>
+<p>結果：プレイヤーは3フレーム × 7ピクセル = 21ピクセル左に移動しました。</p>
+<h3>状態3：画面の端に達した場合</h3>
+<p>プレイヤーが左端に近づいて、<code>playerX = 25</code> の状態で、さらに左矢印を押した場合：</p>
+<pre><code class="language-javascript">if (keyIsDown(LEFT_ARROW)) {
+  playerX -= 7; // playerX = 25 - 7 = 18
+}
+playerX = constrain(18, 20, 580);         // 18 &lt; 20 なので、20に制限される
+// playerX = 20（画面の端で止まる）
+</code></pre>
+<p>次のフレーム：</p>
+<pre><code class="language-javascript">if (keyIsDown(LEFT_ARROW)) {
+  playerX -= 7; // playerX = 20 - 7 = 13
+}
+playerX = constrain(13, 20, 580);         // 13 &lt; 20 なので、20に制限
+// playerX = 20（そのまま）
+</code></pre>
+<p><strong>プレイヤーが左端を超えません。</strong></p>
+<hr>
+<h2>⏱️ 移動速度の計算</h2>
+<h3><code>playerSpeed</code> の意味</h3>
+<p><code>playerSpeed = 7</code> は、「左右どちらかのキーを押している間、1フレームあたり最大7ピクセル移動」を意味します。</p>
+<h3>1秒間の移動距離</h3>
+<p>ここでは60フレーム/秒と仮定します。実際のフレーム数はPCやブラウザの負荷で変わります。</p>
+<pre><code>1秒間の移動距離 = playerSpeed × フレームレート
+                = 7 × 60
+                = 420ピクセル/秒
+</code></pre>
+<p>画面の端に達しなければ、左矢印キーを1秒間押し続けると420ピクセル左へ移動します。</p>
+<h3>画面の左端から右端までの移動</h3>
+<p>画面の幅が600ピクセル、プレイヤーの幅が40ピクセルのとき、プレイヤーの中心は左端で20、右端で580です。中心の移動距離は580 − 20 = 560ピクセルです。</p>
+<p>速さが7なら、560 ÷ 7 = 80フレームかかります。60フレーム/秒なら、80 ÷ 60 ≈ 1.33秒です。</p>
+<h3><code>playerSpeed</code> を変更した場合</h3>
+<p><strong>例：<code>playerSpeed = 10</code> に変更</strong></p>
+<pre><code>1秒間の移動距離 = 10 × 60 = 600ピクセル/秒
+左端から右端まで = 56フレーム ÷ 60 ≈ 0.93秒
+</code></pre>
+<p>もっと速く移動できます。</p>
+<p><strong>例：<code>playerSpeed = 3</code> に変更</strong></p>
+<pre><code>1秒間の移動距離 = 3 × 60 = 180ピクセル/秒
+左端から右端まで = 187フレーム ÷ 60 ≈ 3.12秒
+</code></pre>
+<p>560 ÷ 3 は約186.67なので、187フレーム目に右端へ着きます。</p>
+<hr>
+<h2>📝 重要な用語のまとめ</h2>
+<table>
+<thead>
+<tr>
+<th>用語</th>
+<th>意味</th>
+<th>このゲームでの例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>キー入力</strong></td>
+<td>ユーザーがキーボードで何かを押すこと</td>
+<td>左矢印キーを押す</td>
+</tr>
+<tr>
+<td><strong><code>keyIsDown()</code></strong></td>
+<td>特定のキーが押されているか確認する関数</td>
+<td><code>keyIsDown(LEFT_ARROW)</code></td>
+</tr>
+<tr>
+<td><strong>座標更新</strong></td>
+<td>プレイヤーの位置（X座標）を変える</td>
+<td><code>playerX += 7</code></td>
+</tr>
+<tr>
+<td><strong>加算代入</strong></td>
+<td><code>+=</code> で値を足す</td>
+<td><code>playerX += 7</code> は <code>playerX = playerX + 7</code> と同じ</td>
+</tr>
+<tr>
+<td><strong>減算代入</strong></td>
+<td><code>-=</code> で値を引く</td>
+<td><code>playerX -= 7</code> は <code>playerX = playerX - 7</code> と同じ</td>
+</tr>
+<tr>
+<td><strong><code>constrain()</code></strong></td>
+<td>値を指定の範囲内に制限する関数</td>
+<td>プレイヤーを画面内に留める</td>
+</tr>
+<tr>
+<td><strong>フレームレート</strong></td>
+<td>1秒間のフレーム数</td>
+<td>60 FPS = 1秒間に60フレーム</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>📌 コードの読み方（演習）</h2>
+<h3>演習1：このコードは何をしている？</h3>
+<pre><code class="language-javascript">if (keyIsDown(RIGHT_ARROW)) {
+  playerX += playerSpeed;
+}
+</code></pre>
+<p><strong>答え：</strong> 右矢印キーが押されていれば、プレイヤーを右に <code>playerSpeed</code> ピクセル移動させる。</p>
+<h3>演習2：<code>constrain()</code> の役割は？</h3>
+<pre><code class="language-javascript">playerX = constrain(playerX, playerSize / 2, width - playerSize / 2);
+</code></pre>
+<p><strong>答え：</strong> <code>playerX</code> を、20〜580 の範囲に制限する。これによって、プレイヤーが画面外に出ないようにする。</p>
+<h3>演習3：もし <code>constrain()</code> がなかったら？</h3>
+<pre><code class="language-javascript">// constrain() がない場合
+if (keyIsDown(LEFT_ARROW)) {
+  playerX -= playerSpeed;
+}
+if (keyIsDown(RIGHT_ARROW)) {
+  playerX += playerSpeed;
+}
+</code></pre>
+<p><strong>答え：</strong> プレイヤーが画面外に移動してしまい、見えなくなる可能性がある。</p>
+<hr>
+<h2>✅ 理解度確認クイズ</h2>
+<h3>クイズ1：フレームごとの移動</h3>
+<p><code>playerSpeed = 5</code> のゲームで、左矢印キーを10フレーム押し続けた場合、プレイヤーは何ピクセル左に移動しますか？</p>
+<p><strong>選択肢：</strong></p>
+<ul>
+<li>A. 5ピクセル</li>
+<li>B. 50ピクセル</li>
+<li>C. 300ピクセル</li>
+</ul>
+<hr>
+<h3>クイズ2：画面の端の計算</h3>
+<p><code>playerSize = 40</code>、<code>width = 600</code> のとき、<code>constrain()</code> の最小値と最大値は何ですか？</p>
+<p><strong>選択肢：</strong></p>
+<ul>
+<li>A. 最小値 = 0、最大値 = 600</li>
+<li>B. 最小値 = 20、最大値 = 580</li>
+<li>C. 最小値 = 40、最大値 = 560</li>
+</ul>
+<hr>
+<h3>クイズ3：移動速度と時間</h3>
+<p><code>playerSpeed = 10</code>、フレームレート60 FPS、画面の幅600ピクセル、プレイヤーの幅40ピクセルのとき、プレイヤーが画面の左端から右端に到達するまでにかかる時間は何秒ですか？</p>
+<p><strong>ヒント：</strong> プレイヤーの中心は <code>20</code> から <code>580</code> まで動きます。</p>
+<p><strong>選択肢：</strong></p>
+<ul>
+<li>A. 0.6秒</li>
+<li>B. 約0.93秒</li>
+<li>C. 10秒</li>
+</ul>
+<p><strong>答え：</strong> B。560 ÷ 10 = 56フレームなので、56 ÷ 60 ≈ 0.93秒です。</p>
+<hr>
+<h2>🔗 次のレッスンへ</h2>
+<p>次は、<strong>レッスン4『敵と当たり判定』</strong> です。</p>
+<p>ここでは：</p>
+<ul>
+<li><strong>敵の生成</strong> — 敵がどうやって画面の上から下へ落ちてくるのか</li>
+<li><strong>当たり判定</strong> — <code>dist()</code> 関数で2点間の距離を計算する</li>
+<li><strong>ゲームオーバー</strong> — 敵とプレイヤーが衝突したときの処理</li>
+</ul>
+<p>を、詳しく学びます。</p>
+</main>
+</body>
+</html>

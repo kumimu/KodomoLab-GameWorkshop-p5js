@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>レッスン5：改造ミッションの指導</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: #f5f9fa; color: #17293a; font: 17px/1.75 system-ui, sans-serif; }
+main { max-width: 920px; margin: auto; padding: 24px clamp(16px, 4vw, 40px) 48px; background: white; min-height: 100vh; }
+nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+nav a, nav span { padding: 4px 10px; border: 1px solid #bfd6d8; border-radius: 6px; }
+nav span { background: #dceff0; font-weight: 700; }
+a { color: #15676e; }
+h1 { font-size: clamp(24px, 5vw, 34px); line-height: 1.3; border-bottom: 3px solid #197c7c; padding-bottom: 12px; }
+h2 { margin-top: 32px; font-size: 23px; }
+h3 { margin-top: 24px; font-size: 19px; }
+pre { overflow-x: auto; padding: 14px; background: #edf4f6; border-radius: 8px; line-height: 1.5; }
+code { font-family: Menlo, Consolas, monospace; font-size: .92em; }
+:not(pre) > code { background: #edf4f6; padding: 1px 4px; border-radius: 3px; }
+table { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; }
+th, td { border: 1px solid #becdd2; padding: 7px 10px; text-align: left; }
+th { background: #e8f2f2; }
+blockquote { margin-left: 0; padding-left: 16px; border-left: 3px solid #197c7c; }
+hr { border: 0; border-top: 1px solid #d8e4e7; margin: 24px 0; }
+</style>
+</head>
+<body>
+<main>
+<nav aria-label="レッスン一覧">
+<a href="LESSON_1_ゲームの全体像.html">レッスン1</a>
+<a href="LESSON_2_変数と設定値.html">レッスン2</a>
+<a href="LESSON_3_プレイヤーの移動.html">レッスン3</a>
+<a href="LESSON_4_敵と当たり判定.html">レッスン4</a>
+<span aria-current="page">レッスン5</span>
+<a href="LESSON_6_発展版について.html">レッスン6</a>
+</nav>
+<h1>レッスン5：改造ミッションの指導</h1>
+<blockquote>
+<p><strong>コードを全部覚える必要はありません。</strong></p>
+<p>仕事でプログラムを書く人も、分からないことは調べながら書いています。このレッスンも、気になるところから読んで、試したいところを一つ試してみましょう。</p>
+</blockquote>
+<h2>この資料の使い方</h2>
+<p>設定値や難易度の変更例を、授業後の改造やコーチの補足に使えます。</p>
+<p>当日の進行と投影手順は<a href="../../00_%E5%BD%93%E6%97%A5%E7%94%A8%E8%B3%87%E6%96%99/README.html">当日用資料の使い方</a>を参照してください。</p>
+<p>「現在のコード」と示す例はシンプル版sketch.jsの対応する関数です。「抜粋」「考え方の例」は説明用で、そのままsketch.jsへ追加するコードではありません。改造では既存の値を変更し、応用機能は<a href="../../00_%E5%BD%93%E6%97%A5%E7%94%A8%E8%B3%87%E6%96%99/01_%E7%94%9F%E5%BE%92/%E5%BF%9C%E7%94%A8%E8%AA%B2%E9%A1%8C/00_%E8%AA%B2%E9%A1%8C%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9.html">当日用の課題ページ</a>からコピーします。</p>
+<p>変更例で複数の値を並べている場合は候補の比較です。使う値を1つ選び、既存の設定行を書き換えます。新しい設定行を末尾へ追加しません。</p>
+<h2>🎯 学習目標</h2>
+<p>ワークショップで参加者が行う改造ミッションを、難易度ごとに分析する。</p>
+<ul>
+<li>各ミッションの内容と実装方法</li>
+<li>難易度別のサポート方法</li>
+<li>よくあるエラーと対応</li>
+<li>コーチが生徒を導くためのヒント</li>
+<li>時間内に完成させるための工夫</li>
+</ul>
+<hr>
+<h2>📋 改造ミッション一覧（参照）</h2>
+<p>以下は発展用ミッションの参考一覧です。当日の改造手順は<a href="../../00_%E5%BD%93%E6%97%A5%E7%94%A8%E8%B3%87%E6%96%99/01_%E7%94%9F%E5%BE%92/02_%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88.html">ワークショップテキスト</a>を参照してください。</p>
+<pre><code>★ レベル1（★1つ：基本中の基本）
+- プレイヤーの色を変える
+- 敵の色を変える
+- 背景色を変える
+- ゲームタイトルを変える
+
+★★ レベル2（★2つ：数値調整）
+- プレイヤーの速さを変える
+- プレイヤーの大きさを変える
+- 敵の大きさを変える
+- 遊びやすい難易度に調整する
+
+★★★ レベル3（★3つ：難易度ロジック）
+- 難易度ごとの敵の速さを変える
+- 難易度ごとの敵の数を変える
+- 制限時間を変える
+- 自分だけのテーマを考える
+
+★★★★ 自由改造（★4つ：応用）
+- 画像を使う
+- 効果音を入れる
+- BGMを入れる
+- 新しいルールを追加する
+</code></pre>
+<p>当日の共通ハンズオンではプレイヤーの色と速さを変えます。後半はA・B・G・H・Mから好きな課題を1つ選びます。上の一覧は、授業後にも使える発展例です。</p>
+<hr>
+<h2>🎨 レベル1：基本の色・テーマ変更</h2>
+<h3>ミッション1-1：プレイヤーの色を変える</h3>
+<p><strong>難易度：</strong> ⭐ 最も簡単</p>
+<p><strong>変更ファイル：</strong> <code>sketch.js</code> の対応箇所（関数名で検索）</p>
+<pre><code class="language-javascript">// 元
+let playerColor = &quot;cyan&quot;;
+
+// 変更例
+playerColor = &quot;lime&quot;;
+playerColor = &quot;pink&quot;;
+</code></pre>
+<p><strong>実装時間：</strong> 1分</p>
+<p><strong>生徒がつまずく可能性：</strong></p>
+<ul>
+<li>色名のスペルが違う（<code>&quot;gren&quot;</code>ではなく<code>&quot;green&quot;</code>など）</li>
+<li>保存忘れ、またはブラウザの更新忘れ</li>
+</ul>
+<p><strong>コーチが出すヒント：</strong></p>
+<ol>
+<li>「p5.jsの色名で、好きな色を探してみて」</li>
+<li>「&#39;lime&#39;, &#39;yellow&#39;, &#39;pink&#39; などの色名が使えます」</li>
+<li>「保存してから、Chromeの避けゲームの画面を更新してね」</li>
+</ol>
+<p><strong>コーチが教える前に確認すること：</strong></p>
+<ul>
+<li>生徒が、CUSTOM AREA のどこを変更するのか理解しているか</li>
+<li>正しい色名を入力しているか</li>
+<li>保存と更新のステップを忘れていないか</li>
+</ul>
+<p><strong>代替案（完成できなかった場合）：</strong>
+色名リストを提示して、その中から選ばせる：</p>
+<pre><code class="language-javascript">// 用意した色名
+&quot;cyan&quot;     // シアン（水色）
+&quot;lime&quot;     // ライム（黄緑）
+&quot;yellow&quot;   // 黄
+&quot;orange&quot;   // オレンジ
+&quot;pink&quot;     // ピンク
+&quot;purple&quot;   // 紫
+</code></pre>
+<hr>
+<h3>ミッション1-2：敵の色を変える</h3>
+<p><strong>難易度：</strong> ⭐ 最も簡単</p>
+<p><strong>変更ファイル：</strong> <code>sketch.js</code> の対応箇所（関数名で検索）</p>
+<pre><code class="language-javascript">// 元
+let enemyColor = &quot;red&quot;;
+
+// 変更例
+enemyColor = &quot;orange&quot;;
+enemyColor = &quot;cyan&quot;;
+</code></pre>
+<p><strong>実装時間：</strong> 1分</p>
+<p><strong>生徒がつまずく可能性：</strong> ミッション1-1と同じ</p>
+<p><strong>コーチが出すヒント：</strong> ミッション1-1と同じ</p>
+<hr>
+<h3>ミッション1-3：背景色を変える</h3>
+<p><strong>難易度：</strong> ⭐ 最も簡単</p>
+<p><strong>変更ファイル：</strong> <code>sketch.js</code> の対応箇所（関数名で検索）</p>
+<pre><code class="language-javascript">// 元
+let backgroundColor = &quot;black&quot;;
+
+// 変更例
+backgroundColor = &quot;navy&quot;;
+backgroundColor = &quot;midnightblue&quot;;
+</code></pre>
+<p><strong>実装時間：</strong> 1分</p>
+<p><strong>生徒がつまずく可能性：</strong> ミッション1-1と同じ</p>
+<p><strong>コーチが出すヒント：</strong> ミッション1-1と同じ</p>
+<p><strong>注意点：</strong>
+背景色が明るすぎると、プレイヤーや敵が見えにくくなる可能性があります。</p>
+<p>もし見えにくくなったら、コーチが「コントラスト（色の濃淡の差）を工夫してみよう」とアドバイスできます。</p>
+<hr>
+<h3>ミッション1-4：ゲームタイトルを変える</h3>
+<p><strong>難易度：</strong> ⭐ 最も簡単</p>
+<p><strong>変更ファイル：</strong> <code>sketch.js</code> の対応箇所（関数名で検索）</p>
+<pre><code class="language-javascript">// 元
+let gameTitle = &quot;隕石をよけろ！&quot;;
+
+// 変更例
+gameTitle = &quot;敵を避けまくれ！&quot;;
+gameTitle = &quot;My Game&quot;;
+gameTitle = &quot;スペースバトル&quot;;
+</code></pre>
+<p><strong>実装時間：</strong> 2分</p>
+<p><strong>生徒がつまずく可能性：</strong></p>
+<ul>
+<li>日本語が入力できない環境の場合</li>
+<li>ダブルクォーテーション <code>&quot;</code> を使い忘れる</li>
+</ul>
+<p><strong>コーチが出すヒント：</strong></p>
+<ol>
+<li>「ゲームのテーマに合わせて、好きなタイトルを考えてみて」</li>
+<li>「タイトルは、ダブルクォーテーション <code>&quot;</code> で囲む必要があります」</li>
+<li>「日本語でも英語でも大丈夫です」</li>
+</ol>
+<p><strong>代替案（完成できなかった場合）：</strong>
+すでにある複数のタイトル案から選ばせる：</p>
+<pre><code class="language-javascript">let gameTitle = &quot;敵を避けろ！&quot;;
+gameTitle = &quot;スペースバトル&quot;;
+gameTitle = &quot;避けゲーチャレンジ&quot;;
+</code></pre>
+<hr>
+<h2>📊 レベル1の特徴</h2>
+<p><strong>「設定値を変えるだけ」</strong></p>
+<ul>
+<li>コードの構造は変わらない</li>
+<li>CUSTOM AREA の値を置き換えるだけ</li>
+<li>すべてが数値または色名の変更</li>
+<li>エラーは発生しにくい</li>
+<li>時間内に必ず完成する</li>
+</ul>
+<p><strong>推奨：</strong> 全員が最初にレベル1の1つ以上を実施して、ゲーム改造の流れを理解する</p>
+<hr>
+<h2>⚙️ レベル2：数値調整</h2>
+<h3>ミッション2-1：プレイヤーの速さを変える</h3>
+<p><strong>難易度：</strong> ⭐⭐ 簡単</p>
+<p><strong>変更ファイル：</strong> <code>sketch.js</code> の対応箇所（関数名で検索）</p>
+<pre><code class="language-javascript">// 元
+let playerSpeed = 7;
+
+// 変更例
+playerSpeed = 10;  // 速くなる
+playerSpeed = 3;   // 遅くなる
+</code></pre>
+<p><strong>実装時間：</strong> 2分</p>
+<p><strong>生徒がつまずく可能性：</strong></p>
+<ul>
+<li>数値を文字列 <code>&quot;10&quot;</code> で入力してしまう</li>
+<li>どの程度変更すればいいか分からない</li>
+</ul>
+<p><strong>コーチが出すヒント：</strong></p>
+<ol>
+<li>「元の値は 7 です。10 か 5 に変えてみて」</li>
+<li>「実際にゲームをプレイして、動きを確認してみて」</li>
+<li>「速すぎたら、また調整すればいいんですよ」</li>
+</ol>
+<p><strong>実装のコツ：</strong>
+生徒に「試行錯誤」を促す。</p>
+<ul>
+<li>最初は 10 に変更</li>
+<li>ゲームをプレイ</li>
+<li>「速すぎたから 8 に変更」</li>
+<li>またプレイ</li>
+<li>「ちょうどいい」</li>
+</ul>
+<p>このプロセスが大事です。</p>
+<p><strong>代替案（完成できなかった場合）：</strong>
+選択肢を提示：</p>
+<pre><code class="language-javascript">// 遅い
+let playerSpeed = 3;
+
+// ふつう
+playerSpeed = 7;
+
+// 速い
+playerSpeed = 12;
+</code></pre>
+<hr>
+<h3>ミッション2-2：プレイヤーの大きさを変える</h3>
+<p><strong>難易度：</strong> ⭐⭐ 簡単</p>
+<p><strong>変更ファイル：</strong> <code>sketch.js</code> の対応箇所（関数名で検索）</p>
+<pre><code class="language-javascript">// 元
+let playerSize = 40;
+
+// 変更例
+playerSize = 60;  // 大きくなる
+playerSize = 20;  // 小さくなる
+</code></pre>
+<p><strong>実装時間：</strong> 2分</p>
+<p><strong>生徒がつまずく可能性：</strong> ミッション2-1と同じ</p>
+<p><strong>コーチが出すヒント：</strong></p>
+<ol>
+<li>「大きくなると、当たりやすくなります」</li>
+<li>「小さくなると、避けやすくなります」</li>
+<li>「自分にちょうどいい大きさを見つけてみて」</li>
+</ol>
+<p><strong>実装のコツ：</strong>
+難易度と直結している。</p>
+<ul>
+<li><code>playerSize</code> を大きくすると、敵に当たりやすくなる</li>
+<li><code>playerSize</code> を小さくする = 避けにくい = 難しい</li>
+</ul>
+<hr>
+<h3>ミッション2-3：敵の大きさを変える</h3>
+<p><strong>難易度：</strong> ⭐⭐ 簡単</p>
+<p><strong>変更ファイル：</strong> <code>sketch.js</code> の対応箇所（関数名で検索）</p>
+<pre><code class="language-javascript">// 元
+let enemySize = 35;
+
+// 変更例
+enemySize = 50;  // 大きくなる（難しくなる）
+enemySize = 20;  // 小さくなる（簡単になる）
+</code></pre>
+<p><strong>実装時間：</strong> 2分</p>
+<p><strong>生徒がつまずく可能性：</strong> ミッション2-1と同じ</p>
+<p><strong>コーチが出すヒント：</strong></p>
+<ol>
+<li>「敵が大きいと、当たる確率が上がります」</li>
+<li>「敵が小さいと、避けやすくなります」</li>
+<li>「自分好みに調整してみて」</li>
+</ol>
+<p><strong>注意点：</strong>
+敵のサイズと当たり判定が連動している（<code>isHit()</code> 関数で使用）。</p>
+<p>よくある質問：「敵を大きくしたら、当たりやすくなった」</p>
+<p><strong>答え：</strong> 「はい、そうです。敵のサイズは当たり判定に影響します」</p>
+<hr>
+<h3>ミッション2-4：遊びやすい難易度に調整する</h3>
+<p><strong>難易度：</strong> ⭐⭐⭐ やや難しい（複数要素の組み合わせ）</p>
+<p><strong>変更ファイル：</strong> <code>sketch.js</code> の対応箇所（関数名で検索）の複数</p>
+<pre><code class="language-javascript">// 元（デフォルト）
+let playerSize = 40;
+let enemySize = 35;
+let playerSpeed = 7;
+
+// 例1：難しくしたい
+playerSize = 60;   // プレイヤーを大きく（当たりやすく、難しい）
+enemySize = 50;    // 敵を大きく
+playerSpeed = 5;   // プレイヤーを遅く
+
+// 例2：簡単にしたい
+playerSize = 20;   // プレイヤーを小さく（当たりにくく、簡単）
+enemySize = 20;    // 敵を小さく
+playerSpeed = 10;  // プレイヤーを速く
+</code></pre>
+<p><strong>実装時間：</strong> 5分</p>
+<p><strong>生徒がつまずく可能性：</strong></p>
+<ul>
+<li>複数の値を同時に変更するので、どれを変更すればいいか分からない</li>
+<li>「遊びやすい」の定義が曖昧</li>
+</ul>
+<p><strong>コーチが出すヒント：</strong></p>
+<ol>
+<li>「ゲームが難しすぎたら、プレイヤーを小さくしてみて」</li>
+<li>「敵も小さくしたり、プレイヤーを速くしたりして、自分にちょうどいい難易度を見つけてみて」</li>
+<li>「複数の値を組み合わせて、自分にちょうどいい難易度を作ってみて」</li>
+</ol>
+<p><strong>実装のコツ：</strong>
+生徒が複数の値を試行錯誤できるようにサポート。</p>
+<p><strong>代替案（完成できなかった場合）：</strong>
+テンプレートを提示：</p>
+<pre><code class="language-javascript">// ★簡単モード
+let playerSize = 60;
+let enemySize = 20;
+let playerSpeed = 10;
+
+// ★ふつう（デフォルト）
+playerSize = 40;
+enemySize = 35;
+playerSpeed = 7;
+
+// ★難しいモード
+playerSize = 20;
+enemySize = 50;
+playerSpeed = 5;
+</code></pre>
+<hr>
+<h2>📋 レベル2の特徴</h2>
+<p><strong>「複数の数値を調整」</strong></p>
+<ul>
+<li>CUSTOM AREA 内の複数の値を組み合わせる</li>
+<li>試行錯誤が必要</li>
+<li>ゲーム性が大きく変わる</li>
+<li>時間内に完成する（5〜10分）</li>
+<li>達成感が高い</li>
+</ul>
+<p><strong>推奨：</strong> レベル1を実施した後に、レベル2に進む</p>
+<hr>
+<h2>🔧 レベル3：難易度ロジックの変更</h2>
+<h3>ミッション3-1：難易度ごとの敵の速さを変える</h3>
+<p><strong>難易度：</strong> ⭐⭐⭐ やや難しい（複数箇所の編集）</p>
+<p><strong>変更ファイル：</strong> <code>sketch.js</code> の対応箇所（関数名で検索）（<code>startGame()</code> 関数内）</p>
+<pre><code class="language-javascript">// 【役割】選んだ難易度でゲームを初期化して開始します。
+function startGame(level) {
+  if (level === 1) {
+    difficultyName = &quot;かんたん&quot;;
+    enemySpeed = 4;    // ← ここを変更
+    enemyCount = 1;
+    clearTime = 30;
+  } else if (level === 2) {
+    difficultyName = &quot;ふつう&quot;;
+    enemySpeed = 6;    // ← ここを変更
+    enemyCount = 2;
+    clearTime = 45;
+  } else {
+    difficultyName = &quot;むずかしい&quot;;
+    enemySpeed = 8;    // ← ここを変更
+    enemyCount = 3;
+    clearTime = 60;
+  }
+  // ...
+}
+</code></pre>
+<p><strong>変更例：</strong></p>
+<pre><code class="language-javascript">// 敵が速くなるように調整
+if (level === 1) {
+  enemySpeed = 5;   // 元の 4 から 5 に
+} else if (level === 2) {
+  enemySpeed = 7;   // 元の 6 から 7 に
+} else {
+  enemySpeed = 9;   // 元の 8 から 9 に
+}
+</code></pre>
+<p><strong>実装時間：</strong> 5分</p>
+<p><strong>生徒がつまずく可能性：</strong></p>
+<ul>
+<li><code>if</code> 文の構造が複雑に見える</li>
+<li>どこを変更すればいいか分からない</li>
+<li>3つの場所すべてを変更する必要があることに気づかない</li>
+</ul>
+<p><strong>コーチが出すヒント：</strong></p>
+<ol>
+<li>「難易度『かんたん』の敵の速さは、<code>startGame()</code> 内の <code>enemySpeed = 4</code> で決まります」</li>
+<li>「3つの難易度すべてを同じルールで変更してね」</li>
+<li>「『ふつう』は『かんたん』より速く、『むずかしい』が一番速いようにしましょう」</li>
+</ol>
+<p><strong>実装のコツ：</strong>
+コーチが、変更すべき3行をハイライトして示す。</p>
+<p>生徒に直接変更させず、まずコードを読ませてから変更させる。</p>
+<p><strong>代替案（完成できなかった場合）：</strong>
+虫食いコード形式で提供：</p>
+<pre><code class="language-javascript">// 【役割】選んだ難易度でゲームを初期化して開始します。
+function startGame(level) {
+  if (level === 1) {
+    enemySpeed = ____;   // ここに好きな数字を入れてね
+  } else if (level === 2) {
+    enemySpeed = ____;   // ふつうは、かんたんより大きい数字
+  } else {
+    enemySpeed = ____;   // むずかしいが一番大きい数字
+  }
+}
+</code></pre>
+<hr>
+<h3>ミッション3-2：難易度ごとの敵の数を変える</h3>
+<p><strong>難易度：</strong> ⭐⭐⭐ やや難しい（複数箇所の編集）</p>
+<p><strong>変更ファイル：</strong> <code>sketch.js</code> の対応箇所（関数名で検索）（<code>startGame()</code> 関数内）</p>
+<pre><code class="language-javascript">if (level === 1) {
+  enemyCount = 1;   // ← ここを変更
+} else if (level === 2) {
+  enemyCount = 2;   // ← ここを変更
+} else {
+  enemyCount = 3;   // ← ここを変更
+}
+</code></pre>
+<p>敵の数を変えたら、<code>showStartScreen()</code> の難易度案内も同じ値に直します。案内の数字は文字列に直接書かれています。</p>
+<p><strong>実装時間：</strong> 5分</p>
+<p><strong>生徒がつまずく可能性：</strong> ミッション3-1と同じ</p>
+<p><strong>コーチが出すヒント：</strong></p>
+<ol>
+<li>「敵の数を増やすと、難しくなります」</li>
+<li>「かんたん &lt; ふつう &lt; むずかしい の順で増やしましょう」</li>
+<li>「例えば、1個 → 3個 → 5個 に変更できます」</li>
+</ol>
+<hr>
+<h3>ミッション3-3：制限時間を変える</h3>
+<p><strong>難易度：</strong> ⭐⭐⭐ やや難しい（複数箇所の編集）</p>
+<p><strong>変更ファイル：</strong> <code>sketch.js</code> の対応箇所（関数名で検索）（<code>startGame()</code> 関数内）</p>
+<pre><code class="language-javascript">if (level === 1) {
+  clearTime = 30;   // ← ここを変更（秒）
+} else if (level === 2) {
+  clearTime = 45;   // ← ここを変更
+} else {
+  clearTime = 60;   // ← ここを変更
+}
+</code></pre>
+<p>制限時間を変えたら、<code>showStartScreen()</code> の難易度案内も同じ値に直します。案内の数字は文字列に直接書かれています。</p>
+<p><strong>実装時間：</strong> 5分</p>
+<p><strong>生徒がつまずく可能性：</strong> ミッション3-1と同じ</p>
+<p><strong>コーチが出すヒント：</strong></p>
+<ol>
+<li>「避け続ける時間が短くなるので、クリアしやすくなります」</li>
+<li>「かんたんは30秒、ふつうは45秒、むずかしいは60秒が基本です」</li>
+<li>「20秒、40秒、60秒 など、好きなバランスで変更できます」</li>
+</ol>
+<hr>
+<h3>ミッション3-4：自分だけのテーマを考える</h3>
+<p><strong>難易度：</strong> ⭐⭐⭐⭐ 難しい（総合的な改造）</p>
+<p><strong>変更ファイル：</strong> <code>sketch.js</code> の対応箇所（関数名で検索）（CUSTOM AREA全体）</p>
+<pre><code class="language-javascript">// 元
+let playerColor = &quot;cyan&quot;;
+let enemyColor = &quot;red&quot;;
+let backgroundColor = &quot;black&quot;;
+let playerSize = 40;
+let enemySize = 35;
+let playerSpeed = 7;
+let gameTitle = &quot;隕石をよけろ！&quot;;
+
+// 例：「宇宙戦闘」テーマ
+playerColor = &quot;lime&quot;;      // ネオン緑（自機）
+enemyColor = &quot;red&quot;;       // 赤（敵機）
+backgroundColor = &quot;navy&quot;;  // 濃い青（宇宙）
+playerSize = 50;              // 大きい戦闘機（当たりやすく、難しい）
+enemySize = 40;               // 大きい敵
+playerSpeed = 9;              // 速い戦闘
+gameTitle = &quot;宇宙戦闘 - エイリアンを倒せ！&quot;;
+</code></pre>
+<p><strong>実装時間：</strong> 10分</p>
+<p><strong>生徒がつまずく可能性：</strong></p>
+<ul>
+<li>テーマが思いつかない</li>
+<li>複数の要素をバランスよく調整できない</li>
+<li>色やサイズの組み合わせがちぐはぐになる</li>
+</ul>
+<p><strong>コーチが出すヒント：</strong></p>
+<ol>
+<li>「好きな世界観を思い浮かべて。例えば、『宇宙』『海底』『魔法の森』など」</li>
+<li>「色、大きさ、速度、タイトルを、その世界観に合わせて変更してみて」</li>
+<li>「実際にゲームをプレイしながら、バランスを整えましょう」</li>
+</ol>
+<p><strong>実装のコツ：</strong>
+生徒に「ゲーム制作の自由度」を実感させる。</p>
+<p><strong>テーマの例：</strong></p>
+<ul>
+<li>「宇宙戦闘」— 派手な色、速い敵、シアンと赤</li>
+<li>「深海」— 暗い青と緑、ゆっくりとした敵</li>
+<li>「ジャングル」— 緑と茶色、大きな敵</li>
+<li>「雪の世界」— 白と水色、遅い敵</li>
+</ul>
+<p><strong>代替案（完成できなかった場合）：</strong>
+テーマを決めて、そこからスタート：</p>
+<pre><code class="language-javascript">// 火星ミッションテーマ
+let playerColor = &quot;gold&quot;;      // 金色
+let enemyColor = &quot;darkorange&quot;;       // オレンジ
+let backgroundColor = &quot;maroon&quot;;  // 暗い赤
+let gameTitle = &quot;火星探査 - 隕石を避けろ！&quot;;
+</code></pre>
+<hr>
+<h2>📋 レベル3の特徴</h2>
+<p><strong>「ゲームロジックと複合設定」</strong></p>
+<ul>
+<li>CUSTOM AREA だけでなく、関数の中身も変更する必要がある</li>
+<li>複数の場所を同じルールで変更する必要がある</li>
+<li>試行錯誤の余地が大きい</li>
+<li>時間内に完成する可能性は中程度（10〜15分）</li>
+<li>達成感が非常に高い</li>
+</ul>
+<p><strong>推奨：</strong> レベル2までが完成した生徒が、さらに改造を深める場合に選ぶ</p>
+<hr>
+<h2>🛠️ コーチが用意すべきもの</h2>
+<h3>資料</h3>
+<ul>
+<li>最新の生徒用テキストと、当日用の応用課題ページ</li>
+<li>コーチ用の虫食い課題の解答と確認</li>
+<li>よくあるエラーと対応方法のリスト</li>
+</ul>
+<h3>サポート方法</h3>
+<ol>
+<li><strong>進捗確認</strong> — 5分ごとに生徒の画面を確認</li>
+<li><strong>つまずき対応</strong> — 早期に手を挙げさせる</li>
+<li><strong>試行錯誤を促す</strong> — 答えをすぐに教えない</li>
+<li><strong>成功体験</strong> — 完成したら褒める</li>
+</ol>
+<h3>よくあるエラーと対応</h3>
+<table>
+<thead>
+<tr>
+<th>エラー</th>
+<th>原因</th>
+<th>対応</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>色が変わらない</td>
+<td>保存忘れ・更新忘れ</td>
+<td>「VS Codeで保存してから、Chromeの避けゲームの画面を更新してね」</td>
+</tr>
+<tr>
+<td>スペルエラー</td>
+<td>色名の入力ミス</td>
+<td>色名リストを提示</td>
+</tr>
+<tr>
+<td><code>if</code> 文の構造が分からない</td>
+<td>複雑に見える</td>
+<td>「3つの難易度ごとに、値が異なるんです」</td>
+</tr>
+<tr>
+<td>複数の値をどう組み合わせればいいか分からない</td>
+<td>試行錯誤の方法が分からない</td>
+<td>「1つずつ試してみましょう」</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>📝 進捗の確認（コーチ向け）</h2>
+<p>記録は生徒用の<a href="../../00_%E5%BD%93%E6%97%A5%E7%94%A8%E8%B3%87%E6%96%99/01_%E7%94%9F%E5%BE%92/03_%E6%94%B9%E9%80%A0%E3%81%A8%E7%99%BA%E8%A6%8B%E3%81%AE%E3%83%8E%E3%83%BC%E3%83%88.html">改造・発見ノート</a>を使います。コーチは次を目印に支援します。</p>
+<ul>
+<li>基礎練習の数値・色・タイトル変更を確認できた。</li>
+<li>プレイヤーの色と速さの変更を確認できた。</li>
+<li>A・B・G・H・Mのどれを選んだか確認した。</li>
+<li>機能コードの貼り付けと、虫食いの全置換ができた。</li>
+<li>値を比較し、自分の採用値と理由を残した。</li>
+<li>起動・移動・改造箇所・終了・再開を確認した。</li>
+<li>入れ替えプレイと、ワーク用のUSB保存を行えた。</li>
+</ul>
+<hr>
+<h2>🔗 応用課題へ</h2>
+<p><a href="../../00_%E5%BD%93%E6%97%A5%E7%94%A8%E8%B3%87%E6%96%99/01_%E7%94%9F%E5%BE%92/%E5%BF%9C%E7%94%A8%E8%AA%B2%E9%A1%8C/00_%E8%AA%B2%E9%A1%8C%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9.html">当日用の課題選択ページ</a>から、好きな機能を1つ選びます。追加先はシンプル版の共通欄です。発展版ゲームは、発展した機能を体験する別の見本として扱います。</p>
+<p>発展版のコードを読んでみたい人は、<a href="LESSON_6_%E7%99%BA%E5%B1%95%E7%89%88%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6.html">レッスン6「発展版について」</a>へ進みましょう。</p>
+</main>
+</body>
+</html>

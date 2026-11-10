@@ -48,7 +48,7 @@ registerWorkshopOption("M", {
     // ③ ゲームのコードへ「計算済み」と伝え、標準の1点を重ねて足さないようにします。
     return true; // この課題で得点を計算しました。
   },
-  // 【役割】レア敵なら黄色を返します。それ以外は基本や別の機能の色を使います。
+  // 【役割】レア敵なら黄色を指定します。
   enemyColor(enemy) {
     return enemy.value === this.rareScore ? "yellow" : undefined;
   },

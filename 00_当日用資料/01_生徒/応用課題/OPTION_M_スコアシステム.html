@@ -2,47 +2,18 @@
 .operation-checks{list-style:none;padding-left:0}.operation-checks label{display:flex;align-items:flex-start;gap:10px;padding:9px 8px;cursor:pointer;line-height:1.65}.operation-checks input{flex-shrink:0;width:20px;height:20px;margin-top:3px;accent-color:#087f83}.operation-checks label:has(input:checked){background:#e0f2f1;border-radius:4px}.operation-checks label:focus-within{outline:2px solid #087f83;outline-offset:2px}
 .prediction-quiz{border:1px solid #a9bdca;border-radius:8px;padding:12px 16px;margin:18px 0;background:#f5f9fb;min-width:0}.prediction-quiz legend{font-weight:700;padding:0 6px}.prediction-quiz label{display:flex;align-items:flex-start;gap:10px;padding:10px 8px;cursor:pointer;line-height:1.65}.prediction-quiz input{flex-shrink:0;width:20px;height:20px;margin-top:3px;accent-color:#087f83}.prediction-quiz label:has(input:checked){background:#e0f2f1;border-radius:4px}.prediction-quiz label:focus-within{outline:2px solid #087f83;outline-offset:2px}</style><body><p class="back"><a href="../../index.html">当日資料一覧へ</a></p><h1>OPTION M　スコアシステム</h1>
 <p>敵を画面下まで通過させると「回避」になり、続けて回避すると回避得点の倍率が上がります。射撃を先に作る必要はありません。</p>
-<h2>まず、仕組みを3つでつかもう</h2>
-<p><strong>敵を避ける → Mが得点とコンボを計算 → ゲームのコードは通常得点を重ねて足さない。</strong></p>
-<p><strong>①</strong> 敵が画面下を通り過ぎると、ゲームのコードがavoidへその敵を渡します。</p>
-<p><strong>②</strong> Mがコンボと得点を計算し、次のコンボ期限も決めます。</p>
-<p><strong>③</strong> Mがtrue（得点の計算済み）を返すと、ゲームのコードは標準の1点を重ねて足しません。</p>
-<p>敵が登場するときにspawnEnemyが通常・レアを抽選し、回避得点を決めます。updateは期限切れのコンボを0へ戻し、drawInfoがコンボ数と倍率を表示します。</p>
-<h3>今回変えるのはここ</h3>
-<table>
-<thead>
-<tr>
-<th>虫食い</th>
-<th>どこに効く？</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>__M1__</code></td>
-<td>spawnEnemyでレア敵に設定する回避得点。②で使う</td>
-</tr>
-<tr>
-<td><code>__M2__</code></td>
-<td>②で1回避けるたびに増やすコンボ数</td>
-</tr>
-<tr>
-<td><code>__M3__</code></td>
-<td>②で決める、次の回避までのコンボ猶予時間</td>
-</tr>
-</tbody></table>
-<p>まずは①②③の流れと、自分が変える値を追えれば大丈夫です。コード内にも同じ番号のコメントがあります。</p>
-<p><a href="%E4%BB%95%E7%B5%84%E3%81%BF_%E6%9C%AC%E4%BD%93%E3%81%A8%E8%BF%BD%E5%8A%A0%E6%A9%9F%E8%83%BD.html">もっと知りたい人へ：ゲームのコードと追加機能のつながり</a></p>
-<h2 id="steps">選んだ機能だけを1か所へ貼る</h2>
+<h2 id="steps">1．ヒントの値で動かしてみよう</h2>
 <ol>
 <li>「ワーク用」のsketch.jsを保存します。この後も同じワーク用フォルダで作業します。オリジナルは編集しません。</li>
 <li>下の「この機能のコードをコピー」を押します。</li>
 <li>VS Codeで「ワーク用」のsketch.jsを開き、末尾の「応用コード貼り付け欄」を探します。</li>
-<li>「ここから」と「ここまで」の間に、この課題のコードを1回貼ります。別の機能を追加するときは、先のコードを残したまま、その下へ貼ります。同じ課題を修正する場合は、その課題のコードを置き換えます。</li>
-<li>このページの「空欄の意味とヒント」を読み、虫食いを全て埋め、保存します。迷ったら表の例を使えます。</li>
-<li>Chromeで避けゲームの画面を更新して始め、機能の動作を確認します。</li>
+<li>「ここから」と「ここまで」の間に、この課題のコードを1回貼ります。同じ課題を修正する場合は、その課題のコードを置き換えます。</li>
+<li>「空欄の意味とヒント」の表を見て、「最初に入れる値」で空欄をすべて埋め、保存します。</li>
+<li>Chromeで避けゲームの画面を更新して始め、「動作確認」を見ながら遊びます。</li>
 </ol>
 <p><strong>ゲーム全体を置き換えません。</strong> CUSTOM AREAの色・大きさ・速さ・タイトルはそのまま残ります。プレイヤーをyellowに変えていれば、そのままです。</p>
 <p>貼り付け欄が見つからない場合は、「ワーク用」のsketch.jsを開いているか確認します。<a href="../02_%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88.html#help">困ったときの手順</a>も使えます。</p>
-<h2>貼るコード（この1枠だけ）</h2>
+<h3>貼るコード（この1枠だけ）</h3>
 <pre><code class="language-javascript">// ===== このファイルで使う関数・用語の早見表 =====
 // p5.jsは、円や文字を画面に描くときに使う道具です。
 // 円を描く circle など、p5.jsの道具の使い方はここで調べられます。
@@ -93,7 +64,7 @@ registerWorkshopOption(&quot;M&quot;, {
     // ③ ゲームのコードへ「計算済み」と伝え、標準の1点を重ねて足さないようにします。
     return true; // この課題で得点を計算しました。
   },
-  // 【役割】レア敵なら黄色を返します。それ以外は基本や別の機能の色を使います。
+  // 【役割】レア敵なら黄色を指定します。
   enemyColor(enemy) {
     return enemy.value === this.rareScore ? &quot;yellow&quot; : undefined;
   },
@@ -106,7 +77,7 @@ registerWorkshopOption(&quot;M&quot;, {
   }
 });
 </code></pre>
-<h2 id="holes">空欄の意味とヒント</h2>
+<h3 id="holes">空欄の意味とヒント</h3>
 <p><code>__M1__</code>のような<strong>印全体</strong>を置き換えます。アンダースコアも消します。色の外側にある引用符は残し、数値には引用符を追加しません。</p>
 <table>
 <thead>
@@ -114,7 +85,7 @@ registerWorkshopOption(&quot;M&quot;, {
 <th>印</th>
 <th>何を決める？</th>
 <th>考えるヒント</th>
-<th>迷ったときの例</th>
+<th>最初に入れる値</th>
 </tr>
 </thead>
 <tbody><tr>
@@ -136,12 +107,11 @@ registerWorkshopOption(&quot;M&quot;, {
 <td><code>3000</code></td>
 </tr>
 </tbody></table>
-<p>まず自分で考え、迷ったら例の値を使って動きを確かめます。動いた後に1つずつ変えて試せます。空欄が残っている間は、まだ動かない場合があります。</p>
+<p>まずは表の値で遊び、どんな変化が起きるか見てみましょう。</p>
 <ul>
 <li>敵を画面下まで避けると得点が入り、連続回避の1～5回目は1倍、6～10回目は2倍です。射撃を先に作る必要はありません。</li>
-<li>表示する行はゲームのコードが割り当てるので、BGM表示とコンボ表示は重なりません。</li>
 </ul>
-<h2>回避コンボを試す準備</h2>
+<h3>回避コンボを試す準備</h3>
 <p>敵が1体だけだと、次の敵を回避するまでにコンボの期限が切れやすくなります。<strong>「かんたん」の速さのまま、敵だけ複数にして試します。</strong></p>
 <ol>
 <li>ワーク用のsketch.jsで、<code>function startGame(level)</code>を探します。</li>
@@ -151,21 +121,29 @@ registerWorkshopOption(&quot;M&quot;, {
 </ol>
 <p>すでに敵数を増やしている場合は、その数で確認して構いません。比較実験では敵数と難易度を揃え、durationだけを変えます。多すぎて避けにくければ敵数を減らし、確認が終わったら遊びたい数へ調整します。</p>
 <p>3体でも配置や再登場のタイミングによってコンボが切れることはあります。画面の「連続回避」と「回避倍率」を見て、続く場合・途切れる場合を比べましょう。</p>
-<h2>動作確認</h2>
+<h3>動作確認</h3>
 <ul class="operation-checks">
 <li><label><input type="checkbox"><span>通常敵と黄色のレア敵で回避得点が変わる。</span></label></li>
 <li><label><input type="checkbox"><span>敵を複数にし、回避して、連続回避・回避倍率・時間切れを確認できる。</span></label></li>
 <li><label><input type="checkbox"><span>再開始でコンボも0に戻る。</span></label></li>
 </ul>
 
-<h2>うまく動かないとき</h2>
+<h3>うまく動かないとき</h3>
 <ul>
 <li>この課題の<code>__M1__</code>などの印が残っていないか探します。</li>
 <li>保存後、Chromeで避けゲームの画面を更新し、1で始めます。</li>
-<li>別の機能も入っている場合、そのコードを残したまま追加したか確かめます。同じ課題は1つだけにします。</li>
+<li>同じ課題のコードを2回貼っていないか確かめます。</li>
 <li>それでも直らなければ<a href="../02_%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88.html#help">テキストの対処手順</a>へ進みます。</li>
 </ul>
-<h2>動いたら挑戦！ コンボの「ちょうどよい時間」を作ろう</h2>
+<h2>2．仕組みを3つでつかもう</h2>
+<p>敵を続けて避けると、得点やコンボの表示はどう変わりましたか？</p>
+<ol>
+<li><strong>敵を避けると点が入る</strong>。敵が画面の下まで通り過ぎると得点が入ります。黄色いレア敵の得点は <code>__M1__</code> で決まります。</li>
+<li><strong>続けて避けるとコンボが増える</strong>。1回避けるたびに、<code>__M2__</code> に入れた数だけコンボが増えます。コンボが増えると、得点にかかる倍率が上がります。</li>
+<li><strong>次の敵まで間が空くとコンボが切れる</strong>。<code>__M3__</code> が3000なら、次の敵を避けるまでに3秒を過ぎるとコンボが0に戻ります。</li>
+</ol>
+<p><a href="%E4%BB%95%E7%B5%84%E3%81%BF_%E6%9C%AC%E4%BD%93%E3%81%A8%E8%BF%BD%E5%8A%A0%E6%A9%9F%E8%83%BD.html">もっと知りたい人へ：ゲームのコードと追加機能のつながり</a></p>
+<h2>3．自分の好みに変えてみよう</h2>
 <p>ここからは、動いたコードを自分のルールに変える時間です。3～5分を目安に、次の順で試しましょう。比べる間は、incrementを1、rareScoreを50に揃え、durationだけを変えます。</p>
 <h3>1．予想クイズ：実行する前に考えよう</h3>
 <p>durationを3000から6000に変えると、どうなるでしょう？ 下で予想を1つ選びます。</p>
@@ -197,6 +175,6 @@ registerWorkshopOption(&quot;M&quot;, {
 <p>書き出しに迷ったら、<code>// durationを〇〇にした。〇〇なゲームにしたいから。</code> を手がかりにできます。〇〇は自分の数値や言葉に置き換えます。コメントはゲームの動作を変えず、工夫の理由を残すものです。</p>
 <p>最後にコーチへ「この値にした理由」と「遊んで分かったこと」を1つ伝えてください。予想と違った結果も、発見です。</p>
 <details><summary>Bの射撃も追加した人へ</summary><p>Bの命中得点と、Mの回避得点・回避コンボは別です。回避コンボを確かめるときは、敵を撃たずに画面下まで通過させます。</p></details><h2>できたら次へ</h2>
-<p>自分のルールを決め、コメントを残せたら、この機能の挑戦は完了です。時間があれば、別の課題のコードも同じ欄へ追加できます。追加するたびに前の機能も動くか確認し、55分になったら新しい追加を止めます。</p>
+<p>自分のルールを決め、コメントを残せたら、この機能の挑戦は完了です。</p>
 <p><a href="00_%E8%AA%B2%E9%A1%8C%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9.html">課題一覧へ戻る</a></p>
 <script>document.querySelectorAll('pre').forEach(pre=>{const button=document.createElement('button');button.className='copy';button.textContent='この機能のコードをコピー';const status=document.createElement('span');status.className='copy-status';status.setAttribute('role','status');button.onclick=async()=>{const code=pre.querySelector('code');try{await navigator.clipboard.writeText(code.textContent);status.textContent='コピーしました。sketch.js末尾の応用コード貼り付け欄へ貼ってください。';}catch(e){const r=document.createRange();r.selectNodeContents(code);const s=window.getSelection();s.removeAllRanges();s.addRange(r);status.textContent='機能コードを選択しました。Chromeの編集メニューからコピーしてください。';}};pre.before(button,status);});</script></body></html>

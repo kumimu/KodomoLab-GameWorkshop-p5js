@@ -1,10 +1,14 @@
 # レッスン2：変数と設定値
 
-## 当日の使い方
+> **コードを全部覚える必要はありません。**
+>
+> 仕事でプログラムを書く人も、分からないことは調べながら書いています。このレッスンも、気になるところから読んで、試したいところを一つ試してみましょう。
 
-対応する時間帯は、**10～25分「JavaScriptの基礎練習」と32～35分「避けゲームを初めて改造」**です。授業で画面共有する中心資料は[生徒用テキスト](../../00_当日用資料/01_生徒/02_ワークショップテキスト.html)です。このLESSONは、仕組みを詳しく読みたい人やコーチの参考用で、全編を投影して読む時間は設けません。
+## この資料の使い方
 
-10～25分はpractice.jsで数値・色・タイトル・変数を体験し、25～32分は生徒テキストの「ゲーム全体の地図」、32～35分はプレイヤーの色変更を扱います。必要なときだけ、この資料の該当箇所を補足に使います。
+色・大きさ・速さなどの設定値が、ゲームのどこで使われるか調べるときに参照します。
+
+当日の進行と投影手順は[当日用資料の使い方](../../00_当日用資料/README.html)を参照してください。
 
 「現在のコード」と示す例はシンプル版sketch.jsの対応する関数です。「抜粋」「考え方の例」は説明用で、そのままsketch.jsへ追加するコードではありません。改造では既存の値を変更し、応用機能は[当日用の課題ページ](../../00_当日用資料/01_生徒/応用課題/00_課題の選び方.html)からコピーします。
 
@@ -153,7 +157,7 @@ function drawPlayer() {
 
 ```javascript
 let playerColor = "lime";      // 緑色
-playerColor = "#FF6B9D";   // ピンク色（16進数）
+playerColor = "pink";   // ピンク色
 playerColor = "yellow";    // 黄色
 ```
 
@@ -186,7 +190,7 @@ function drawEnemy(enemy) {
 
 ```javascript
 let enemyColor = "orange";     // オレンジ
-enemyColor = "#00D9FF";    // シアン色
+enemyColor = "cyan";    // シアン色
 enemyColor = "purple";     // 紫
 ```
 
@@ -218,7 +222,7 @@ function draw() {
 
 ```javascript
 let backgroundColor = "navy";   // 濃い青
-backgroundColor = "#1a1a2e"; // 暗い紫（16進数）
+backgroundColor = "midnightblue"; // 濃い青
 backgroundColor = "white";   // 白（見えにくくなる可能性）
 ```
 
@@ -232,7 +236,7 @@ let playerSize = 40;
 
 **役割：** プレイヤー（三角形）のサイズをピクセル単位で指定します。
 
-**使われている場所：** `sketch.js` の対応箇所（関数名で検索）の `drawPlayer()` と、156行目の `movePlayer()`
+**使われている場所：** `sketch.js` の対応箇所（関数名で検索）の `drawPlayer()` と `movePlayer()`
 
 ```javascript
 // 【役割】キーに応じて自機を動かします。
@@ -366,9 +370,7 @@ gameTitle = "My Game";
 
 ## 🎨 色を指定する方法
 
-p5.jsで色を指定する方法は3つあります。
-
-### 方法1：英語の色名
+色は英語の名前で指定します。
 
 ```javascript
 let playerColor = "red";
@@ -397,45 +399,6 @@ let backgroundColor = "black";
 全ての色名は、p5.js公式ドキュメント（Color Reference）に載っています。
 
 https://v1.p5js.org/reference/#/p5/color
-
-### 方法2：16進数（ヘックスカラー）
-
-```javascript
-let playerColor = "#FF6B9D";  // ピンク
-let enemyColor = "#00D9FF";   // シアン
-let backgroundColor = "#1a1a2e"; // 暗い紫
-```
-
-16進数は、色をより細かく指定できます。
-
-`#` のあとに、6文字の数字とアルファベットが続きます。
-
-- 最初の2文字：赤（00〜FF）
-- 次の2文字：緑（00〜FF）
-- 最後の2文字：青（00〜FF）
-
-**例：**
-
-```text
-#FF0000  // 赤（赤100%、緑0%、青0%）
-#00FF00  // 緑
-#0000FF  // 青
-#FFFFFF  // 白（全て100%）
-#000000  // 黒（全て0%）
-```
-
-オンラインの「カラーピッカー」を使うと、好きな色の16進数が簡単に分かります。
-
-### 方法3：RGB値
-
-```javascript
-let playerColor = "rgb(255, 107, 157)";  // ピンク
-let enemyColor = "rgb(0, 217, 255)";     // シアン
-```
-
-RGB値は、赤・緑・青の3つの値（各0〜255）で色を指定します。この例はCSSの色指定を文字列で渡すため、rgb(...)全体を引用符で囲みます。rgbという関数を呼び出す書き方ではありません。
-
----
 
 ## 📝 実際の変更を試す（シミュレーション）
 
@@ -500,9 +463,9 @@ let gameTitle = "隕石をよけろ！";
 **変更後：**
 
 ```javascript
-let playerColor = "#FF1493";    // 深いピンク
-let enemyColor = "#00FF00";     // ネオン緑
-let backgroundColor = "#0a0a2e"; // 暗い紫
+let playerColor = "deeppink";    // 深いピンク
+let enemyColor = "lime";     // ネオン緑
+let backgroundColor = "midnightblue"; // 濃い青
 let playerSize = 40;
 let enemySize = 35;
 let playerSpeed = 7;
@@ -521,15 +484,15 @@ let gameTitle = "NEONバトル";
 
 ゲーム画面は、左上を (0, 0) とする座標系を使っています。
 
-```
-(0, 0)      →        (600, 0)
-  ┌─────────────────────┐
-  │                     │  ← width = 600
-  │                     │
-  │                     │  height = 400
-  │                     │
-(0, 400)    →    (600, 400)
-```
+<figure class="lesson-diagram">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 200" width="420" role="img" aria-label="ゲーム画面の座標" font-size="16" fill="#17293a">
+<rect x="46" y="32" width="328" height="136" fill="#edf4f6" stroke="#197c7c" stroke-width="2"/>
+<text x="46" y="23">(0, 0)</text><text x="374" y="23" text-anchor="end">(600, 0)</text>
+<text x="46" y="190">(0, 400)</text><text x="374" y="190" text-anchor="end">(600, 400)</text>
+
+</svg>
+<figcaption>画面は横600・縦400ピクセル。右へ行くほどxが、下へ行くほどyが大きくなります。</figcaption>
+</figure>
 
 ### プレイヤーの位置
 
@@ -549,7 +512,7 @@ playerY = height - 55;    // 画面の下から少し上 = 345
 
 ### 移動の仕組み
 
-**`movePlayer()` 関数（156行目）：**
+**`movePlayer()` 関数：**
 
 ```javascript
 // 【役割】キーに応じて自機を動かします。
@@ -584,7 +547,6 @@ function movePlayer() {
 | **変数** | データを保存する箱 | `let playerColor = "cyan";` |
 | **プロパティ（設定値）** | 変数に保存される値 | `playerColor` の値は `"cyan"` |
 | **色名** | 英語の色の名前 | `"red"`、`"blue"` |
-| **16進数** | 色を数字で指定する方法 | `"#FF0000"` は赤 |
 | **ピクセル** | 画面の最小単位 | プレイヤーのサイズは 40 ピクセル |
 | **座標** | 画面上の位置 | (300, 345) は画面中央の下 |
 | **constrain()** | 値を指定の範囲内に制限する関数 | プレイヤーが画面外に出ないようにする |
@@ -628,20 +590,6 @@ function movePlayer() {
 `enemySize = 35` のゲームと、`enemySize = 50` のゲームでは、どちらが難しいでしょう？
 
 **理由も答えてください。**
-
----
-
-## 🎓 中学生への説明例（講師向け）
-
-> このゲームの見た目や動きの速さは、上の方にある **CUSTOM AREA** という領域で全部決まっています。
->
-> 例えば `playerColor = "cyan"` というのは、「プレイヤーの色は、シアン色ですよ」という指示です。
->
-> ここを `playerColor = "lime"` に変えると、プレイヤーが緑色になります。
->
-> 1つの値を変えるだけで、ゲーム全体に反映されます。それが **変数** の便利さです。
->
-> 難しすぎるゲームなら、`playerSize` を大きくしたり、`playerSpeed` を速くしたり、`enemySize` を小さくしたりして、自分好みに調整できるんです。
 
 ---
 

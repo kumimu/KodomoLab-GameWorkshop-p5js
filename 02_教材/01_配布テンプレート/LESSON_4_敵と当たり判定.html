@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>レッスン4：敵と当たり判定</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: #f5f9fa; color: #17293a; font: 17px/1.75 system-ui, sans-serif; }
+main { max-width: 920px; margin: auto; padding: 24px clamp(16px, 4vw, 40px) 48px; background: white; min-height: 100vh; }
+nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+nav a, nav span { padding: 4px 10px; border: 1px solid #bfd6d8; border-radius: 6px; }
+nav span { background: #dceff0; font-weight: 700; }
+a { color: #15676e; }
+h1 { font-size: clamp(24px, 5vw, 34px); line-height: 1.3; border-bottom: 3px solid #197c7c; padding-bottom: 12px; }
+h2 { margin-top: 32px; font-size: 23px; }
+h3 { margin-top: 24px; font-size: 19px; }
+pre { overflow-x: auto; padding: 14px; background: #edf4f6; border-radius: 8px; line-height: 1.5; }
+code { font-family: Menlo, Consolas, monospace; font-size: .92em; }
+:not(pre) > code { background: #edf4f6; padding: 1px 4px; border-radius: 3px; }
+table { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; }
+th, td { border: 1px solid #becdd2; padding: 7px 10px; text-align: left; }
+th { background: #e8f2f2; }
+blockquote { margin-left: 0; padding-left: 16px; border-left: 3px solid #197c7c; }
+hr { border: 0; border-top: 1px solid #d8e4e7; margin: 24px 0; }
+
+.lesson-screen, .lesson-diagram { margin: 16px 0; padding: 16px; border: 1px solid #bfd6d8; border-radius: 8px; background: #f5f9fa; }
+.lesson-screen p:first-child { margin-top: 0; }
+.lesson-screen p:last-child { margin-bottom: 0; }
+.playfield { border-top: 1px solid #bfd6d8; text-align: center; }
+.player-symbol { color: #15676e; }
+.lesson-diagram svg { display: block; max-width: 100%; height: auto; margin: auto; }
+.lesson-diagram figcaption { margin-top: 10px; }
+</style>
+</head>
+<body>
+<main>
+<nav aria-label="レッスン一覧">
+<a href="LESSON_1_ゲームの全体像.html">レッスン1</a>
+<a href="LESSON_2_変数と設定値.html">レッスン2</a>
+<a href="LESSON_3_プレイヤーの移動.html">レッスン3</a>
+<span aria-current="page">レッスン4</span>
+<a href="LESSON_5_改造ミッションの指導.html">レッスン5</a>
+<a href="LESSON_6_発展版について.html">レッスン6</a>
+</nav>
+<h1>レッスン4：敵と当たり判定</h1>
+<blockquote>
+<p><strong>コードを全部覚える必要はありません。</strong></p>
+<p>仕事でプログラムを書く人も、分からないことは調べながら書いています。このレッスンも、気になるところから読んで、試したいところを一つ試してみましょう。</p>
+</blockquote>
+<h2>この資料の使い方</h2>
+<p>敵が落ちて再登場する仕組みや、当たり判定の計算を詳しく知りたいときに参照します。</p>
+<p>当日の進行と投影手順は<a href="../../00_%E5%BD%93%E6%97%A5%E7%94%A8%E8%B3%87%E6%96%99/README.html">当日用資料の使い方</a>を参照してください。</p>
+<p>「現在のコード」と示す例はシンプル版sketch.jsの対応する関数です。「抜粋」「考え方の例」は説明用で、そのままsketch.jsへ追加するコードではありません。改造では既存の値を変更し、応用機能は<a href="../../00_%E5%BD%93%E6%97%A5%E7%94%A8%E8%B3%87%E6%96%99/01_%E7%94%9F%E5%BE%92/%E5%BF%9C%E7%94%A8%E8%AA%B2%E9%A1%8C/00_%E8%AA%B2%E9%A1%8C%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9.html">当日用の課題ページ</a>からコピーします。</p>
+<h2>🎯 学習目標</h2>
+<p>敵がどのように生成・移動し、プレイヤーとの衝突がどのように判定されるのかを理解する。</p>
+<ul>
+<li>敵の配列管理</li>
+<li>敵の生成（スポーン）と再利用</li>
+<li>敵の落下（移動）の仕組み</li>
+<li>当たり判定の計算方法（<code>dist()</code> 関数）</li>
+<li>ゲームオーバーの流れ</li>
+</ul>
+<hr>
+<h2>👾 敵とは何か</h2>
+<p>ゲームでは、敵は <strong>配列</strong> で管理されています。</p>
+<pre><code class="language-javascript">let enemies = []; // 敵の配列（最初は空）
+</code></pre>
+<p><strong>配列とは</strong> — 複数の値をまとめて保存する「箱」です。</p>
+<p>敵が1個、2個、3個と増えても、<code>enemies</code> という1つの変数で管理できます。</p>
+<hr>
+<h2>🎲 敵の生成と初期化</h2>
+<h3>ゲーム開始時に敵を作る</h3>
+<p><strong><code>sketch.js</code> の対応箇所（関数名で検索）（<code>startGame()</code> 関数）：</strong></p>
+<pre><code class="language-javascript">// 【役割】選んだ難易度でゲームを初期化して開始します。
+function startGame(level) {
+  if (level === 1) {
+    difficultyName = &quot;かんたん&quot;;
+    enemySpeed = 4;
+    enemyCount = 1;
+    clearTime = 30;
+  } else if (level === 2) {
+    difficultyName = &quot;ふつう&quot;;
+    enemySpeed = 6;
+    enemyCount = 2;
+    clearTime = 45;
+  } else {
+    difficultyName = &quot;むずかしい&quot;;
+    enemySpeed = 8;
+    enemyCount = 3;
+    clearTime = 60;
+  }
+
+  playerX = width / 2;
+  playerY = height - 55;
+  score = 0;
+  startTime = millis();
+  resultText = &quot;&quot;;
+  enemies = [];
+
+  for (let i = 0; i &lt; enemyCount; i++) {
+    enemies.push({
+      x: random(enemySize, width - enemySize),
+      y: random(-300, -50),
+      speed: enemySpeed + random(0, 2),
+    });
+  }
+
+  runOption(&quot;start&quot;);
+  for (const enemy of enemies) {
+    runOption(&quot;spawnEnemy&quot;, enemy);
+  }
+  gameState = &quot;play&quot;;
+}
+</code></pre>
+<h3>難易度による敵の数の違い</h3>
+<table>
+<thead>
+<tr>
+<th>難易度</th>
+<th><code>enemyCount</code></th>
+<th>敵の数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>かんたん</td>
+<td>1</td>
+<td>1個</td>
+</tr>
+<tr>
+<td>ふつう</td>
+<td>2</td>
+<td>2個</td>
+</tr>
+<tr>
+<td>むずかしい</td>
+<td>3</td>
+<td>3個</td>
+</tr>
+</tbody></table>
+<h3>敵の初期データ</h3>
+<p>各敵は、以下のデータを持ちます：</p>
+<pre><code class="language-javascript">const sampleEnemy = {
+  x: random(enemySize, width - enemySize),  // 敵のX座標（ランダム）
+  y: random(-300, -50),                     // 敵のY座標（画面上の外から出現）
+  speed: enemySpeed + random(0, 2)          // 敵の速度（基本速度 + ランダム値）
+};
+</code></pre>
+<h3><code>random()</code> 関数とは</h3>
+<p><strong><code>random(a, b)</code></strong> は、<code>a</code> から <code>b</code> の間のランダムな数を返します。</p>
+<p><strong>例：</strong></p>
+<pre><code class="language-javascript">x: random(enemySize, width - enemySize);
+</code></pre>
+<p><code>enemySize = 35</code> の場合：</p>
+<pre><code class="language-javascript">x: random(35, 565); // 35〜565の間でランダムに選ばれる
+</code></pre>
+<p>敵がランダムな位置から落ちてくるため、毎回異なるゲームになります。</p>
+<h3>敵のY座標がマイナス？</h3>
+<pre><code class="language-javascript">y: random(-300, -50);
+</code></pre>
+<p><strong>なぜマイナスなのか？</strong></p>
+<p>敵は画面の上の外から出現します。</p>
+<pre><code>Y = -300  ← 敵の初期位置（画面の外）
+Y = -200
+Y = -100
+Y = -50
+Y = 0     ← 画面の上端
+Y = 100
+Y = 200
+...
+Y = 400   ← 画面の下端
+</code></pre>
+<p>敵は毎フレーム下へ移動するので、やがて画面に見えるようになります。</p>
+<hr>
+<h2>🔄 敵の移動（落下）</h2>
+<h3><code>moveEnemy()</code> と <code>respawnEnemy()</code>（現在のコード）</h3>
+<p><strong><code>sketch.js</code> の対応箇所（関数名で検索）：</strong></p>
+<pre><code class="language-javascript">// 【役割】敵を動かし、通過したときの得点と再登場を処理します。
+function moveEnemy(enemy) {
+  // Aの① ゲームのコードから追加機能へ「この敵は何倍の速さ？」と聞きます。
+  const multiplier = runOption(&quot;speedMultiplier&quot;, enemy);
+  // Aの③ 返ってきた倍率を元の速さに掛けます。返事がなければ1倍です。
+  enemy.y += enemy.speed * (multiplier === undefined ? 1 : multiplier);
+  if (enemy.y &gt; height + enemySize) {
+    // 応用側で得点を計算した場合は、標準の1点を重ねて加えません。
+    // Mがtrue（計算済み）を返したら、標準の1点は重ねて足しません。
+    if (runOption(&quot;avoid&quot;, enemy) !== true) {
+      score += 1;
+    }
+    respawnEnemy(enemy);
+  }
+}
+
+// 【役割】敵の位置・速さ・追加機能の情報を決め直します。
+function respawnEnemy(enemy) {
+  enemy.y = random(-300, -50);
+  enemy.x = random(enemySize, width - enemySize);
+  enemy.speed = enemySpeed + random(0, 2);
+  runOption(&quot;spawnEnemy&quot;, enemy);
+}
+</code></pre>
+<h3>敵が下へ移動</h3>
+<pre><code class="language-javascript">enemy.y += enemy.speed;
+</code></pre>
+<p>これは追加機能がない場合の考え方を示す1行です。現在のゲームのコードは、元の速さに追加機能から返された倍率（未指定なら1）を掛け、毎フレーム敵のY座標を増やします。</p>
+<p><strong>敵のY座標が増える = 画面の下へ移動する</strong></p>
+<p><strong>例：</strong> <code>enemy.speed = 6</code> の場合</p>
+<pre><code>フレーム1：enemy.y = -50 + 6 = -44
+フレーム2：enemy.y = -44 + 6 = -38
+フレーム3：enemy.y = -38 + 6 = -32
+...
+フレーム80：enemy.y = 430
+フレーム81：enemy.y = 436になり、435を超えるので再登場の処理へ
+</code></pre>
+<p>敵が画面に見えるようになり、下へ落ちていきます。</p>
+<h3>敵が画面の下を通り過ぎた場合</h3>
+<p>現在のmoveEnemyの該当部分です。</p>
+<pre><code class="language-javascript">if (enemy.y &gt; height + enemySize) {
+  if (runOption(&quot;avoid&quot;, enemy) !== true) {
+    score += 1;
+  }
+  respawnEnemy(enemy);
+}
+</code></pre>
+<p>敵が画面の下を完全に通り過ぎると（enemy.y &gt; 400 + 35、つまり435）、追加機能が得点を計算していなければ1点を足します。その後、respawnEnemyが敵の位置と速さを決め直し、追加機能へ登場を知らせます。</p>
+<p>新しい敵へ入れ替えるのではなく、同じ敵の情報を書き換えて再利用します。追加機能がない初期状態では、画面下を通過するたびに1点です。</p>
+<h3>敵の速度のランダム化</h3>
+<pre><code class="language-javascript">enemy.speed = enemySpeed + random(0, 2);
+</code></pre>
+<p>敵の速度を毎回ランダムに変えることで、ゲームのバリエーションが増えます。</p>
+<p><strong>例：</strong> <code>enemySpeed = 6</code> の難易度で：</p>
+<pre><code>1回目：speed = 6 + 0.5 = 6.5
+2回目：speed = 6 + 1.8 = 7.8
+3回目：speed = 6 + 0.1 = 6.1
+</code></pre>
+<p>全ての敵が同じ速度ではなく、少しずつ異なります。</p>
+<hr>
+<h2>📏 当たり判定の計算</h2>
+<h3><code>isHit()</code> 関数</h3>
+<p><strong><code>sketch.js</code> の対応箇所（関数名で検索）：</strong></p>
+<pre><code class="language-javascript">// 【役割】自機と敵の距離で衝突を調べます。
+function isHit(enemy) {
+  const distance = dist(playerX, playerY, enemy.x, enemy.y);
+  return distance &lt; playerSize / 2 + enemySize / 2;
+}
+</code></pre>
+<h3><code>dist()</code> 関数とは</h3>
+<p><strong><code>dist(x1, y1, x2, y2)</code></strong> は、2点間の距離を計算する関数です。</p>
+<p><strong>数学の公式：</strong></p>
+<pre><code>距離 = √((x2 - x1)² + (y2 - y1)²)
+</code></pre>
+<p>ピタゴラスの定理を使った計算です。</p>
+<h3>ピタゴラスの定理とは？</h3>
+<p><strong>簡単に言うと：「直角三角形の3辺の関係を表す公式」</strong></p>
+<p>ゲーム画面で、2つのオブジェクト（プレイヤーと敵）の距離を計算するときに使います。</p>
+<p><strong>図解：</strong></p>
+<figure class="lesson-diagram">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 200" width="420" role="img" aria-label="敵とプレイヤーの横の差、縦の差、中心間の距離" font-size="16" fill="#17293a">
+<path d="M72 46 V153 H343" fill="none" stroke="#637c86" stroke-width="2"/>
+<path d="M72 46 L343 153" fill="none" stroke="#197c7c" stroke-width="3"/>
+<circle cx="72" cy="46" r="6" fill="#b64848"/><circle cx="343" cy="153" r="6" fill="#197c7c"/>
+<text x="72" y="28" text-anchor="middle">敵</text><text x="343" y="179" text-anchor="middle">プレイヤー</text>
+<text x="62" y="108" text-anchor="end">縦の差</text><text x="207" y="178" text-anchor="middle">横の差</text>
+<text x="217" y="91">距離</text>
+</svg>
+<figcaption>横の差と縦の差で直角三角形を作ると、斜めの辺が中心どうしの距離です。</figcaption>
+</figure>
+<ul><li>横の差 = playerX − enemy.x</li><li>縦の差 = playerY − enemy.y</li><li>距離 = √(横の差² + 縦の差²)</li></ul>
+<p><strong>具体例：</strong></p>
+<p>プレイヤーが (300, 345) にいて、敵が (200, 400) にいる場合：</p>
+<pre><code>横の差 = 300 - 200 = 100
+縦の差 = 345 - 400 = -55
+
+距離 = √(100² + (-55)²)
+     = √(10000 + 3025)
+     = √13025
+     ≈ 36.1
+</code></pre>
+<p><strong>重要：</strong> <code>dist()</code> 関数が自動的にこの計算をしてくれるので、私たちは複雑な数学を考える必要はありません。</p>
+<p>結果の距離が 37.5 より小さいなら、衝突しています。</p>
+<h3>プレイヤーと敵の衝突判定</h3>
+<pre><code class="language-javascript">const distance = dist(playerX, playerY, enemy.x, enemy.y);
+return distance &lt; playerSize / 2 + enemySize / 2;
+</code></pre>
+<p><strong>条件を読む：</strong></p>
+<ul>
+<li><strong><code>distance</code></strong> — プレイヤーの中心から敵の中心までの距離</li>
+<li><strong><code>playerSize / 2 + enemySize / 2</code></strong> — プレイヤーと敵が接触する距離</li>
+</ul>
+<p><strong>例：</strong> <code>playerSize = 40</code>、<code>enemySize = 35</code> の場合</p>
+<pre><code>playerSize / 2 + enemySize / 2 = 20 + 17.5 = 37.5
+</code></pre>
+<p>プレイヤーの中心から敵の中心までの距離が <strong>37.5より小さい</strong> = 衝突している</p>
+<h3>図解</h3>
+<p>プレイヤーは三角形で描きますが、当たり判定では中心とサイズを使って円として扱います。</p>
+<figure class="lesson-diagram">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 200" width="420" role="img" aria-label="プレイヤーと敵の中心を結んだ距離" font-size="16" fill="#17293a">
+<circle cx="90" cy="94" r="44" fill="#d0eef0" stroke="#197c7c" stroke-width="2"/>
+<circle cx="330" cy="94" r="38" fill="#f9dfdf" stroke="#b64848" stroke-width="2"/>
+<path d="M90 94 H330" stroke="#17293a" stroke-width="2"/><circle cx="90" cy="94" r="4"/><circle cx="330" cy="94" r="4"/>
+<text x="210" y="80" text-anchor="middle">中心どうしの距離</text>
+<text x="90" y="165" text-anchor="middle">プレイヤー（半径20）</text>
+<text x="330" y="165" text-anchor="middle">敵（半径17.5）</text>
+</svg>
+<figcaption>距離が37.5より小さいときに、当たりと判定します。37.5ちょうどか、それより大きければ当たりと判定しません。</figcaption>
+</figure>
+<hr>
+<h2>🎮 ゲーム中の敵の処理フロー</h2>
+<p><strong><code>sketch.js</code> の対応箇所（関数名で検索）（<code>playGame()</code> 関数）：</strong></p>
+<pre><code class="language-javascript">// 【役割】プレイ中の移動・描画・判定を進めます。
+function playGame() {
+  const elapsed = floor((millis() - startTime) / 1000);
+  const remaining = clearTime - elapsed;
+  if (remaining &lt;= 0) {
+    resultText = &quot;CLEAR!&quot;;
+    gameState = &quot;end&quot;;
+    return;
+  }
+
+  movePlayer();
+  // Bの弾移動、Gの音の時刻、Mのコンボ期限などを、各update関数で確かめます。
+  runOption(&quot;update&quot;); // 選んだ機能を更新します。未選択なら何もしません。
+  drawGameInfo(remaining);
+  drawPlayer();
+  // Bなどのdraw関数を呼び、追加した弾を画面へ描きます。
+  runOption(&quot;draw&quot;);
+  for (const enemy of enemies) {
+    moveEnemy(enemy);
+    drawEnemy(enemy);
+    if (isHit(enemy)) {
+      resultText = &quot;GAME OVER&quot;;
+      gameState = &quot;end&quot;;
+      return;
+    }
+  }
+}
+</code></pre>
+<h3>毎フレーム、この順序で敵処理が起こります</h3>
+<ol>
+<li><strong>敵を移動</strong> — <code>moveEnemy(enemy)</code> で敵のY座標を更新</li>
+<li><strong>敵を描く</strong> — <code>drawEnemy(enemy)</code> で新しい位置に敵を描く</li>
+<li><strong>衝突判定</strong> — <code>isHit(enemy)</code> でプレイヤーとの距離を計算</li>
+<li><strong>敵ごとにループ</strong> — 敵が複数個いるので、全ての敵について1〜3を繰り返す</li>
+</ol>
+<p><strong>もし衝突が検出されたら：</strong></p>
+<pre><code class="language-javascript">resultText = &#39;GAME OVER&#39;;
+gameState = &#39;end&#39;;
+return;
+</code></pre>
+<p>ゲーム終了画面へ移ります。</p>
+<hr>
+<h2>📊 具体的な流れ（条件を揃えたシミュレーション）</h2>
+<p>追加機能なし、キーを押さず、自機は(300, 345)のまま、playerSize = 40、enemySize = 35とします。敵1体の初期位置を(300, -100)、速さを5に固定して考えます。これは計算を追うための例で、実際の登場位置と速さは抽選されます。</p>
+<table>
+<thead>
+<tr>
+<th>進んだフレーム</th>
+<th align="right">敵のy</th>
+<th align="right">自機との距離</th>
+<th>判定</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td align="right">-100</td>
+<td align="right">445</td>
+<td>当たらない</td>
+</tr>
+<tr>
+<td>1</td>
+<td align="right">-95</td>
+<td align="right">440</td>
+<td>当たらない</td>
+</tr>
+<tr>
+<td>80</td>
+<td align="right">300</td>
+<td align="right">45</td>
+<td>当たらない</td>
+</tr>
+<tr>
+<td>81</td>
+<td align="right">305</td>
+<td align="right">40</td>
+<td>当たらない</td>
+</tr>
+<tr>
+<td>82</td>
+<td align="right">310</td>
+<td align="right">35</td>
+<td>当たる</td>
+</tr>
+</tbody></table>
+<p>横の位置が同じなので、距離は縦の差だけです。衝突のしきい値は40 / 2 + 35 / 2 = 37.5。82フレーム目に35 &lt; 37.5となり、ゲームが終了します。その先のフレームを計算し続ける例ではありません。</p>
+<p>横にも差がある場合はdistで距離を調べます。例えば自機(300, 345)、敵(200, 400)なら、距離は約114.13です。37.5より大きいので、この座標では衝突しません。</p>
+<p>当たり判定は中心とサイズから円で近似するため、三角形の輪郭と完全に一致する判定ではありません。</p>
+<hr>
+<h2>📝 重要な用語のまとめ</h2>
+<table>
+<thead>
+<tr>
+<th>用語</th>
+<th>意味</th>
+<th>このゲームでの例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>配列</strong></td>
+<td>複数の値をまとめて保存する仕組み</td>
+<td><code>enemies = []</code></td>
+</tr>
+<tr>
+<td><strong>要素</strong></td>
+<td>配列の中の1つの値</td>
+<td><code>enemies[0]</code> — 最初の敵</td>
+</tr>
+<tr>
+<td><strong>ループ</strong></td>
+<td>複数の値に同じ処理を繰り返す</td>
+<td><code>for (const enemy of enemies)</code></td>
+</tr>
+<tr>
+<td><strong><code>random(a, b)</code></strong></td>
+<td>a〜bの間のランダムな値</td>
+<td>敵の位置や速度</td>
+</tr>
+<tr>
+<td><strong>距離計算</strong></td>
+<td>2点間の距離を計算する</td>
+<td><code>dist()</code> 関数</td>
+</tr>
+<tr>
+<td><strong>当たり判定</strong></td>
+<td>2つのオブジェクトが衝突しているか判定する</td>
+<td>プレイヤーと敵の距離</td>
+</tr>
+<tr>
+<td><strong>スコア</strong></td>
+<td>ゲーム中の得点</td>
+<td>敵が画面を通り過ぎるたびに+1</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>✅ 理解度確認クイズ</h2>
+<h3>クイズ1：敵の初期位置</h3>
+<p>難易度「ふつう」でゲームが始まるとき、敵は何個生成されますか？</p>
+<p><strong>ヒント：</strong> <code>startGame()</code> 関数の <code>enemyCount</code> を見てください。</p>
+<p><strong>選択肢：</strong></p>
+<ul>
+<li>A. 1個</li>
+<li>B. 2個</li>
+<li>C. 3個</li>
+</ul>
+<hr>
+<h3>クイズ2：敵のリサイクル</h3>
+<p>敵が画面の下を通り過ぎたとき、どうなりますか？</p>
+<p><strong>選択肢：</strong></p>
+<ul>
+<li>A. 敵が削除される</li>
+<li>B. 敵がリセットされて、画面の上の外から再び落ちてくる</li>
+<li>C. 画面の下の外に留まったままになる</li>
+</ul>
+<hr>
+<h3>クイズ3：当たり判定の計算</h3>
+<p><code>playerSize = 40</code>、<code>enemySize = 35</code> のとき、衝突が発生する距離の閾値（しきいち）は何ですか？</p>
+<p><strong>ヒント：</strong> <code>playerSize / 2 + enemySize / 2</code> を計算してください。</p>
+<p><strong>選択肢：</strong></p>
+<ul>
+<li>A. 20</li>
+<li>B. 35</li>
+<li>C. 37.5</li>
+</ul>
+<hr>
+<h3>クイズ4：スコア加算のタイミング</h3>
+<p>追加機能がない初期状態で、スコアが+1される場合はいつですか？</p>
+<p><strong>選択肢：</strong></p>
+<ul>
+<li>A. 敵がまだ画面内にいる状態で、左右へ動いて避けたとき</li>
+<li>B. 敵が画面を通り過ぎるたびに</li>
+<li>C. 敵とプレイヤーが衝突したとき</li>
+</ul>
+<hr>
+<h2>🔗 次のレッスンへ</h2>
+<p>次は、<strong>レッスン5『改造ミッションの指導』</strong> です。</p>
+<p>参加者が実際に行う改造ミッションを、難易度ごとに分析し、コーチが生徒をサポートする方法を学びます。</p>
+</main>
+</body>
+</html>

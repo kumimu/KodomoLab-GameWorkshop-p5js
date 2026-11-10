@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>レッスン1：ゲームの全体像</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: #f5f9fa; color: #17293a; font: 17px/1.75 system-ui, sans-serif; }
+main { max-width: 920px; margin: auto; padding: 24px clamp(16px, 4vw, 40px) 48px; background: white; min-height: 100vh; }
+nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+nav a, nav span { padding: 4px 10px; border: 1px solid #bfd6d8; border-radius: 6px; }
+nav span { background: #dceff0; font-weight: 700; }
+a { color: #15676e; }
+h1 { font-size: clamp(24px, 5vw, 34px); line-height: 1.3; border-bottom: 3px solid #197c7c; padding-bottom: 12px; }
+h2 { margin-top: 32px; font-size: 23px; }
+h3 { margin-top: 24px; font-size: 19px; }
+pre { overflow-x: auto; padding: 14px; background: #edf4f6; border-radius: 8px; line-height: 1.5; }
+code { font-family: Menlo, Consolas, monospace; font-size: .92em; }
+:not(pre) > code { background: #edf4f6; padding: 1px 4px; border-radius: 3px; }
+table { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; }
+th, td { border: 1px solid #becdd2; padding: 7px 10px; text-align: left; }
+th { background: #e8f2f2; }
+blockquote { margin-left: 0; padding-left: 16px; border-left: 3px solid #197c7c; }
+hr { border: 0; border-top: 1px solid #d8e4e7; margin: 24px 0; }
+
+.lesson-screen, .lesson-diagram { margin: 16px 0; padding: 16px; border: 1px solid #bfd6d8; border-radius: 8px; background: #f5f9fa; }
+.lesson-screen p:first-child { margin-top: 0; }
+.lesson-screen p:last-child { margin-bottom: 0; }
+.playfield { border-top: 1px solid #bfd6d8; text-align: center; }
+.player-symbol { color: #15676e; }
+.lesson-diagram svg { display: block; max-width: 100%; height: auto; margin: auto; }
+.lesson-diagram figcaption { margin-top: 10px; }
+</style>
+</head>
+<body>
+<main>
+<nav aria-label="レッスン一覧">
+<span aria-current="page">レッスン1</span>
+<a href="LESSON_2_変数と設定値.html">レッスン2</a>
+<a href="LESSON_3_プレイヤーの移動.html">レッスン3</a>
+<a href="LESSON_4_敵と当たり判定.html">レッスン4</a>
+<a href="LESSON_5_改造ミッションの指導.html">レッスン5</a>
+<a href="LESSON_6_発展版について.html">レッスン6</a>
+</nav>
+<h1>レッスン1：ゲームの全体像</h1>
+<blockquote>
+<p><strong>コードを全部覚える必要はありません。</strong></p>
+<p>仕事でプログラムを書く人も、分からないことは調べながら書いています。このレッスンも、気になるところから読んで、試したいところを一つ試してみましょう。</p>
+</blockquote>
+<h2>この資料の使い方</h2>
+<p>ゲームの画面が切り替わる仕組みや、ファイルの読み込み順を詳しく知りたいときに参照します。</p>
+<p>当日の進行と投影手順は<a href="../../00_%E5%BD%93%E6%97%A5%E7%94%A8%E8%B3%87%E6%96%99/README.html">当日用資料の使い方</a>を参照してください。</p>
+<p>「現在のコード」と示す例はシンプル版sketch.jsの対応する関数です。「抜粋」「考え方の例」は説明用で、そのままsketch.jsへ追加するコードではありません。改造では既存の値を変更し、応用機能は<a href="../../00_%E5%BD%93%E6%97%A5%E7%94%A8%E8%B3%87%E6%96%99/01_%E7%94%9F%E5%BE%92/%E5%BF%9C%E7%94%A8%E8%AA%B2%E9%A1%8C/00_%E8%AA%B2%E9%A1%8C%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9.html">当日用の課題ページ</a>からコピーします。</p>
+<h2>🎯 学習目標</h2>
+<p>シンプル版ゲームの全体的な流れを理解する。</p>
+<ul>
+<li>HTMLとJavaScriptの関係</li>
+<li>p5.jsとは何か</li>
+<li>ゲームの3つの状態（開始画面 → ゲーム中 → 終了画面）</li>
+<li>ゲームループとは何か</li>
+<li>各ファイルの役割</li>
+</ul>
+<hr>
+<h2>📂 ファイルの構成</h2>
+<p>実行の中心は次の3ファイルです。配布時はlicensesフォルダや基礎練習も含め、教材フォルダごと渡します。</p>
+<table>
+<thead>
+<tr>
+<th>ファイル名</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>index.html</code></td>
+<td>ブラウザが最初に読み込むファイル。ゲーム画面の枠を作る</td>
+</tr>
+<tr>
+<td><code>sketch.js</code></td>
+<td>ゲームの動きを書いたJavaScriptコード</td>
+</tr>
+<tr>
+<td><code>p5.min.js</code></td>
+<td>p5.jsというライブラリ。図形を描いたり、キー入力を受け取ったりする機能を提供</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>🔗 HTMLとJavaScriptの関係</h2>
+<h3><code>index.html</code> の重要な部分</h3>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ja&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;自分だけの避けゲー&lt;/title&gt;
+  &lt;script src=&quot;p5.min.js&quot;&gt;&lt;/script&gt;  &lt;!-- ① p5.jsを読み込む --&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;自分だけの避けゲーを作ろう！&lt;/h1&gt;
+  &lt;p&gt;1・2・3で難易度選択／← → で移動&lt;/p&gt;
+  &lt;script src=&quot;sketch.js&quot;&gt;&lt;/script&gt;  &lt;!-- ② ゲームコードを読み込む --&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h3>ファイル読み込みの順番が大事</h3>
+<p>ブラウザは、HTMLファイルを上から順に読みます。</p>
+<ol>
+<li><strong>最初に：</strong> <code>&lt;script src=&quot;p5.min.js&quot;&gt;&lt;/script&gt;</code> で <strong>p5.jsライブラリ</strong> を読み込む</li>
+<li><strong>その後：</strong> <code>&lt;script src=&quot;sketch.js&quot;&gt;&lt;/script&gt;</code> で <strong>避けゲームのコード</strong> を読み込む</li>
+</ol>
+<p><strong>なぜ順番が大事？</strong></p>
+<p>p5.jsの中には、図形を描く関数（<code>circle()</code>、<code>triangle()</code>など）がたくさん定義されています。</p>
+<p><code>sketch.js</code> でこれらの関数を使いたいときに、p5.jsが先に読み込まれていないと、「そんな関数は知らない」とエラーになります。</p>
+<p><strong>順番を間違えると：</strong></p>
+<pre><code>エラー：circle is not defined（circleという関数は定義されていません）
+</code></pre>
+<hr>
+<h2>📊 p5.jsとは何か</h2>
+<p><strong>p5.js</strong> は、JavaScriptで図形を描いたり、キーボード入力を受け取ったりするのを簡単にしてくれるライブラリです。</p>
+<p>このゲームで使われているp5.jsの機能：</p>
+<table>
+<thead>
+<tr>
+<th>機能</th>
+<th>役割</th>
+<th>使用例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>描画</strong></td>
+<td>図形や文字を画面に描く</td>
+<td><code>circle(x, y, size)</code> — 円を描く<br><code>triangle(x1, y1, x2, y2, x3, y3)</code> — 三角形を描く<br><code>text(文字列, x, y)</code> — 文字を表示</td>
+</tr>
+<tr>
+<td><strong>キャンバス</strong></td>
+<td>ゲーム画面を作る</td>
+<td><code>createCanvas(600, 400)</code> — 600×400ピクセルの画面を作る</td>
+</tr>
+<tr>
+<td><strong>キー入力</strong></td>
+<td>キーボード入力を受け取る</td>
+<td><code>keyIsDown(LEFT_ARROW)</code> — 左矢印キーが押されているか確認<br><code>keyPressed()</code> — キーが押されたときの処理</td>
+</tr>
+<tr>
+<td><strong>時間</strong></td>
+<td>フレームごとに自動実行</td>
+<td><code>draw()</code> — 1秒間に約60回自動で呼ばれる関数</td>
+</tr>
+<tr>
+<td><strong>計算・補助</strong></td>
+<td>計算や制限</td>
+<td><code>dist(x1, y1, x2, y2)</code> — 2点間の距離を計算<br><code>constrain(値, 最小, 最大)</code> — 値を範囲内に制限</td>
+</tr>
+</tbody></table>
+<p>p5.jsがなければ、ブラウザの低レベルなCanvasコマンドを使う必要があり、はるかに複雑になります。</p>
+<hr>
+<h2>🎮 ゲームの3つの状態</h2>
+<p>このゲームは、3つの画面状態を行き来します。</p>
+<h3><code>sketch.js</code> の対応箇所（関数名で検索）：</h3>
+<pre><code class="language-javascript">let gameState = &quot;start&quot;; // start / play / end
+</code></pre>
+<p><code>gameState</code> という変数が、<strong>今、ゲームがどの状態にあるのか</strong> を管理しています。</p>
+<h3>状態1：<code>gameState = &quot;start&quot;</code> — 開始画面・難易度選択</h3>
+<figure class="lesson-screen" aria-label="開始画面の例">
+<p><strong>隕石をよけろ！</strong></p>
+<p>難易度を選んでスタート！</p>
+<ul><li>1：かんたん　30秒・敵1個</li><li>2：ふつう　45秒・敵2個</li><li>3：むずかしい　60秒・敵3個</li></ul>
+<p>ゲーム中は ← → キーで移動</p>
+</figure>
+<p>ユーザーが <code>1</code>、<code>2</code>、<code>3</code> のキーのいずれかを押すと、ゲーム開始。</p>
+<h3>状態2：<code>gameState = &quot;play&quot;</code> — ゲーム中</h3>
+<figure class="lesson-screen" aria-label="プレイ中の画面の例">
+<p>難易度：ふつう　残り時間：42　SCORE：5</p>
+<div class="playfield" aria-label="赤い敵が上から落ち、下のプレイヤーが左右に動く">
+<p>🔴 敵 ↓</p><p>🔴 敵 ↓</p><p>◀ <span class="player-symbol">▲</span> ▶ プレイヤー</p>
+</div>
+</figure>
+<p>プレイヤーが敵に触れるまで、またはカウントダウンが0になるまで、この画面が表示されます。</p>
+<p>敵が上から下に移動して、プレイヤーが左右に動いて避けます。</p>
+<h3>状態3：<code>gameState = &quot;end&quot;</code> — 終了画面</h3>
+<figure class="lesson-screen" aria-label="結果画面の例">
+<p><strong>CLEAR!</strong>（または GAME OVER）</p>
+<p>難易度：ふつう　SCORE：12</p>
+<p>スペースキーで開始画面へ</p>
+</figure>
+<p>ゲームが終わった結果を表示します。</p>
+<p>スペースキーを押すと、開始画面に戻ります。</p>
+<hr>
+<h2>🔄 ゲームループとは</h2>
+<h3>ゲームループが何か</h3>
+<p><strong>ゲームループ</strong> は、ゲーム全体の心臓です。</p>
+<p>毎フレーム（通常1秒間に60回）、同じ処理が自動で繰り返されます。</p>
+<h3><code>sketch.js</code> の対応箇所（関数名で検索）：</h3>
+<pre><code class="language-javascript">// 【役割】画面を描き直し、現在の状態に応じた処理を呼びます。
+function draw() {
+  background(backgroundColor);
+
+  if (gameState === &quot;start&quot;) {
+    showStartScreen();
+  } else if (gameState === &quot;play&quot;) {
+    playGame();
+  } else if (gameState === &quot;end&quot;) {
+    showEndScreen();
+  }
+}
+</code></pre>
+<h3>この <code>draw()</code> 関数が、1秒間に約60回呼ばれます</h3>
+<p>毎フレーム、以下のことが起こります：</p>
+<ol>
+<li><strong>背景を描き直す</strong> — <code>background(backgroundColor)</code> で前のフレームの画像を完全に消す</li>
+<li><strong>ゲーム状態をチェック</strong> — <code>if</code> 文で現在の <code>gameState</code> がどの値か判定</li>
+<li><strong>対応する画面を描く</strong> — 状態に応じて、関数を呼び出す</li>
+</ol>
+<p>例えば <code>gameState = &quot;play&quot;</code> なら、<code>playGame()</code> 関数が呼ばれます。</p>
+<h3>なぜ60回も繰り返すの？</h3>
+<p>人間の目は、1秒間に30フレーム以上の画像が高速に切り替わると、<strong>滑らかなアニメーション</strong> に見えます。</p>
+<p>映画は24フレーム/秒、ゲームは通常60フレーム/秒です。</p>
+<p>60回繰り返すことで、敵がスムーズに落ちてくるように見え、プレイヤーもなめらかに動くのです。</p>
+<p>もし1秒間に5回だけなら、ぎこちないアニメーションになります。</p>
+<hr>
+<h2>🎬 ゲーム中（play）の詳しい流れ</h2>
+<h3><code>playGame()</code> 関数の全体像（現在のコード）</h3>
+<p><strong><code>sketch.js</code> の対応箇所（関数名で検索）：</strong></p>
+<pre><code class="language-javascript">// 【役割】プレイ中の移動・描画・判定を進めます。
+function playGame() {
+  const elapsed = floor((millis() - startTime) / 1000);
+  const remaining = clearTime - elapsed;
+  if (remaining &lt;= 0) {
+    resultText = &quot;CLEAR!&quot;;
+    gameState = &quot;end&quot;;
+    return;
+  }
+
+  movePlayer();
+  // Bの弾移動、Gの音の時刻、Mのコンボ期限などを、各update関数で確かめます。
+  runOption(&quot;update&quot;); // 選んだ機能を更新します。未選択なら何もしません。
+  drawGameInfo(remaining);
+  drawPlayer();
+  // Bなどのdraw関数を呼び、追加した弾を画面へ描きます。
+  runOption(&quot;draw&quot;);
+  for (const enemy of enemies) {
+    moveEnemy(enemy);
+    drawEnemy(enemy);
+    if (isHit(enemy)) {
+      resultText = &quot;GAME OVER&quot;;
+      gameState = &quot;end&quot;;
+      return;
+    }
+  }
+}
+</code></pre>
+<h3>毎フレーム、この順序で処理が進む</h3>
+<ol>
+<li><strong>時間計測とクリア判定</strong> — 残り時間が0なら終了する。</li>
+<li><strong>自機の移動</strong> — キー入力で位置を変える。</li>
+<li><strong>追加機能の更新</strong> — runOption(&quot;update&quot;)が、登録済みの機能を更新する。未登録なら何もしない。</li>
+<li><strong>情報・自機・追加の描画</strong> — スコアなど、自機、追加機能の順に描く。</li>
+<li><strong>敵の処理</strong> — 敵1体ずつ移動・描画・衝突判定を行い、当たれば終了する。</li>
+</ol>
+<p>約60フレーム/秒で進むのが目安です。実際の回数はPCやブラウザの負荷で変わります。まずは「位置を変えて、描いて、当たったか調べる」の流れを追い、追加機能の内部は選んだ課題で確認します。</p>
+<hr>
+<h2>🎯 なぜこんなに複雑？</h2>
+<p>一見、複雑に見えるかもしれません。</p>
+<p>でも、考え方は単純です：</p>
+<p><strong>「毎フレーム、前の画像を消して、新しい画像を描き直す」</strong></p>
+<p>これだけです。</p>
+<p>敵が画面に表示される位置が毎フレーム少しずつ下がっていくので、<strong>敵が落ちてくるように見える</strong>のです。</p>
+<p>プレイヤーの位置が毎フレーム左または右に少しずつ動くので、<strong>プレイヤーが移動するように見える</strong>のです。</p>
+<hr>
+<h2>📝 重要な用語のまとめ</h2>
+<table>
+<thead>
+<tr>
+<th>用語</th>
+<th>意味</th>
+<th>このゲームでの例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>フレーム</strong></td>
+<td>ゲーム画面の1コマ</td>
+<td>1フレーム = 1/60秒</td>
+</tr>
+<tr>
+<td><strong>ゲームループ</strong></td>
+<td><code>draw()</code> 関数が繰り返し呼ばれる仕組み</td>
+<td>毎フレーム、敵を下に移動し、プレイヤーを描く</td>
+</tr>
+<tr>
+<td><strong>キャンバス</strong></td>
+<td>ゲームが描かれる仮想の画面</td>
+<td>600ピクセル × 400ピクセル</td>
+</tr>
+<tr>
+<td><strong>座標</strong></td>
+<td>画面上の位置。左上が (0, 0)</td>
+<td>プレイヤーが画面の中央なら (300, 345)</td>
+</tr>
+<tr>
+<td><strong>変数</strong></td>
+<td>ゲーム中の状態や数値を保存する箱</td>
+<td><code>gameState = &quot;play&quot;</code> など</td>
+</tr>
+<tr>
+<td><strong>関数</strong></td>
+<td>決まった処理をまとめたもの</td>
+<td><code>movePlayer()</code> — プレイヤーを移動させる処理</td>
+</tr>
+<tr>
+<td><strong>イベント</strong></td>
+<td>ユーザーの操作（キー入力など）に反応すること</td>
+<td>キーが押されたら <code>keyPressed()</code> が実行される</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>✅ 理解度確認クイズ</h2>
+<h3>クイズ1：ファイルの読み込み順序</h3>
+<p>HTMLで、なぜ <code>p5.min.js</code> を先に読んで、その後に <code>sketch.js</code> を読むのでしょう？</p>
+<p><strong>ヒント：</strong> <code>sketch.js</code> の中では、p5.jsの関数（<code>circle()</code> など）を使っています。</p>
+<p><strong>答え：</strong></p>
+<p>p5.jsのコードが先にメモリに用意されていないと、<code>sketch.js</code>でそれらの関数を使えないからです。</p>
+<p>もし順番を逆にしたら、ブラウザは「circle って何ですか？知りません」とエラーを出します。</p>
+<hr>
+<h3>クイズ2：ゲームループの頻度</h3>
+<p><code>draw()</code> 関数は、1秒間に何回呼ばれていますか？</p>
+<p><strong>答え：</strong> 約60回です。</p>
+<p>フレームレートが60 FPS（frames per second）だからです。</p>
+<p>1秒間に60フレーム = 1秒間に60回。</p>
+<hr>
+<h3>クイズ3：ゲーム状態の遷移</h3>
+<p>プレイヤーが難易度1を選んでから、敵に当たるまで、<code>gameState</code> の値はどのように変わりますか？</p>
+<p><strong>答え：</strong> <code>start</code> → <code>play</code> → <code>end</code></p>
+<ol>
+<li>最初：<code>gameState = &quot;start&quot;</code>（開始画面）</li>
+<li>キー <code>1</code> を押す：<code>gameState = &quot;play&quot;</code>（ゲーム開始）</li>
+<li>敵に当たる：<code>gameState = &quot;end&quot;</code>（終了画面）</li>
+</ol>
+<hr>
+<h2>📚 さらに詳しく知りたい人へ</h2>
+<h3>p5.js公式ドキュメント</h3>
+<p>p5.jsの全ての関数について知りたい人は、公式ウェブサイトを見ましょう。</p>
+<p><a href="https://v1.p5js.org/reference/">https://v1.p5js.org/reference/</a></p>
+<p><code>circle()</code>、<code>triangle()</code>、<code>text()</code> など、このゲームで使われている関数も載っています。</p>
+<h3>発展版ゲームもp5.jsを使います</h3>
+<p>シンプル版と発展版ゲームは、どちらもp5.jsを使っています。発展版ゲームは追加機能を体験する完成見本です。</p>
+<hr>
+<h2>🔗 次のレッスンへ</h2>
+<p>次は、<strong>レッスン2『変数と設定値』</strong> です。</p>
+<p>CUSTOM AREA の7つの設定値（色、サイズ、速度）を変えると、ゲームがどう変わるのかを実際に試します。</p>
+</main>
+</body>
+</html>
