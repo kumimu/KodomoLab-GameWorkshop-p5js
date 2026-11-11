@@ -159,12 +159,12 @@ registerWorkshopOption(&quot;B&quot;, {
 <li>同じ難易度で遊び、弾の動きが見えるか、敵を狙いやすいか比べます。</li>
 <li>自分が撃っていて気持ちよい値を採用します。最初の値へ戻しても構いません。</li>
 </ol>
-<p>ノートN03へ「試した値・予想・実際の違い」を短く残します。弾を速くしたときと遅くしたときで、狙い方は変わりましたか？</p>
-<h3>3．発見をコメント1行にしよう</h3>
+<p>試して分かったことは、ノートN02の動作確認メモに書けます。弾を速くしたときと遅くしたときで、狙い方は変わりましたか？</p>
+<h3>3．発見をコメント1行にしよう（任意）</h3>
 <p>ワーク用のsketch.jsで、<strong>Bの弾を追加する処理にあるvyの行のすぐ上</strong>へ、<code>//</code>で始まるコメントを1行追加します。どんなゲームにしたくてその値を選んだのか、自分の言葉で書きましょう。</p>
 <p>迷ったら、<code>// 弾のvyを〇〇にした。〇〇な撃ち心地にしたいから。</code> を書き出しの手がかりにできます。〇〇は自分の数値や言葉に置き換えます。</p>
 <p>最後にコーチへ「この値にした理由」と「遊んで分かったこと」を1つ伝えます。予想と違った結果も、発見です。</p>
 <h2>できたら次へ</h2>
-<p>自分の採用値を決め、コメントを残せたら挑戦は完了です。</p>
+<p>気に入った設定を決め、保存して動きを確認できたら完了です。</p>
 <p><a href="00_%E8%AA%B2%E9%A1%8C%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9.html">課題一覧へ戻る</a></p>
 <script>document.querySelectorAll('pre').forEach(pre=>{const button=document.createElement('button');button.className='copy';button.textContent='この機能のコードをコピー';const status=document.createElement('span');status.className='copy-status';status.setAttribute('role','status');button.onclick=async()=>{const code=pre.querySelector('code');try{await navigator.clipboard.writeText(code.textContent);status.textContent='コピーしました。sketch.js末尾の応用コード貼り付け欄へ貼ってください。';}catch(e){const r=document.createRange();r.selectNodeContents(code);const s=window.getSelection();s.removeAllRanges();s.addRange(r);status.textContent='機能コードを選択しました。Chromeの編集メニューからコピーしてください。';}};pre.before(button,status);});</script></body></html>
