@@ -60,6 +60,14 @@ body{margin:0;background:#182b3a;color:#172e3d;font-family:"Hiragino Sans","Yu G
 .deck .optional-note{font-size:18px;color:#536c73;margin:7px 0 0}
 .deck #s3 .takeaway{margin-top:14px}
 
+.deck #s5 .explanation h3{margin-bottom:5px}
+.deck #s5 .explanation h3:not(:first-child){margin-top:8px}
+.deck #s5 .explanation p:not(.lesson-note){margin:4px 0}
+.deck #s5 .takeaway{margin-top:12px;padding:8px 15px}
+.deck .explanation .lesson-note{margin:14px 0 0;border:2px solid #176c70;border-radius:8px;background:#e6f4f4;font-size:20px;line-height:1.35;overflow:hidden;print-color-adjust:exact}
+.deck .lesson-note strong{display:block;background:#176064;color:white;padding:5px 12px;font-size:24px}
+.deck .lesson-note span{display:block;padding:6px 12px}
+
 @media print{
   @page{size:400mm 225mm;margin:0}
   .slide,.deck,.slide[hidden],.deck[hidden]{display:block;position:static;width:1600px;height:auto;transform:none!important;zoom:.94488;print-color-adjust:exact}
@@ -118,7 +126,7 @@ body{margin:0;background:#182b3a;color:#172e3d;font-family:"Hiragino Sans","Yu G
   <mark>enemy.x = random(enemySize, width - enemySize)</mark>;
   <mark>enemy.speed = enemySpeed + random(0, 2)</mark>;
 <span class="optional">  runOption(&quot;spawnEnemy&quot;, enemy);</span>
-}</code></pre></div></div></div></section><section id="s5" class=""><h1>5　当たり判定</h1><p class="lead">プレイヤーが敵に当たったら、ゲームオーバー！</p><div class="layout"><div class="explanation"><h3>① プレイヤーと敵の中心の距離を測ります（<code>dist()</code>）</h3><p>プレイヤーの位置と、敵の位置の間がどれだけ離れているかを求めます。</p><h3>② 近ければ当たったと判定します（<code>isHit()</code>）</h3><p>距離が「プレイヤーのサイズの半分＋敵のサイズの半分」より小さいと、当たりとします。プレイヤーも円の範囲で近さを判定する簡単な方法です。</p><h3>③ 当たったらゲームを終えます</h3><p><code>true</code>なら結果をGAME OVERにし、状態を<code>end</code>へ。<code>return</code>で今の処理を終えます。</p><div class="takeaway">次の draw() では結果画面を描く。<br>当たらなければプレイを続ける。</div></div><div class="source"><div class="code-block"><h3>sketch.js：isHit() 全体</h3><pre><code>function isHit(enemy) {
+}</code></pre></div></div></div></section><section id="s5" class=""><h1>5　当たり判定</h1><p class="lead">プレイヤーが敵に当たったら、ゲームオーバー！</p><div class="layout"><div class="explanation"><h3>① プレイヤーと敵の中心の距離を測ります（<code>dist()</code>）</h3><p>プレイヤーと敵の中心が、どれだけ離れているかを調べます。</p><h3>② 近ければ当たったと判定します（<code>isHit()</code>）</h3><p>プレイヤーと敵を円として考えます。中心の距離が半径の合計より短ければ、当たりです。</p><h3>③ 当たったらゲームを終えます</h3><p><code>true</code>なら結果をGAME OVERにし、状態を<code>end</code>へ。<code>return</code>で今の処理を終えます。</p><div class="takeaway">次の draw() では結果画面を描く。<br>当たらなければプレイを続ける。</div><p class="lesson-note"><strong>ゲームの仕組みをもっとのぞいてみよう</strong><span>今日の解説を聞いて、ゲームの基本的な仕組みをもっとじっくり学びたいと思った人に、持ち帰って読める補助テキスト（LESSON_1〜6）を用意しています。気になるところから、ぜひ読んでみてください。</span></p></div><div class="source"><div class="code-block"><h3>sketch.js：isHit() 全体</h3><pre><code>function isHit(enemy) {
   const distance = <mark>dist(playerX, playerY, enemy.x, enemy.y)</mark>;
   return <mark>distance &lt; playerSize / 2 + enemySize / 2</mark>;
 }</code></pre></div><div class="code-block"><h3>sketch.js：playGame() の当たり判定部分</h3><pre><code>if (<mark>isHit(enemy)</mark>) {
