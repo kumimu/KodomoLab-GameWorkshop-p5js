@@ -50,6 +50,8 @@
 <li><input type="checkbox"> 準備担当が各PCの「ワーク用」をGitで初期化し、練習・改造前の状態を初期コミットした。
 <p>教材の動作確認を始める前に、準備担当が「ワーク用」フォルダ内で次のコマンドを実行し、配布時の状態を初期コミットします。</p>
 <pre><code class="language-sh">git init
+git config --local user.name "Workshop Test"
+git config --local user.email "workshop-test@example.com"
 git add .
 git commit -m "ワークショップ開始時の教材"</code></pre>
 </li>
