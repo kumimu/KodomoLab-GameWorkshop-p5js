@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>自宅でゲーム改造を続ける</title>
+  <style>
+    @page { size: A4; margin: 16mm; }
+    * { box-sizing: border-box; }
+    body {
+      max-width: 190mm;
+      margin: 24px auto;
+      padding: 0 16px;
+      color: #162234;
+      font: 11pt/1.7 "Hiragino Sans", "Yu Gothic", sans-serif;
+    }
+    h1 { font-size: 23pt; line-height: 1.35; border-bottom: 3px solid #197c7c; padding-bottom: 9px; }
+    h2 { font-size: 16pt; margin: 18px 0 6px; break-after: avoid; }
+    p, ul, ol { margin: 6px 0; }
+    a { color: #156c70; }
+    code { font-family: Menlo, Consolas, monospace; }
+    .steps { background: #eaf3f3; border-left: 3px solid #197c7c; padding: 6px 12px; }
+    @media print { body { max-width: none; margin: 0; padding: 0; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>自宅でゲーム改造を続ける</h1>
+    <p>ワークショップで改造したゲームは、持ち帰り用USBの「ワーク用」フォルダに入っています。自宅のパソコンにコピーして、改造の続きを始めましょう。</p>
+
+    <h2>1. 作業フォルダをコピーして、ゲームを起動する</h2>
+    <ol>
+      <li>USBをパソコンにつなぎ、「ワーク用」を<strong>フォルダごと</strong>デスクトップなどにコピーします。</li>
+      <li>コピーした「ワーク用」の中にある <code>index.html</code> を、Chromeなどのブラウザで開きます。</li>
+      <li>数字キーの<strong>1・2・3</strong>で難易度を選び、<strong>←・→</strong>でプレイヤーを動かします。</li>
+    </ol>
+
+    <h2>2. ゲームのコードを編集する</h2>
+    <p>コピーした「ワーク用」の中にある <code>sketch.js</code> を、VS CodeやWindowsの「メモ帳」などのテキストエディターで開きます。</p>
+    <ul>
+      <li><strong>VS Codeを使う場合</strong>は、「ファイル」→「フォルダーを開く」で「ワーク用」を選び、左の一覧から <code>sketch.js</code> を開きます。</li>
+      <li><strong>Windowsのメモ帳を使う場合</strong>は、<code>sketch.js</code> を右クリックし、「プログラムから開く」→「メモ帳」を選びます。</li>
+    </ul>
+    <p>編集を再開するときは、<code>playerColor</code> を好きな色に変えて、保存と更新の流れを確認してみましょう。色名は <code>"yellow"</code> や <code>"orange"</code> のように書きます。</p>
+
+    <h2>3. 保存して、変更を確認する</h2>
+    <ol>
+      <li>編集した <code>sketch.js</code> を「ファイル」→「保存」で上書きします。</li>
+      <li>ブラウザのゲーム画面に戻り、更新ボタンを押します。</li>
+      <li>ゲームを開始し、編集した内容が反映されているか確認します。</li>
+    </ol>
+    <p class="steps"><strong>コードを変える → 保存する → ブラウザを更新する</strong></p>
+    <p>変更が反映されないときは、編集した <code>sketch.js</code> とブラウザで開いた <code>index.html</code> が、パソコンにコピーした同じ「ワーク用」フォルダにあるか確かめてください。</p>
+    <p>ゲームの仕組みや改造のしかたを詳しく知りたい人は、「ワーク用」にある <code>LESSON_1</code>〜<code>LESSON_6</code> のうち、気になるページをブラウザで開いてみてください。</p>
+
+    <h2>補足　授業と同じアプリを使いたい方へ</h2>
+    <p>ワークショップでは、コードの編集に <strong>Visual Studio Code（VS Code）</strong>、ゲームの確認に <strong>Google Chrome</strong> を使いました。ご自宅でも同じアプリを使いたい方は、以下の公式サイトをご覧ください。</p>
+    <ul>
+      <li><a href="https://code.visualstudio.com/download">Visual Studio Codeの公式ダウンロードページ</a></li>
+      <li><a href="https://www.google.com/chrome/">Google Chromeの公式ダウンロードページ</a></li>
+    </ul>
+  </main>
+</body>
+</html>
